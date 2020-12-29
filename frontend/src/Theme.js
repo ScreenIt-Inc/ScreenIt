@@ -15,6 +15,8 @@ function ThemeApp() {
         light: "#55AFB4",
         main: "#344A59",
         dark: "#212936",
+        grey: "#9E9E9E",
+        white: "#FFFFFF"
       },
       secondary: {
         light: '#56657F',
