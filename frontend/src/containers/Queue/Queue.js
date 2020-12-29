@@ -2,11 +2,14 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 // import PaperButton from '../../components/Controls/Button/PaperButton'
 import ButtonGroup from '../../components/Controls/Button/ButtonGroup'
+import Table from '../../components/Table/Table'
+import Grid from "@material-ui/core/Grid";
 import { makeStyles } from '@material-ui/core/styles';
 import PeopleAltIcon from '@material-ui/icons/PeopleAlt';
 import AssignmentTurnedInIcon from '@material-ui/icons/AssignmentTurnedIn';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import AnnouncementIcon from '@material-ui/icons/Announcement';
+import Paper from '@material-ui/core/Paper';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -21,6 +24,15 @@ const useStyles = makeStyles((theme) => ({
           height: theme.spacing(16),
         },
     },
+    paper: {
+        padding: theme.spacing(2),
+        display: "flex",
+        overflow: "auto",
+        flexDirection: "column",
+    },
+    // fixedHeight: {
+    //     height: 500,
+    // }
 }));
 
 export default function Queue(props) {
@@ -33,9 +45,21 @@ export default function Queue(props) {
     ]);
 
     return(
-        <div>
-            <ButtonGroup buttons={buttons} handleClick={() => {console.log("clicked")}}/>
-        </div>
+        <Grid container spacing={3} justify="center">
+            <Grid item xs={12}>
+                <ButtonGroup buttons={buttons} handleClick={() => {console.log("clicked")}}/>
+            </Grid>
+            {/* <Grid item xs={2}></Grid> */}
+            <Grid item xs={9}>
+                <Paper className={classes.paper}>
+                    <Table />
+                </Paper>
+            </Grid>
+            {/* <Grid item xs={2}></Grid> */}
+        </Grid>
+        // <div>
+        //     <ButtonGroup buttons={buttons} handleClick={() => {console.log("clicked")}}/>
+        // </div>
     )
 }
 
