@@ -50,7 +50,7 @@ export default function Queue(props) {
                 <ButtonGroup buttons={buttons} handleClick={() => {console.log("clicked")}}/>
             </Grid>
             {/* <Grid item xs={2}></Grid> */}
-            <Grid item xs={9}>
+            <Grid item xs={10}>
                 <Paper className={classes.paper}>
                     <Table />
                 </Paper>

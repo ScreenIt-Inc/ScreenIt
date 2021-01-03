@@ -125,7 +125,7 @@ export default function TableQ(props) {
                 />
               </TableCell>
               <TableCell>{row.name}</TableCell>
-              <TableCell>{`$${row.amount}`}</TableCell>
+              <TableCell>{row.amount}</TableCell>
               <TableCell>{row.item}</TableCell>
               <TableCell>{row.date}</TableCell>
               <TableCell>{date.getHours}</TableCell>

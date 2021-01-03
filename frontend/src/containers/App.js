@@ -1,5 +1,6 @@
 import React from "react";
 import Navbar from "../components/Navbar/Navbar";
+import Routes from "../routes/Routes";
 import { Router } from "react-router-dom";
 import history from "../routes/History";
 import { SnackbarProvider } from "notistack";
@@ -25,8 +26,8 @@ class App extends React.Component {
               autoHideDuration={4000}
             >
             {/* <MaterialSnackbar /> */}
-              <Navbar />
-            {/* {<Routes lang={lang} />} */}
+              {/* <Navbar /> */}
+              <Routes />
             </SnackbarProvider>
           </Router>
         </div>

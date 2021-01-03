@@ -19,6 +19,7 @@ import Logo from "../../assets/images/ScreenitLogo.png"
 import Queue from "../../containers/Queue/Queue"
 import ContactTracing from "../../containers/ContactTracing/ContactTracing"
 import Settings from "../../containers/Settings/Settings"
+import history from "../../routes/History";
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -112,7 +113,7 @@ export default function Navbar({ props }) {
   };
 
   return (
-    <Router>
+    <Router history={history}>
     <div className={classes.root}>
       <CssBaseline />
       <Drawer
