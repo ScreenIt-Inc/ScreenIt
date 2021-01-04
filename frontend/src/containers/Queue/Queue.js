@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Queue(props) {
     const classes = useStyles();
-    const [buttons, setButtons] = useState([
+    const [buttons] = useState([
         {quantity: 128, category: "Capacity", icon: PeopleAltIcon},
         {quantity: 32, category: "Queue", icon: AssignmentTurnedInIcon},
         {quantity: 2, category: "Notifications", icon: NotificationsIcon},
@@ -49,17 +49,12 @@ export default function Queue(props) {
             <Grid item xs={12}>
                 <ButtonGroup buttons={buttons} handleClick={() => {console.log("clicked")}}/>
             </Grid>
-            {/* <Grid item xs={2}></Grid> */}
             <Grid item xs={10}>
                 <Paper className={classes.paper}>
                     <Table />
                 </Paper>
             </Grid>
-            {/* <Grid item xs={2}></Grid> */}
         </Grid>
-        // <div>
-        //     <ButtonGroup buttons={buttons} handleClick={() => {console.log("clicked")}}/>
-        // </div>
     )
 }
 

@@ -1,5 +1,4 @@
 import React from "react";
-import Navbar from "../components/Navbar/Navbar";
 import Routes from "../routes/Routes";
 import { Router } from "react-router-dom";
 import history from "../routes/History";
@@ -9,8 +8,7 @@ import "./App.scss";
 import { connect } from "react-redux";
 import { setCurrentLang } from "../store/Lang/LangAction";
 class App extends React.Component {
-  // App contains routes and also wrapped with snackbar and intl for localization
-
+  // App contains routes and also wrapped with snackbar
   render() {
     const { loading } = this.props;
     return (
@@ -25,13 +23,10 @@ class App extends React.Component {
               maxSnack={3}
               autoHideDuration={4000}
             >
-            {/* <MaterialSnackbar /> */}
-              {/* <Navbar /> */}
               <Routes />
             </SnackbarProvider>
           </Router>
         </div>
-      // </IntlProvider>
     );
   }
 }

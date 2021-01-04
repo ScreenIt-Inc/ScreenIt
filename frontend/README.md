@@ -6,7 +6,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 <p>To make our projects we almost all the times it’s the create-react-app that we use to create an app with no build configuration. Or we just make our own simple boilerplate from scratch.</p>
 <h2>Installation</h2>
 <ol>
-  <li>First, let's clone React-boilerplate-redux repository then you need to install the dependencies:</li>
+  <li>First, let's clone the ScreenIT repository then you need to install the dependencies:</li>
   <code>npm install</code>
   <li>Now you can run the project:</li>
   <code>npm start</code>
