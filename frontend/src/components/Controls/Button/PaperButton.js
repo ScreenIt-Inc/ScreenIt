@@ -51,7 +51,7 @@ const PaperButton = ({quantity, category, icon, selected, handleClick}) => {
   const Icon = icon;
   return (
     // <div className={classes.root}>
-      <Paper className={selected ? classes.selected : classes.paper} variant="contained" color="primary" onClick={handleClick} elevation={5}>
+      <Paper className={selected ? classes.selected : classes.paper} color="primary" onClick={handleClick} elevation={5}>
         <Icon className={classes.icon} />
         <p className={classes.quantity}>{quantity}</p>
         <p className={classes.category}>{category}</p>

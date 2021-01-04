@@ -28,8 +28,8 @@ const ButtonGroup = ({buttons}) => {
         <div className={classes.root}>
             {buttons.map((button,i) => {
                 return (
-                    <div className={classes.paper}>
-                        <PaperButton selected={i==selected} quantity={button.quantity} category={button.category} icon={button.icon} handleClick={() => setSelected(i)} />
+                    <div key={"Button"+i+button.category} className={classes.paper}>
+                        <PaperButton selected={i===selected} quantity={button.quantity} category={button.category} icon={button.icon} handleClick={() => setSelected(i)} />
                     </div>
                 )
             })}

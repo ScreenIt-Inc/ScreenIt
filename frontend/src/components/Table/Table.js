@@ -71,7 +71,7 @@ const rows = [
 
 export default function TableQ(props) {
   const [viewAll, setViewAll] = useState(false);
-  const [paid, setPaid] = useState(rows);
+  const [paid] = useState(rows);
   function preventDefault(event) {
     setViewAll(!viewAll)
     event.preventDefault();
@@ -128,7 +128,7 @@ export default function TableQ(props) {
               <TableCell>{row.amount}</TableCell>
               <TableCell>{row.item}</TableCell>
               <TableCell>{row.date}</TableCell>
-              <TableCell>{date.getHours}</TableCell>
+              <TableCell>{date.getHours.toString()}</TableCell>
               <TableCell align="right">
                 {" "}
                 <Button

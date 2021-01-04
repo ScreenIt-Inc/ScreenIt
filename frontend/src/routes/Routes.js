@@ -1,17 +1,13 @@
-import React, { Suspense, useEffect } from "react";
+import React, { Suspense } from "react";
 import {
   Router,
   Switch,
-  Redirect,
-  useLocation,
-  useHistory,
+  Redirect
 } from "react-router-dom";
 import history from "./History";
 import * as LazyComponent from "../utils/LazyLoaded";
 import Loader from "../components/Loader/Loader";
 import PrivateRoute from "../utils/PrivateRoute";
-import store from "../store";
-import { setCurrentLang } from "../store/Lang/LangAction";
 
 const Routes = () => {
 
