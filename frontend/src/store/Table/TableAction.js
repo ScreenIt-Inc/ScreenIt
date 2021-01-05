@@ -1,7 +1,6 @@
 import * as types from './TableTypes';
 
 export const setCurrentTable = payload  => {
-  localStorage.setItem('table', payload);
   return { type: types.SET_TABLE, payload };
 }
 

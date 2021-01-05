@@ -14,7 +14,7 @@ import CircleUnchecked from "@material-ui/icons/RadioButtonUnchecked";
 import Button from "@material-ui/core/Button";
 import Title from "./Title";
 import { useSnackbar } from "notistack";
-
+import {useSelector, useDispatch} from 'react-redux'
 
 const useStyles = makeStyles((theme) => ({
   seeMore: {
@@ -70,6 +70,7 @@ const rows = [
 ];
 
 export default function TableQ(props) {
+  const category = useSelector(state => state.table.category)
   const [viewAll, setViewAll] = useState(false);
   const [paid] = useState(rows);
   function preventDefault(event) {
@@ -93,7 +94,7 @@ export default function TableQ(props) {
           display: "flex",
         }}
       >
-        <Title>Waiting List</Title>
+        <Title>{category}</Title>
         <div className={classes.seeMore}>
           <Link color="primary" href="#" onClick={preventDefault}>
             View All

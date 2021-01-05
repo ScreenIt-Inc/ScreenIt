@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PaperButton from './PaperButton'
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles'
+import {useSelector, useDispatch} from 'react-redux'
+import { setCurrentTable } from '../../../store/Table/TableAction'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -21,15 +23,16 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const ButtonGroup = ({buttons}) => {
-    const classes = useStyles();
-    const [selected, setSelected] = useState(1);
+    const classes = useStyles()
+    const category = useSelector(state => state.table.category)
+    const dispatch = useDispatch()
 
     return(
         <div className={classes.root}>
             {buttons.map((button,i) => {
                 return (
                     <div key={"Button"+i+button.category} className={classes.paper}>
-                        <PaperButton selected={i===selected} quantity={button.quantity} category={button.category} icon={button.icon} handleClick={() => setSelected(i)} />
+                        <PaperButton selected={button.category === category} quantity={button.quantity} category={button.category} icon={button.icon} handleClick={() => dispatch(setCurrentTable(button.category))} />
                     </div>
                 )
             })}
