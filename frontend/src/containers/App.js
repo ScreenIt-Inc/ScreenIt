@@ -6,7 +6,6 @@ import { SnackbarProvider } from "notistack";
 import Loader from "../components/Loader/Loader";
 import "./App.scss";
 import { connect } from "react-redux";
-import { setCurrentLang } from "../store/Lang/LangAction";
 class App extends React.Component {
   // App contains routes and also wrapped with snackbar
   render() {
@@ -31,9 +30,8 @@ class App extends React.Component {
   }
 }
 
-const mapStateToProps = ({ lang, loading }) => ({
-  lang,
+const mapStateToProps = ({ loading }) => ({
   loading,
 });
 
-export default connect(mapStateToProps, { setCurrentLang })(App);
+export default connect(mapStateToProps, {})(App);

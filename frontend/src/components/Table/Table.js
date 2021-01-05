@@ -20,6 +20,9 @@ const useStyles = makeStyles((theme) => ({
   seeMore: {
     marginTop: theme.spacing(3),
   },
+  button: {
+    backgroundColor: theme.palette.primary.light
+  }
 }));
 
 function createData(id, name, amount, item, date) {
@@ -134,6 +137,7 @@ export default function TableQ(props) {
                 {" "}
                 <Button
                   variant="contained"
+                  classes={classes.button}
                   color="primary"
                   style={{ borderRadius: 5 }}
                   onClick={() => handlePaid("Notification sent to "+row.name)}
