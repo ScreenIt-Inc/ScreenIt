@@ -16,6 +16,7 @@ const Routes = () => {
       <Router history={history}>
         <Switch>
           <LazyComponent.Login path="/login" exact />
+          <LazyComponent.CustomerForm path="/customerform" exact />  
           <PrivateRoute component={LazyComponent.Home} path="/queue" exact />
           <Redirect from="**" to={"/queue"} exact />
         </Switch>
