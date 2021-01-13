@@ -47,7 +47,7 @@ export default function Queue(props) {
     return(
         <Grid container spacing={3} justify="center">
             <Grid item xs={12}>
-                <ButtonGroup buttons={buttons} handleClick={() => {console.log("clicked")}}/>
+                <ButtonGroup buttons={buttons} page="Queue"/>
             </Grid>
             <Grid item xs={10}>
                 <Paper className={classes.paper}>

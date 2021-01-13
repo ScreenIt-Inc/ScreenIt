@@ -10,6 +10,7 @@ import WidgetsIcon from '@material-ui/icons/Widgets';
 import Paper from '@material-ui/core/Paper';
 import InputBase from '@material-ui/core/InputBase';
 import SearchIcon from '@material-ui/icons/Search';
+import { MenuItem, TextField, Select} from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -64,6 +65,9 @@ const useStyles = makeStyles((theme) => ({
           width: '20ch',
         },
       },
+      inputRoot: {
+        color: 'inherit',
+      },
 }));
 
 export default function Settings(props) {
@@ -92,21 +96,52 @@ export default function Settings(props) {
             </div>
             </Grid>
             <Grid item xs={12}>
-                <ButtonGroup buttons={buttons} handleClick={() => {console.log("clicked")}}/>
+                <ButtonGroup buttons={buttons} page="Settings"/>
             </Grid>
             <Grid item xs={10}>
                 <Paper className={classes.paper}>
-                 
+                    <form noValidate autoComplete="off">
+                      <h6>Max Capacity</h6>
+                      <TextField margin="normal" variant="outlined" label="Enter numeric value" defaultValue="10"
+                      helperText="Change maximum capacity of people allowed inside"
+                      id = "max-capacity" />
+                      <h6>Languages</h6>
+                      <p></p>
+                      <Select
+                        labelId = "language-select"
+                        defaultValue = {"enUS"}
+                      >
+                        <MenuItem value={"enUS"}>English</MenuItem>
+                        <MenuItem value={"frFR"}>French</MenuItem>
+                        <MenuItem value={"esES"}>Spanish</MenuItem>
+                      </Select>
+                      <p></p>
+                    </form>
+                    {/* Privacy */}
+                    <form noValidate autoComplete="off">
+                    </form>
+                    {/* Notifications */}
+                    <form noValidate autoComplete="off">
+                      <h6>Notification Message</h6>
+                      <TextField margin="normal" variant="outlined" placeholder="Enter Message ..."
+                      helperText="Customize message used to notify clients to enter"
+                      id = "notif-msg" />
+                      <h6>Mode</h6>
+                      <p></p>
+                      <Select
+                        labelId = "notif-select"
+                        defaultValue = {"sms"}
+                      >
+                        <MenuItem value={"sms"}>Text message</MenuItem>
+                        <MenuItem value={"call"}>Call</MenuItem>
+                      </Select>
+                      <p></p>
+                    </form>
+                    {/* Permissions */}
+                    <form noValidate autoComplete="off">
+                    </form>
                 </Paper>
             </Grid>
         </Grid>
     )   
 }
-
-// const mapStateToProps = (state) => {
-//     return {
-//         lang : state.lang
-//     }
-// }
-
-// export default connect(mapStateToProps,null)(Home);
