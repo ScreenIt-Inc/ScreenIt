@@ -5,6 +5,9 @@ import TextField from '@material-ui/core/TextField';
 import { Container, Row, Col, Jumbotron, Button, Form } from 'react-bootstrap';
 import Logo from "../../assets/images/ScreenitLogo.png"
 
+
+URL = 'http://localhost:3000/api/form/submission' //hardcode for now
+
 const useStyles = makeStyles((theme) => ({
   content: {
     flexGrow: 1,
@@ -71,20 +74,41 @@ export default function CustomerForm(props) {
 		'phone': ''
 	}
 
+
 	const handleFormChange = (key, value) => {
     	user_data[key] = value;
   	};
 
+
   	const verifyData = () => {
   		return true
   	}
+
+
+  	const postData = () => {
+  		console.log('posting', JSON.stringify(user_data))
+  		fetch(URL, {
+		  method: 'POST',
+		  headers: {
+		    'Accept': 'application/json',
+		    'Content-Type': 'application/json',
+		  },
+		  body: JSON.stringify(user_data)
+		})
+
+  	}
+
+
   	const handleSubmit = () => {
   		if (!verifyData()){
+  			//indicate error here
   			return
   		}
 
+  		postData()
 
   	}
+
 
     return(
         <div className={classes.content}>
@@ -136,7 +160,7 @@ export default function CustomerForm(props) {
 						  </Form.Group>
 
 
-						  <Button variant="primary" type="submit">
+						  <Button variant="primary" type="submit" onClick={handleSubmit}>
 						    Submit
 						  </Button>
 						</Form>
