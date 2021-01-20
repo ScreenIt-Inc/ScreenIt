@@ -1,16 +1,13 @@
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import Logger from '../../loaders/logger';
 
-const route = Router(),
-	bodyParser = require('body-parser');
+const route = Router()
 
 
 export default (app: Router) => {
 	app.use('/form', route);
-	app.use(bodyParser.json());
 
-
-  	route.post("/testurl", function(req,res,next){
+  	route.post("/testurl", function(req: Request, res: Response, next: NextFunction){
 		    console.log(req.body);
 		    Logger.info(`FINALLY IT WENT THROUGH`);
 		    res.send("response");
