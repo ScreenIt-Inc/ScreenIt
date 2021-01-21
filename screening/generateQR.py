@@ -8,7 +8,7 @@ siteBaseUrl:
 	wheres the site
 
 error: 
-	Error level   |   % of code can be correct
+	Error level   |   % of code can be corrected
 		L 					7% 
 		M 					15% 
 		Q 					25% 			(most common choice)
