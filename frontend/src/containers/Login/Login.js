@@ -16,6 +16,8 @@ import {
   Visibility,
   VisibilityOff,
 } from "@material-ui/icons";
+import { dispatchSnackbarError } from "../../utils/Shared";
+
 export default function Login(props) {
   const [values, setValues] = useState({
     email: "",
@@ -24,13 +26,21 @@ export default function Login(props) {
   });
   // this method is only to trigger route guards , remove and use your own logic
   const handleLogin = async () => {
-    const loginResponse = await axiosInstance.post("/auth/signin", {
+    const requestOptions = {
       email: values.email,
       password: values.password,
-    });
-    const { token, user } = loginResponse.data;
-    localStorage.setItem("token", token);
-    localStorage.setItem("user", user);
+    };
+    await axiosInstance
+      .post("/auth/signin", requestOptions)
+      .then((response) => {
+        const { token, user } = response.data;
+        localStorage.setItem("token", token);
+        localStorage.setItem("user", user);
+      })
+      .catch((error) => {
+        // console.log(error.response.data.errors.message);
+        dispatchSnackbarError(error.response.data);
+      });
     History.push("/");
   };
 
