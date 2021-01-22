@@ -9,5 +9,8 @@ const Auth = {
   isAuth() {
     return localStorage.getItem("token");
   },
+  getUser() {
+    return localStorage.getItem("user");
+  },
 };
 export default Auth;

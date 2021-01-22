@@ -20,7 +20,6 @@ import Logo from "../../assets/images/ScreenitLogo.png";
 import Queue from "../../containers/Queue/Queue";
 import ContactTracing from "../../containers/ContactTracing/ContactTracing";
 import Settings from "../../containers/Settings/Settings";
-import Login from "../../containers/Login/Login";
 import history from "../../routes/History";
 import Auth from "../../utils/Auth";
 
@@ -109,8 +108,15 @@ export default function Navbar({ props }) {
   const classes = useStyles();
   const [open, setOpen] = useState(true);
   const [selected, setSelected] = useState(0);
-  const pages = ["Queue", "Contact Tracing", "Main Settings"];
-  const routes = ["/queue", "/contactTracing", "/settings"];
+  const pages = [
+    { title: "Queue", route: "/queue", adminRequired: false },
+    {
+      title: "Contact Tracing",
+      route: "/contactTracing",
+      adminRequired: false,
+    },
+    { title: "Main Setting", route: "/settings", adminRequired: true },
+  ];
 
   const handleDrawer = () => {
     setOpen(!open);
@@ -141,14 +147,15 @@ export default function Navbar({ props }) {
           </div>
           <Divider />
           <List>
-            {pages.map((text, i) => (
+            {pages.map((page, i) => (
               <ListItem
                 button
-                key={text}
+                key={page.title}
                 selected={selected === i}
                 onClick={() => setSelected(i)}
                 component={Link}
-                to={routes[i]}
+                to={page.route}
+                disabled={page.adminRequired && Auth.getUser().role === "Admin"}
               >
                 <ListItemIcon
                   className={
@@ -159,7 +166,7 @@ export default function Navbar({ props }) {
                   {i === 1 && <PeopleAltIcon />}
                   {i === 2 && <SettingsIcon />}
                 </ListItemIcon>
-                <ListItemText primary={text} />
+                <ListItemText primary={page.title} />
               </ListItem>
             ))}
           </List>
