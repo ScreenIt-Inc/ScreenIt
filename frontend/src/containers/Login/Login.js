@@ -1,29 +1,41 @@
 import React, { useState } from "react";
-import {
-  Grid,
-  TextField,
-  InputAdornment,
-  Button,
-  IconButton,
-} from "@material-ui/core";
+import { Grid, Button } from "@material-ui/core";
 import Logo from "../../assets/images/ScreenitOriginal.png";
 import SidebarLogo from "../../assets/images/sidebarlogo.png";
+import LoginField from "../../components/Controls/InputField/LoginField";
+import RegisterField from "../../components/Controls/InputField/RegisterField";
+import ForgotPasswordField from "../../components/Controls/InputField/ForgotPasswordField";
 import History from "../../routes/History";
 import { axiosInstance } from "../../network/apis";
-import {
-  AccountCircle,
-  LockRounded,
-  Visibility,
-  VisibilityOff,
-} from "@material-ui/icons";
 import { dispatchSnackbarError } from "../../utils/Shared";
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { makeStyles } from "@material-ui/core/styles";
+import history from "../../routes/History";
+
+const useStyles = makeStyles((theme) => ({
+  button: {
+    color: theme.palette.primary.main,
+    "&:hover": {
+      color: theme.palette.primary.main,
+      textDecoration: "none",
+    },
+  },
+  content: {
+    display: "flex",
+    flexDirection: "column",
+    maxWidth: 400,
+    minWidth: 300,
+  },
+}));
 
 export default function Login(props) {
+  const classes = useStyles();
   const [values, setValues] = useState({
     email: "",
     password: "",
     showPassword: false,
   });
+  const [selected, setSelected] = useState("Log In");
   // this method is only to trigger route guards , remove and use your own logic
   const handleLogin = async () => {
     const requestOptions = {
@@ -57,7 +69,7 @@ export default function Login(props) {
   };
 
   return (
-    <div>
+    <Router history={history}>
       <Grid container style={{ minHeight: "100vh" }}>
         <Grid item xs={12} sm={6}>
           <img
@@ -81,55 +93,41 @@ export default function Login(props) {
           style={{ padding: 10 }}
         >
           <div />
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              maxWidth: 400,
-              minWidth: 300,
-            }}
-          >
+          <div className={classes.content}>
             <Grid container justify="center">
               <img src={Logo} width={400} alt="logo" />
             </Grid>
-            <TextField
-              label="Email"
-              margin="normal"
-              value={values.email}
-              onChange={handleChange("email")}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <AccountCircle />
-                  </InputAdornment>
-                ),
-              }}
-            />
-            <TextField
-              type={values.showPassword ? "text" : "password"}
-              label="Password"
-              margin="normal"
-              value={values.password}
-              onChange={handleChange("password")}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <LockRounded />
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={handleClickShowPassword}
-                      onMouseDown={handleMouseDownPassword}
-                    >
-                      {values.showPassword ? <Visibility /> : <VisibilityOff />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
+            <main>
+              <Switch>
+                <Route path="/login">
+                  <LoginField
+                    values={values}
+                    handleChange={handleChange}
+                    handleClickShowPassword={handleClickShowPassword}
+                    handleMouseDownPassword={handleMouseDownPassword}
+                  />
+                </Route>
+                <Route path="/register">
+                  <RegisterField
+                    values={values}
+                    handleChange={handleChange}
+                    handleClickShowPassword={handleClickShowPassword}
+                    handleMouseDownPassword={handleMouseDownPassword}
+                    setSelected={setSelected}
+                  />
+                </Route>
+                <Route path="/forgotPassword">
+                  <ForgotPasswordField
+                    values={values}
+                    handleChange={handleChange}
+                    handleClickShowPassword={handleClickShowPassword}
+                    handleMouseDownPassword={handleMouseDownPassword}
+                    setSelected={setSelected}
+                  />
+                </Route>
+              </Switch>
+            </main>
+            <div />
             <div style={{ height: 20 }} />
             <Button
               color="primary"
@@ -139,15 +137,25 @@ export default function Login(props) {
               Log In
             </Button>
             <div style={{ height: 20 }} />
-            <Button>Register</Button>
+            <Button
+              className={classes.button}
+              component={Link}
+              to="/register"
+              onClick={() => setSelected("Register")}
+            >
+              Register
+            </Button>
+            <Button
+              className={classes.button}
+              component={Link}
+              to="/forgotPassword"
+              onClick={() => setSelected("Forgot Password")}
+            >
+              Forgot Password
+            </Button>
           </div>
-          <Grid container justify="center">
-            <Grid item>
-              <Button>Forgot Password</Button>
-            </Grid>
-          </Grid>
         </Grid>
       </Grid>
-    </div>
+    </Router>
   );
 }

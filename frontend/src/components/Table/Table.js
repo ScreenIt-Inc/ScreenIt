@@ -14,7 +14,7 @@ import CircleUnchecked from "@material-ui/icons/RadioButtonUnchecked";
 import Button from "@material-ui/core/Button";
 import Title from "./Title";
 import { dispatchSnackbarSuccess } from "../../utils/Shared";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   seeMore: {
