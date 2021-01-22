@@ -129,30 +129,34 @@ export default function Login(props) {
             </main>
             <div />
             <div style={{ height: 20 }} />
-            <Button
-              color="primary"
-              variant="contained"
-              onClick={() => handleLogin()}
-            >
-              Log In
-            </Button>
-            <div style={{ height: 20 }} />
-            <Button
-              className={classes.button}
-              component={Link}
-              to="/register"
-              onClick={() => setSelected("Register")}
-            >
-              Register
-            </Button>
-            <Button
-              className={classes.button}
-              component={Link}
-              to="/forgotPassword"
-              onClick={() => setSelected("Forgot Password")}
-            >
-              Forgot Password
-            </Button>
+            {selected === "Log In" && (
+              <div className={classes.content}>
+                <Button
+                  color="primary"
+                  variant="contained"
+                  onClick={() => handleLogin()}
+                >
+                  Log In
+                </Button>
+                <div style={{ height: 20 }} />
+                <Button
+                  className={classes.button}
+                  component={Link}
+                  to="/register"
+                  onClick={() => setSelected("Register")}
+                >
+                  Register
+                </Button>
+                <Button
+                  className={classes.button}
+                  component={Link}
+                  to="/forgotPassword"
+                  onClick={() => setSelected("Forgot Password")}
+                >
+                  Forgot Password
+                </Button>
+              </div>
+            )}
           </div>
         </Grid>
       </Grid>

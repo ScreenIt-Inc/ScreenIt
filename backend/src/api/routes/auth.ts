@@ -15,6 +15,7 @@ export default (app: Router) => {
     '/signup',
     celebrate({
       body: Joi.object({
+        establishmentId: Joi.string().optional(),
         name: Joi.string().required(),
         role: Joi.string().required(),
         email: Joi.string().required(),
