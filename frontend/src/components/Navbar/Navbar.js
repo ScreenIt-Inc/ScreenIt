@@ -13,6 +13,7 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import DeveloperBoardIcon from "@material-ui/icons/DeveloperBoard";
 import PeopleAltIcon from "@material-ui/icons/PeopleAlt";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import SettingsIcon from "@material-ui/icons/Settings";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import Logo from "../../assets/images/ScreenitLogo.png";
@@ -171,8 +172,8 @@ export default function Navbar({ props }) {
               component={Link}
               to={"/login"}
             >
-              <ListItemIcon>
-                <PeopleAltIcon />
+              <ListItemIcon className={classes.icons}>
+                <ExitToAppIcon />
               </ListItemIcon>
               <ListItemText primary={"Sign Out"} />
             </ListItem>
