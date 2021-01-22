@@ -9,6 +9,7 @@ import {
 import Logo from "../../assets/images/ScreenitOriginal.png";
 import SidebarLogo from "../../assets/images/sidebarlogo.png";
 import History from "../../routes/History";
+import { axiosInstance } from "../../network/apis";
 import {
   AccountCircle,
   LockRounded,
@@ -22,8 +23,14 @@ export default function Login(props) {
     showPassword: false,
   });
   // this method is only to trigger route guards , remove and use your own logic
-  const handleLogin = () => {
-    localStorage.setItem("token", "token");
+  const handleLogin = async () => {
+    const loginResponse = await axiosInstance.post("/auth/signin", {
+      email: values.email,
+      password: values.password,
+    });
+    const { token, user } = loginResponse.data;
+    localStorage.setItem("token", token);
+    localStorage.setItem("user", user);
     History.push("/");
   };
 

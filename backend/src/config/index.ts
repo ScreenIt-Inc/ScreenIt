@@ -26,6 +26,7 @@ export default {
    */
   jwtSecret: process.env.JWT_SECRET,
   jwtAlgorithm: process.env.JWT_ALGO,
+  jwtExpire: process.env.JWT_EXPIRE,
 
   /**
    * Used by winston logger

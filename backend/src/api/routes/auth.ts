@@ -16,6 +16,7 @@ export default (app: Router) => {
     celebrate({
       body: Joi.object({
         name: Joi.string().required(),
+        role: Joi.string().required(),
         email: Joi.string().required(),
         password: Joi.string().required(),
       }),
@@ -66,15 +67,17 @@ export default (app: Router) => {
    * emitted for the session and add it to a black list.
    * It's really annoying to develop that but if you had to, please use Redis as your data store
    */
-  route.post('/logout', middlewares.isAuth, (req: Request, res: Response, next: NextFunction) => {
-    const logger:Logger = Container.get('logger');
-    logger.debug('Calling Sign-Out endpoint with body: %o', req.body);
-    try {
-      //@TODO AuthService.Logout(req.user) do some clever stuff
-      return res.status(200).end();
-    } catch (e) {
-      logger.error('🔥 error %o', e);
-      return next(e);
-    }
-  });
+  // route.post('/logout', middlewares.isAuth, async (req: Request, res: Response, next: NextFunction) => {
+  //   const logger:Logger = Container.get('logger');
+  //   logger.debug('Calling Sign-Out endpoint with body: %o', req.body);
+  //   try {
+  //     const { email } = req.body
+  //     const authServiceInstance = Container.get(AuthService);
+  //     await authServiceInstance.SignOut(email);
+  //     return res.status(200).end();
+  //   } catch (e) {
+  //     logger.error('🔥 error %o', e);
+  //     return next(e);
+  //   }
+  // });
 };

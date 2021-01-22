@@ -8,15 +8,11 @@ export default class MailerService {
   ) { }
 
   public async SendWelcomeEmail(email) {
-    /**
-     * @TODO Call Mailchimp/Sendgrid or whatever
-     */
-    // Added example for sending mail from mailgun
     const data = {
-      from: 'Excited User <me@samples.mailgun.org>',
-      to: email, //your email address
-      subject: 'Hello',
-      text: 'Testing some Mailgun awesomness!'
+      from: 'ScreenIT <donotreply@screenit.org>',
+      to: email,
+      subject: 'Registration Confirmation',
+      text: 'Welcome to ScreenIT!'
     };
 
     this.emailClient.messages().send(data);
