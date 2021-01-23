@@ -33,12 +33,14 @@ export default function Login(props) {
   const [values, setValues] = useState({
     email: "",
     password: "",
+    establishmentId: "",
     showPassword: false,
   });
   const [selected, setSelected] = useState("Log In");
   // this method is only to trigger route guards , remove and use your own logic
   const handleLogin = async () => {
     const requestOptions = {
+      establishmentId: values.establishmentId,
       email: values.email,
       password: values.password,
     };

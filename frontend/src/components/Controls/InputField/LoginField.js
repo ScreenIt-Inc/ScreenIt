@@ -11,6 +11,7 @@ import {
   LockRounded,
   Visibility,
   VisibilityOff,
+  Business,
 } from "@material-ui/icons";
 const LoginField = ({
   values,
@@ -27,6 +28,19 @@ const LoginField = ({
         minWidth: 300,
       }}
     >
+      <TextField
+        label="Establishment ID"
+        margin="normal"
+        value={values.establishmentId}
+        onChange={handleChange("establishmentId")}
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <Business />
+            </InputAdornment>
+          ),
+        }}
+      />
       <TextField
         label="Email"
         margin="normal"

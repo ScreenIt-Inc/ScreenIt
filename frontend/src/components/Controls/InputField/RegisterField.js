@@ -69,7 +69,6 @@ const RegisterField = ({
       .post("/auth/signup", requestOptions)
       .then((response) => {
         dispatchSnackbarSuccess("Registered Successfully");
-        window.location.reload();
       })
       .catch((error) => {
         // console.log(error.response.data.errors.message);

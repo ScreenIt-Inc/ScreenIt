@@ -50,8 +50,8 @@ export default class AuthService {
     }
   }
 
-  public async SignIn(email: string, password: string): Promise<{ user: IUser; token: string }> {
-    const userRecord = await this.userModel.findOne({ email });
+  public async SignIn(email: string, password: string, establishmentId: string): Promise<{ user: IUser; token: string }> {
+    const userRecord = await this.userModel.findOne({ email, establishmentId });
     if (!userRecord) {
       throw new Error('User not registered');
     }

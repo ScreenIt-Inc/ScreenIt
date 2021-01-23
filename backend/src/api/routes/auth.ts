@@ -15,7 +15,7 @@ export default (app: Router) => {
     '/signup',
     celebrate({
       body: Joi.object({
-        establishmentId: Joi.string().optional(),
+        establishmentId: Joi.string().required(),
         name: Joi.string().required(),
         role: Joi.string().required(),
         email: Joi.string().required(),
@@ -40,6 +40,7 @@ export default (app: Router) => {
     '/signin',
     celebrate({
       body: Joi.object({
+        establishmentId: Joi.string().required(),
         email: Joi.string().required(),
         password: Joi.string().required(),
       }),
@@ -48,9 +49,9 @@ export default (app: Router) => {
       const logger:Logger = Container.get('logger');
       logger.debug('Calling Sign-In endpoint with body: %o', req.body);
       try {
-        const { email, password } = req.body;
+        const { email, password, establishmentId } = req.body;
         const authServiceInstance = Container.get(AuthService);
-        const { user, token } = await authServiceInstance.SignIn(email, password);
+        const { user, token } = await authServiceInstance.SignIn(email, password, establishmentId);
         return res.json({ user, token }).status(200);
       } catch (e) {
         logger.error('🔥 error: %o',  e );
