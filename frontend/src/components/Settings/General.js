@@ -1,7 +1,9 @@
-import { Button, TextField } from "@material-ui/core";
+import { TextField } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
+import IconButton from "@material-ui/core/IconButton";
 import Paper from "@material-ui/core/Paper";
 import { makeStyles } from "@material-ui/core/styles";
+import Tooltip from "@material-ui/core/Tooltip";
 import { Save } from "@material-ui/icons";
 import React from "react";
 import { useSelector } from "react-redux";
@@ -37,8 +39,15 @@ export default function General(props) {
   return (
     <Paper className={classes.paper}>
       <Grid container spacing={3} className={classes.container}>
-        <Grid item xs={12}>
+        <Grid item xs={8}>
           <h4 className={classes.title}>{category} Settings</h4>
+        </Grid>
+        <Grid item xs={4} className={classes.buttonContainer}>
+          <Tooltip title="Save Settings">
+            <IconButton aria-label="save" style={{ marginTop: -15 }}>
+              <Save />
+            </IconButton>
+          </Tooltip>
         </Grid>
         <Grid item xs={6}>
           <TextField
@@ -90,7 +99,7 @@ export default function General(props) {
             rows={3}
           />
         </Grid>
-        <Grid item xs={12} className={classes.buttonContainer}>
+        {/* <Grid item xs={12} className={classes.buttonContainer}>
           <Button
             variant="contained"
             color="primary"
@@ -100,7 +109,7 @@ export default function General(props) {
           >
             Save
           </Button>
-        </Grid>
+        </Grid> */}
       </Grid>
     </Paper>
   );

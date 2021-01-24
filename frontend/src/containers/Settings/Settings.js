@@ -3,6 +3,7 @@ import { ListAlt, Lock, Settings as SettingsIcon } from "@material-ui/icons";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import ButtonGroup from "../../components/Controls/Button/ButtonGroup";
+import Form from "../../components/Settings/Form";
 import General from "../../components/Settings/General";
 import Permissions from "../../components/Settings/Permissions";
 
@@ -22,6 +23,7 @@ export default function Settings(props) {
       <Grid item xs={10}>
         {category === "General" && <General />}
         {category === "Permissions" && <Permissions />}
+        {category === "Form" && <Form />}
       </Grid>
     </Grid>
   );
