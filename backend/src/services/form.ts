@@ -23,6 +23,5 @@ export function formSubmit(data: Object){
 var qModel = mongoose.model('Questionnaire', new mongoose.Schema({ 'questionnaire': []}), 'questionnaire'); // last arg to connect model to collection questionaire
 export async function formPull(){
 	const Logger : Logger = Container.get('logger');
-	console.log(await qModel.find({}))
 	return qModel.find({}) //should just be a single value, so pull all returns an array
 }
