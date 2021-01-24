@@ -5,8 +5,11 @@ import Paper from "@material-ui/core/Paper";
 import { makeStyles } from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
 import { Save } from "@material-ui/icons";
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+// import { axiosInstance } from "../../network/apis";
+// import { dispatchSnackbarError } from "../../utils/Shared";
+import { setCurrentSetting } from "../../store/Setting/SettingAction";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -34,8 +37,26 @@ const useStyles = makeStyles((theme) => ({
 
 export default function General(props) {
   const classes = useStyles();
+  const dispatch = useDispatch();
   const category = useSelector((state) => state.setting.category);
+  const stateValues = useSelector((state) => state.setting.general);
+  const [values, setValues] = useState({ ...stateValues });
 
+  const saveSettings = async () => {
+    const requestOptions = {
+      ...values,
+    };
+    dispatch(setCurrentSetting({ general: values }));
+    // await axiosInstance
+    //   .post("/settings/saveGeneral", requestOptions)
+    //   .then((response) => {
+    //     setValues({ ...response.data });
+    //   })
+    //   .catch((error) => {
+    //     // console.log(error.response.data.errors.message);
+    //     dispatchSnackbarError(error.response.data);
+    //   });
+  };
   return (
     <Paper className={classes.paper}>
       <Grid container spacing={3} className={classes.container}>
@@ -44,7 +65,11 @@ export default function General(props) {
         </Grid>
         <Grid item xs={4} className={classes.buttonContainer}>
           <Tooltip title="Save Settings">
-            <IconButton aria-label="save" style={{ marginTop: -15 }}>
+            <IconButton
+              aria-label="save"
+              style={{ marginTop: -15 }}
+              onClick={saveSettings}
+            >
               <Save />
             </IconButton>
           </Tooltip>
@@ -59,6 +84,10 @@ export default function General(props) {
               shrink: true,
             }}
             variant="outlined"
+            value={values.establishmentName}
+            onChange={(e) =>
+              setValues({ ...values, establishmentName: e.target.value })
+            }
           />
         </Grid>
         <Grid item xs={3}>
@@ -72,6 +101,7 @@ export default function General(props) {
             value={123112}
             variant="outlined"
             disabled
+            value={values.establishmentId}
           />
         </Grid>
         <Grid item xs={3}>
@@ -83,6 +113,7 @@ export default function General(props) {
               shrink: true,
             }}
             variant="outlined"
+            value={values.maxCapacity}
           />
         </Grid>
         <Grid item xs={12}>
@@ -97,19 +128,9 @@ export default function General(props) {
             variant="outlined"
             multiline
             rows={3}
+            value={values.message}
           />
         </Grid>
-        {/* <Grid item xs={12} className={classes.buttonContainer}>
-          <Button
-            variant="contained"
-            color="primary"
-            size="large"
-            className={classes.button}
-            startIcon={<Save />}
-          >
-            Save
-          </Button>
-        </Grid> */}
       </Grid>
     </Paper>
   );

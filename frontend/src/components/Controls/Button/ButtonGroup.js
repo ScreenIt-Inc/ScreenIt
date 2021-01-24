@@ -34,10 +34,10 @@ const ButtonGroup = ({ buttons, page }) => {
 
   const handleClick = (category) => {
     if (page == "Queue") {
-      dispatch(setCurrentTable(category));
+      dispatch(setCurrentTable({ category: category }));
     }
     if (page == "Settings") {
-      dispatch(setCurrentSetting(category));
+      dispatch(setCurrentSetting({ category: category }));
     }
   };
 
