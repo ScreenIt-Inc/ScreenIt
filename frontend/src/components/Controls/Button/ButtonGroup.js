@@ -1,9 +1,9 @@
-import React from "react";
-import PaperButton from "./PaperButton";
 import { makeStyles } from "@material-ui/core/styles";
-import { useSelector, useDispatch } from "react-redux";
-import { setCurrentTable } from "../../../store/Table/TableAction";
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { setCurrentSetting } from "../../../store/Setting/SettingAction";
+import { setCurrentTable } from "../../../store/Table/TableAction";
+import PaperButton from "./PaperButton";
 
 const useStyles = makeStyles((theme) => ({
   root: {

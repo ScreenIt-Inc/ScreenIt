@@ -1,9 +1,10 @@
-import React, { useState } from "react";
-import ButtonGroup from "../../components/Controls/Button/ButtonGroup";
 import Grid from "@material-ui/core/Grid";
-import { Settings as SettingsIcon, Lock, ListAlt } from "@material-ui/icons";
+import { ListAlt, Lock, Settings as SettingsIcon } from "@material-ui/icons";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
+import ButtonGroup from "../../components/Controls/Button/ButtonGroup";
 import General from "../../components/Settings/General";
+import Permissions from "../../components/Settings/Permissions";
 
 export default function Settings(props) {
   const [buttons] = useState([
@@ -18,7 +19,10 @@ export default function Settings(props) {
       <Grid item xs={12}>
         <ButtonGroup buttons={buttons} page="Settings" />
       </Grid>
-      {category === "General" && <General />}
+      <Grid item xs={10}>
+        {category === "General" && <General />}
+        {category === "Permissions" && <Permissions />}
+      </Grid>
     </Grid>
   );
 }
