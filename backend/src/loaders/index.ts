@@ -10,6 +10,8 @@ export default async ({ expressApp }) => {
   const mongoConnection = await mongooseLoader();
   Logger.info('✌️ DB loaded and connected!');
 
+  //if questionaire does not exist, push default here
+
   /**
    * WTF is going on here?
    *

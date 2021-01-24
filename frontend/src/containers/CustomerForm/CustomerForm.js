@@ -1,14 +1,16 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import TextField from '@material-ui/core/TextField';
 import { Container, Row, Col, Jumbotron, Button, Form } from 'react-bootstrap';
 import Logo from "../../assets/images/ScreenitLogo.png"
 
 
-URL = 'http://localhost:3000/api/form/submission' //hardcode for now
+const BASE_URL = 'http://localhost:3001' //hardcode for now
+const SUBMIT_ENDPOINT = '/api/form/submission'
+const GET_ENDPOINT = '/api/form/questionnaire'
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = theme => ({
   content: {
     flexGrow: 1,
     paddingTop: "10vh",
@@ -21,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
     height: "100vh",
     overflow: "auto",
   },
-  formHeadRight: {       
+  formHeadRight: {
     backgroundColor: theme.palette.primary.main,
     height: "20vh",
     width: "50vh",
@@ -35,9 +37,10 @@ const useStyles = makeStyles((theme) => ({
 	top: "50%",
 	transform: "translateY(-50%)",
 	fontFamily: "Monaco",
-	fontSize: "130%"
+	fontSize: "130%",
+
   },
-  formHeadLeft: {       
+  formHeadLeft: {
     backgroundColor: theme.palette.primary.main,
     height: "20vh",
     width: "1vh",
@@ -46,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
     padding: '0'
 
   },
-  formBody: {       
+  formBody: {
     backgroundColor: theme.palette.primary.main,
     width: "50vh",
     borderRadius: "11px",
@@ -61,113 +64,249 @@ const useStyles = makeStyles((theme) => ({
 	  padding: "9%",
 	  margin: "0 auto",
 	  backgroundColor: "white"
+  },
+  headerQuestion: {
+    fontWeight: 'bold',
+    color: theme.palette.primary.light
+  },
+  baseQuestion: {
+    fontWeight: 'bold',
+    color: theme.palette.secondary.light
+  },
+  centerDiv: {
+	textAlign: 'center',
   }
-}));
+});
 
-export default function CustomerForm(props) {
-	const classes = useStyles();
-	var user_data = {
-		'firstname': '',
-		'lastname': '',
-		'email': '',
-		'address': '',
-		'phone': ''
+class CustomerForm extends React.Component{
+	constructor(props){
+		super(props);
+		this.state = {
+			user_data: {
+				'firstname': '',
+				'lastname': '',
+				'email': '',
+				'address': '',
+				'phone': '',
+				'questionaire': []
+			},
+			'pulled': false,
+			questionnaire:
+				[
+					{
+						'question': 'Do you have any of the following new or worsening symptoms or signs?',
+						'answers': [],
+						'isHeader': true
+					},
+					{
+						'question': 'Fevers or Chills',
+						'answers': ['Yes', 'No'],
+						'isHeader': false
+					},
+					{
+						'question': 'Cough',
+						'answers': ['Yes', 'No'],
+						'isHeader': false
+					},
+					{
+						'question': 'Difficulty breathing or shortness of breath',
+						'answers': ['Yes', 'No'],
+						'isHeader': false
+					},
+					{
+						'question': 'Sore throat, trouble swallowing',
+						'answers': ['Yes', 'No'],
+						'isHeader': false
+					},
+					{
+						'question': 'Runny or stuffy nose',
+						'answers': ['Yes', 'No'],
+						'isHeader': false
+					},
+					{
+						'question': 'Decrease or loss of taste or smell',
+						'answers': ['Yes', 'No'],
+						'isHeader': false
+					},
+					{
+						'question': 'Have you come in contact with someone who has tested postive for Covid-19?',
+						'answers':['Yes', 'No'],
+						'isHeader': true
+					},
+					{
+						'question': 'Have you traveled outside of Canada in the past 14 days?',
+						'answers':['Yes', 'No'],
+						'isHeader': true
+					},
+				]
+			}
 	}
 
+	componentDidMount() {
 
-	const handleFormChange = (key, value) => {
-    	user_data[key] = value;
-  	};
-
-
-  	const verifyData = () => {
-  		return true
+	    fetch(BASE_URL + GET_ENDPOINT)
+  		  .then(function(stream) {
+  		  	return stream.json() // convert 'ReadableStream' and returns a promise to convert to json
+  		  }).then(function(data) {
+  		  	console.log(data);
+  		  	this.setState({
+  		  		pulled: true,
+  		  		questionnaire: data.questionnaire
+  		  	});
+  		  }.bind(this)).catch(function(error) { //make sure to bind for above set state
+		  	console.log('Error pulling database questions, using default')
+		  	console.log(error)
+		  });
   	}
 
 
-  	const postData = () => {
-  		console.log('posting', JSON.stringify(user_data))
-  		fetch(URL, {
+	handleFormChange = (key, value) => {
+    	this.state.user_data[key] = value;
+  	}
+
+
+  	verifyData = () => {
+  		return true;
+  	}
+
+
+  	postData = () => {
+  		fetch(BASE_URL + SUBMIT_ENDPOINT, {
 		  method: 'POST',
 		  headers: {
 		    'Accept': 'application/json',
 		    'Content-Type': 'application/json',
 		  },
-		  body: JSON.stringify(user_data)
-		})
+		  body: JSON.stringify(this.state.user_data)
+		});
 
   	}
 
 
-  	const handleSubmit = () => {
-  		if (!verifyData()){
+  	handleSubmit = () => {
+  		if (!this.verifyData.bind(this)()){
   			//indicate error here
-  			return
+  			return;
   		}
 
-  		postData()
+  		this.postData.bind(this)();
 
   	}
 
+  	render() {
+  		const { classes } = this.props;
+  		if (!this.state.pulled){
+	  		return (
+	  			<div>
+	  				LOADING...
+	  			</div>
 
-    return(
-        <div className={classes.content}>
-	        <Container fluid>
-	        <Row className={classes.headRow} >
-	        	<Col xs={{ span: 3, offset: 1 }} sm={{ span: 3, offset: 1 }} md={{ span: 3, offset: 1 }} lg={{ span: 3, offset: 1 }} xl={{ span: 3, offset: 1 }} className={classes.formHeadLeft}>
-	        		<img src={Logo} alt="ScreenIT" height="100%"></img>
-		        </Col>
+	  		)
+		}
+		else {
+		    return (
+		        <div className={classes.content}>
+			        <Container fluid>
+			        <Row className={classes.headRow} >
+			        	<Col xs={{ span: 3, offset: 1 }} sm={{ span: 3, offset: 1 }} md={{ span: 3, offset: 1 }} lg={{ span: 3, offset: 1 }} xl={{ span: 3, offset: 1 }} className={classes.formHeadLeft}>
+			        		<img src={Logo} alt="ScreenIT" height="100%"></img>
+				        </Col>
 
-		        <Col xs={{ span: 6, offset: 1 }} sm={{ span: 6, offset: 1 }} md={{ span: 6, offset: 1 }} lg={{ span: 6, offset: 1 }} xl={{ span: 6, offset: 1}} className={classes.formHeadRight}>
-		           	<div className={classes.titleText}>
-		            	Information Form
-		            </div>
-		        </Col>
-		    </Row>	
-	        <Row>
-	        	<Col className={classes.formBody}>
-		            <br />
-		            <div className={classes.innerFormDiv}>
-						<Form>
-						  <Form.Group controlId="formName">
-						  <Form.Label>Name</Form.Label>
-						  <Row>
-						    <Col>
-						      <Form.Control placeholder="First name" onChange={(event) => {handleFormChange('firstname', event.target.value)}}/>
-						    </Col>
-						    <Col>
-						      <Form.Control placeholder="Last name" onChange={(event) => {handleFormChange('lastname', event.target.value)}}/>
-						    </Col>
-						  </Row>
-						   </Form.Group>
+				        <Col xs={{ span: 6, offset: 1 }} sm={{ span: 6, offset: 1 }} md={{ span: 6, offset: 1 }} lg={{ span: 6, offset: 1 }} xl={{ span: 6, offset: 1}} className={classes.formHeadRight}>
+				           	<div className={classes.titleText}>
+				            	Information Form
+				            </div>
+				        </Col>
+				    </Row>
+			        <Row>
+			        	<Col className={classes.formBody}>
+				            <br />
+				            <div className={classes.innerFormDiv}>
+								<Form>
+								  <Form.Group controlId="formName">
+								  <Form.Label className={classes.headerQuestion}>Name</Form.Label>
+								  <Row>
+								    <Col>
+								      <Form.Control placeholder="First name" onChange={(event) => {this.handleFormChange.bind(this)('firstname', event.target.value)}}/>
+								    </Col>
+								    <Col>
+								      <Form.Control placeholder="Last name" onChange={(event) => {this.handleFormChange.bind(this)('lastname', event.target.value)}}/>
+								    </Col>
+								  </Row>
+								   </Form.Group>
 
-						  <Form.Group controlId="formBasicEmail">
-						    <Form.Label>Email address</Form.Label>
-						    <Form.Control type="email" placeholder="Enter email" onChange={(event) => {handleFormChange('email', event.target.value)}}/>
-						  </Form.Group>
+								  <Form.Group controlId="formBasicEmail">
+								    <Form.Label className={classes.headerQuestion}>Email address</Form.Label>
+								    <Form.Control type="email" placeholder="Enter email" onChange={(event) => {this.handleFormChange.bind(this)('email', event.target.value)}}/>
+								  </Form.Group>
 
-						  <Form.Group controlId="formBasicPassword">
-						    <Form.Label>Phone Number</Form.Label>
-						    <Form.Control type="tel" placeholder="Phone Number" onChange={(event) => {handleFormChange('phone', event.target.value)}}/>
-						  </Form.Group>
+								  <Form.Group controlId="formBasicPassword">
+								    <Form.Label className={classes.headerQuestion}>Phone Number</Form.Label>
+								    <Form.Control type="tel" placeholder="Phone Number" onChange={(event) => {this.handleFormChange.bind(this)('phone', event.target.value)}}/>
+								  </Form.Group>
 
-						  <Form.Group controlId="formBasicPassword">
-						    <Form.Label>Address</Form.Label>
-						    <Form.Control type="address" placeholder="Address" onChange={(event) => {handleFormChange('address', event.target.value)}}/>
-						    <Form.Text className="text-muted">
-						      We'll never share your information with anyone else.
-						    </Form.Text>
-						  </Form.Group>
+								  <Form.Group controlId="formBasicPassword">
+								    <Form.Label className={classes.headerQuestion}>Address</Form.Label>
+								    <Form.Control type="address" placeholder="Address" onChange={(event) => {this.handleFormChange.bind(this)('address', event.target.value)}}/>
+								    <Form.Text className="text-muted">
+								      We'll never share your information with anyone else.
+								    </Form.Text>
+								  </Form.Group>
+							    	{
+						                this.state.questionnaire.map(Q =>
+							                	Q.isHeader
+									                ?
+									                	<div>
+									                		<br />
+										                	<Row key={Q.question}>
+										    					<Col>
+											                  		<Form.Label className={classes.headerQuestion}>{Q.question}</Form.Label>
+											                  	</Col>
+													    	</Row>
+													    	<Row key={Q.question}>
+											                  	<Col>
+											                  		{
+											                  			Q.answers.map(A =>
+											                  				<Form.Check inline label={A} type='radio' id={A} />
+											                  			)
+											                  		}
+											                  	</Col>
+											                </Row>
+											            </div>
 
+								                	:
+								                		<Row key={Q.question}>
+									    					<Col>
+										                  		<Form.Label className={classes.baseQuestion}>{Q.question}</Form.Label>
+										                  	</Col>
+										                  	<Col>
+										                  		{
+										                  			Q.answers.map(A =>
+										                  				<Form.Check inline label={A} type='radio' id={A} />
+										                  			)
+										                  		}
+										                  	</Col>
+												    	</Row>
 
-						  <Button variant="primary" type="submit" onClick={handleSubmit}>
-						    Submit
-						  </Button>
-						</Form>
-					</div>
-		        </Col>
-		    </Row>
-	        </Container>
-        </div>
-    )   
+						                )
+					              	}
+					              	<br />
+					              	<div className={classes.centerDiv}>
+										<Button variant="info" type="submit" onClick={this.handleSubmit.bind(this)}>
+											Submit
+										</Button>
+									</div>
+								</Form>
+							</div>
+				        </Col>
+				    </Row>
+
+			        </Container>
+		        </div>
+		    )
+		}
+	}
+
 }
+
+export default withStyles(useStyles)(CustomerForm);
