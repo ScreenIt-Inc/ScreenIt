@@ -7,7 +7,7 @@ import express from 'express';
 import Logger from './loaders/logger';
 
 async function startServer() {
-  const app = express();
+  const app = express(), bodyParser = require('body-parser');  
 
   /**
    * A little hack here
@@ -27,6 +27,7 @@ async function startServer() {
     Logger.error(err);
     process.exit(1);
   });
+
 
 }
 

@@ -9,7 +9,7 @@ export default ({ app }: { app: express.Application }) => {
    * @TODO Explain why they are here
    */
   app.get('/status', (req, res) => {
-    res.status(200).end();
+    res.send("pottato");
   });
   app.head('/status', (req, res) => {
     res.status(200).end();

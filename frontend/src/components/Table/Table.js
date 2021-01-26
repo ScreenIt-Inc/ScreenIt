@@ -13,16 +13,16 @@ import CircleCheckedFilled from "@material-ui/icons/CheckCircle";
 import CircleUnchecked from "@material-ui/icons/RadioButtonUnchecked";
 import Button from "@material-ui/core/Button";
 import Title from "./Title";
-import { useSnackbar } from "notistack";
-import {useSelector, useDispatch} from 'react-redux'
+import { dispatchSnackbarSuccess } from "../../utils/Shared";
+import { useSelector } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   seeMore: {
     marginTop: theme.spacing(3),
   },
   button: {
-    backgroundColor: theme.palette.primary.light
-  }
+    backgroundColor: theme.palette.primary.light,
+  },
 }));
 
 function createData(id, name, amount, item, date) {
@@ -30,38 +30,10 @@ function createData(id, name, amount, item, date) {
 }
 
 const rows = [
-  createData(
-    0,
-    "Justeen Randev",
-    "416-342-5436",
-    "2",
-    "78",
-    312.44
-  ),
-  createData(
-    1,
-    "Gurnain Saini",
-    "416-342-5436",
-    "5",
-    "75",
-    866.99
-  ),
-  createData(
-    2,
-    "Tasmiha Hassan",
-    "416-342-5436",
-    "4",
-    "98",
-    100.81
-  ),
-  createData(
-    3,
-    "Beyonce Knowles",
-    "416-342-5436",
-    "1",
-    "87",
-    654.39
-  ),
+  createData(0, "Justeen Randev", "416-342-5436", "2", "78", 312.44),
+  createData(1, "Gurnain Saini", "416-342-5436", "5", "75", 866.99),
+  createData(2, "Tasmiha Hassan", "416-342-5436", "4", "98", 100.81),
+  createData(3, "Beyonce Knowles", "416-342-5436", "1", "87", 654.39),
   createData(
     4,
     "Khaleesi Mother of Dragons",
@@ -73,21 +45,20 @@ const rows = [
 ];
 
 export default function TableQ(props) {
-  const category = useSelector(state => state.table.category)
+  const category = useSelector((state) => state.table.category);
   const [viewAll, setViewAll] = useState(false);
   const [paid] = useState(rows);
   function preventDefault(event) {
-    setViewAll(!viewAll)
+    setViewAll(!viewAll);
     event.preventDefault();
   }
   const maxEvents = 10;
 
   const classes = useStyles();
-  const { enqueueSnackbar } = useSnackbar();
   const handlePaid = (message) => {
-    enqueueSnackbar(message, { variant: "default" });
-  }
-  const date = new Date()
+    dispatchSnackbarSuccess(message);
+  };
+  const date = new Date();
   return (
     <React.Fragment>
       <div
@@ -108,44 +79,60 @@ export default function TableQ(props) {
         <TableHead>
           <TableRow>
             <TableCell></TableCell>
-            <TableCell><b>Name</b></TableCell>
-            <TableCell><b>Contact Number</b></TableCell>
-            <TableCell><b>Group Size</b></TableCell>
-            <TableCell><b>Temperature</b></TableCell>
-            <TableCell><b>Time</b></TableCell>
+            <TableCell>
+              <b>Name</b>
+            </TableCell>
+            <TableCell>
+              <b>Contact Number</b>
+            </TableCell>
+            <TableCell>
+              <b>Group Size</b>
+            </TableCell>
+            <TableCell>
+              <b>Temperature</b>
+            </TableCell>
+            <TableCell>
+              <b>Time</b>
+            </TableCell>
             <TableCell align="right"></TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {paid.map((row, i) => {
-            return ((i < maxEvents || viewAll) && <TableRow key={row.id}>
-              <TableCell>
-                <Checkbox
-                  icon={<CircleUnchecked />}
-                  checkedIcon={<CircleCheckedFilled />}
-                  onClick={() => {
-                    console.log('checked')
-                  }}
-                />
-              </TableCell>
-              <TableCell>{row.name}</TableCell>
-              <TableCell>{row.amount}</TableCell>
-              <TableCell>{row.item}</TableCell>
-              <TableCell>{row.date}</TableCell>
-              <TableCell>{date.getHours.toString()}</TableCell>
-              <TableCell align="right">
-                {" "}
-                <Button
-                  variant="contained"
-                  classes={classes.button}
-                  color="primary"
-                  style={{ borderRadius: 5 }}
-                  onClick={() => handlePaid("Notification sent to "+row.name)}
-                >
-                  <span style={{color: "white"}} >Notify</span>
-                </Button>
-              </TableCell>
-            </TableRow>)
+            return (
+              (i < maxEvents || viewAll) && (
+                <TableRow key={row.id}>
+                  <TableCell>
+                    <Checkbox
+                      icon={<CircleUnchecked />}
+                      checkedIcon={<CircleCheckedFilled />}
+                      onClick={() => {
+                        console.log("checked");
+                      }}
+                    />
+                  </TableCell>
+                  <TableCell>{row.name}</TableCell>
+                  <TableCell>{row.amount}</TableCell>
+                  <TableCell>{row.item}</TableCell>
+                  <TableCell>{row.date}</TableCell>
+                  <TableCell>{date.getHours.toString()}</TableCell>
+                  <TableCell align="right">
+                    {" "}
+                    <Button
+                      variant="contained"
+                      classes={classes.button}
+                      color="primary"
+                      style={{ borderRadius: 5 }}
+                      onClick={() =>
+                        handlePaid("Notification sent to " + row.name)
+                      }
+                    >
+                      <span style={{ color: "white" }}>Notify</span>
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              )
+            );
           })}
         </TableBody>
       </Table>

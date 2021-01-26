@@ -12,7 +12,6 @@ const User = new mongoose.Schema(
     email: {
       type: String,
       lowercase: true,
-      unique: true,
       index: true,
     },
 
@@ -23,6 +22,12 @@ const User = new mongoose.Schema(
     role: {
       type: String,
       default: 'user',
+    },
+
+    establishmentId: {
+      type: String,
+      required: [true, 'Please enter valid ID'],
+      index: true,
     },
   },
   { timestamps: true },
