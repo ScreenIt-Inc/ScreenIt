@@ -1,9 +1,11 @@
 import { Router } from 'express';
-import auth from './routes/auth';
-import user from './routes/user';
-import agendash from './routes/agendash';
-import form from './routes/form';
 import Logger from '../loaders/logger';
+import agendash from './routes/agendash';
+import auth from './routes/auth';
+import form from './routes/form';
+import settings from './routes/settings';
+import user from './routes/user';
+
 // guaranteed to get dependencies
 export default () => {
 	const app = Router();
@@ -11,6 +13,7 @@ export default () => {
 	user(app);
 	agendash(app);
 	form(app);
+	settings(app);
 
 	Logger.info(JSON.stringify(app.stack))
 	return app

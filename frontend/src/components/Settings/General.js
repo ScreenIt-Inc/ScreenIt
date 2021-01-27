@@ -7,8 +7,6 @@ import Tooltip from "@material-ui/core/Tooltip";
 import { Save } from "@material-ui/icons";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-// import { axiosInstance } from "../../network/apis";
-// import { dispatchSnackbarError } from "../../utils/Shared";
 import { setCurrentSetting } from "../../store/Setting/SettingAction";
 
 const useStyles = makeStyles((theme) => ({
@@ -42,21 +40,6 @@ export default function General(props) {
   const stateValues = useSelector((state) => state.setting.general);
   const [values, setValues] = useState({ ...stateValues });
 
-  const saveSettings = async () => {
-    const requestOptions = {
-      ...values,
-    };
-    dispatch(setCurrentSetting({ general: values }));
-    // await axiosInstance
-    //   .post("/settings/saveGeneral", requestOptions)
-    //   .then((response) => {
-    //     setValues({ ...response.data });
-    //   })
-    //   .catch((error) => {
-    //     // console.log(error.response.data.errors.message);
-    //     dispatchSnackbarError(error.response.data);
-    //   });
-  };
   return (
     <Paper className={classes.paper}>
       <Grid container spacing={3} className={classes.container}>
@@ -68,7 +51,7 @@ export default function General(props) {
             <IconButton
               aria-label="save"
               style={{ marginTop: -15 }}
-              onClick={saveSettings}
+              onClick={() => dispatch(setCurrentSetting({ general: values }))}
             >
               <Save />
             </IconButton>
@@ -98,10 +81,12 @@ export default function General(props) {
             InputLabelProps={{
               shrink: true,
             }}
-            value={123112}
             variant="outlined"
             disabled
             value={values.establishmentId}
+            onChange={(e) =>
+              setValues({ ...values, establishmentId: e.target.value })
+            }
           />
         </Grid>
         <Grid item xs={3}>
@@ -114,6 +99,9 @@ export default function General(props) {
             }}
             variant="outlined"
             value={values.maxCapacity}
+            onChange={(e) =>
+              setValues({ ...values, maxCapacity: e.target.value })
+            }
           />
         </Grid>
         <Grid item xs={12}>
@@ -129,6 +117,7 @@ export default function General(props) {
             multiline
             rows={3}
             value={values.message}
+            onChange={(e) => setValues({ ...values, message: e.target.value })}
           />
         </Grid>
       </Grid>
