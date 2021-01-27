@@ -13,9 +13,136 @@ import CircleCheckedFilled from "@material-ui/icons/CheckCircle";
 import CircleUnchecked from "@material-ui/icons/RadioButtonUnchecked";
 import Button from "@material-ui/core/Button";
 import Title from "./Title";
-import { useSnackbar } from "notistack";
+import { dispatchSnackbarSuccess } from "../../utils/Shared";
 import {useSelector, useDispatch} from 'react-redux'
 
+import { DataGrid } from '@material-ui/data-grid';
+import {TableContainer} from '@material-ui/core';
+
+const useStyles = makeStyles((theme) => ({
+  seeMore: {
+    marginTop: theme.spacing(3),
+  },
+  button: {
+    backgroundColor: theme.palette.primary.light,
+  },
+}));
+
+const columns = [
+  { field: 'id', headerName: 'ID', width: 70 },
+  { field: 'firstName', headerName: 'First name', width: 130 },
+  { field: 'lastName', headerName: 'Last name', width: 130 },
+  { field: 'contactNumber', headerName: 'Contact Number', width: 150 },
+  { field: 'emailAddress', headerName: 'Email Address', width: 170 },
+  { field: 'entryDate', headerName: 'Entry Date', type: 'dateTime', width: 300 },
+  { field: 'exitDate', headerName: 'Exit Date', type: 'dateTime', width: 300 }
+];
+
+const rows = [
+  { id: 1, lastName: 'Snow', firstName: 'Jon', contactNumber:'123-456-7890', emailAddress: "name@email.com", entryDate: new Date(2020, 5, 5, 5, 20, 0), exitDate: new Date(2020, 5, 5, 5, 40, 0) },
+  { id: 2, lastName: 'Lane', firstName: 'Carrie', contactNumber:'123-456-7890', emailAddress: "name@email.com", entryDate: new Date(2020, 5, 5, 5, 43, 0), exitDate: new Date(2020, 5, 5, 6, 0, 0) },
+  { id: 3, lastName: 'Lane', firstName: 'Jaime', contactNumber:'123-456-7890', emailAddress: "name@email.com", entryDate:new Date(2020, 5, 5, 5, 30, 0), exitDate:new Date(2020, 5, 5, 5, 45, 0) },
+  { id: 4, lastName: 'Stark', firstName: 'Aria', contactNumber:'123-456-7890', emailAddress: "name@email.com", entryDate: new Date(2020, 5, 5, 5, 0, 0), exitDate: new Date(2020, 5, 5, 5, 15, 0) },
+  { id: 5, lastName: 'Trails', firstName: 'Dan', contactNumber:'123-456-7890', emailAddress: "name@email.com", entryDate: new Date(2020, 5, 5, 5, 10, 0), exitDate: new Date(2020, 5, 5, 5, 30, 0) },
+  { id: 6, lastName: 'Mercer', firstName: 'Max', contactNumber:'123-456-7890', emailAddress: "name@email.com", entryDate: new Date(2020, 10, 17, 3, 24, 0), exitDate: new Date(2020, 10, 17, 3, 26, 0) },
+  { id: 7, lastName: 'Clifford', firstName: 'Fiona', contactNumber:'123-456-7890', emailAddress: "name@email.com", entryDate: new Date(2020, 5, 5, 5, 10, 0), exitDate: new Date(2020, 5, 5, 5, 45, 0) },
+  { id: 8, lastName: 'Arrows', firstName: 'Ross', contactNumber:'123-456-7890', emailAddress: "name@email.com", entryDate: new Date(2020, 10, 17, 3, 23, 0), exitDate: new Date(2020, 10, 17, 3, 25, 0) },
+  { id: 9, lastName: 'Roxie', firstName: 'Harvey', contactNumber:'123-456-7890', emailAddress: "name@email.com", entryDate: new Date(2020, 5, 5, 5, 25, 0), exitDate: new Date(2020, 5, 5, 5, 35, 0) }
+];
+
+class CustomersTable extends React.Component{
+  state = {
+    customers: rows,
+    possibleContacts: [],
+    selectedRows: [],
+    loading: false
+  }
+/*
+  contactTrace = (selectedRows) => {
+    let infectedCustomers = this.state.customers.filter(customer => this.state.selectedRows.includes(customer.id.toString()));
+    let newPossibleContacts = this.state.customers.filter(possibleContact => (
+      infectedCustomers.some(infectedCustomer => (
+        (possibleContact.entryDate <= infectedCustomer.exitDate) && (possibleContact.exitDate >= infectedCustomer.entryDate)
+          && (possibleContact.id != infectedCustomer.id))
+    )
+    ));
+
+    this.setState({
+      possibleContacts: newPossibleContacts
+    })
+  }
+  */
+
+  render(){
+    return (
+      <div style={{ padding: 10 }}>
+        <Title>Records</Title>
+        <div style={{ height: 300, width: '100%' }}>
+          <DataGrid
+            rows={this.state.customers}
+            columns={columns}
+            pageSize={9}
+            sortingMode='client' sortingOrder={['asc', 'desc', null]}
+            loading={this.state.loading}
+            checkboxSelection
+            onSelectionChange={newSelectedRows => this.setState({selectedRows: newSelectedRows.rowIds})}
+          />
+        </div>
+        <br/>
+
+        {this.state.possibleContacts.map(possibleContact =>
+          <TableRow>
+          <TableCell>{possibleContact.id + " "}</TableCell>
+          <TableCell>{possibleContact.firstName}</TableCell>
+          <TableCell>{possibleContact.lastName}</TableCell>
+          <TableCell>{possibleContact.contactNumber}</TableCell>
+          <TableCell>{possibleContact.emailAddress}</TableCell>
+          </TableRow>)}
+      </div>
+    );
+  }
+}
+
+export default CustomersTable;
+/*
+<div style={{ height: 300, width: '100%' }}>
+  <DataGrid
+    rows={this.state.possibleContacts}
+    columns={columns}
+    pageSize={3}
+    sortingMode='client' sortingOrder={['asc', 'desc', null]}
+    loading={this.state.loading}
+  />
+</div>
+*/
+
+/*
+componentWillMount() {
+    this.callAPI();
+}
+
+callAPI() {
+  fetch("http://localhost:9000/testAPI")
+      .then(res => res.json())
+      .then(res => this.setState({ customers: res, loading: false }), () => this.formatDates());
+}
+
+formatDates = () => {
+  let formatedCustomers = this.state.customers.forEach((item, i) => {
+    item.entryDate = new Date(JSON.parse(item.entryDate));
+  });
+
+  this.setState({
+    customers: formatedCustomers
+  })
+
+  //row.exitDate = new Date(JSON.parse(row.exitDate));
+}
+*/
+
+
+
+/*
 const useStyles = makeStyles((theme) => ({
   seeMore: {
     marginTop: theme.spacing(3),
@@ -46,9 +173,8 @@ export default function CustomersTable(props) {
   const maxEvents = 10;
 
   const classes = useStyles();
-  const { enqueueSnackbar } = useSnackbar();
   const handlePaid = (message) => {
-    enqueueSnackbar(message, { variant: "default" });
+    dispatchSnackbarSuccess(message);
   }
   const date = new Date()
   return (
@@ -100,6 +226,8 @@ export default function CustomersTable(props) {
     </React.Fragment>
   );
 }
+*/
+
 /*
 { id: 4, lastName: 'Stark', firstName: 'Aria', contactNumber:'123-456-7890', emailAddress: "name@email.com", entryDate: new Date(2020, 5, 5, 5, 0, 0), exitDate: new Date(2020, 5, 5, 5, 15, 0) ),
 { id: 5, lastName: 'Trails', firstName: 'Dan', contactNumber:'123-456-7890', emailAddress: "name@email.com", entryDate: new Date(2020, 5, 5, 5, 10, 0), exitDate: new Date(2020, 5, 5, 5, 30, 0) ),

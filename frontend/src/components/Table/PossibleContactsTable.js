@@ -13,7 +13,7 @@ import CircleCheckedFilled from "@material-ui/icons/CheckCircle";
 import CircleUnchecked from "@material-ui/icons/RadioButtonUnchecked";
 import Button from "@material-ui/core/Button";
 import Title from "./Title";
-import { useSnackbar } from "notistack";
+import { dispatchSnackbarSuccess } from "../../utils/Shared";
 import {useSelector, useDispatch} from 'react-redux'
 
 const useStyles = makeStyles((theme) => ({
@@ -46,9 +46,8 @@ export default function PossibleContactsTable(props) {
   const maxEvents = 10;
 
   const classes = useStyles();
-  const { enqueueSnackbar } = useSnackbar();
   const handlePaid = (message) => {
-    enqueueSnackbar(message, { variant: "default" });
+    dispatchSnackbarSuccess(message);
   }
   const date = new Date()
   return (
