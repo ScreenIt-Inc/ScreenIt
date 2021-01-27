@@ -29,13 +29,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const columns = [
-  { field: 'id', headerName: 'ID', width: 70 },
-  { field: 'firstName', headerName: 'First name', width: 130 },
-  { field: 'lastName', headerName: 'Last name', width: 130 },
-  { field: 'contactNumber', headerName: 'Contact Number', width: 150 },
+  { field: 'id', headerName: 'ID', width: 100 },
+  { field: 'firstName', headerName: 'First name', width: 150 },
+  { field: 'lastName', headerName: 'Last name', width: 150 },
+  { field: 'contactNumber', headerName: 'Contact #', width: 150 },
   { field: 'emailAddress', headerName: 'Email Address', width: 170 },
-  { field: 'entryDate', headerName: 'Entry Date', type: 'dateTime', width: 300 },
-  { field: 'exitDate', headerName: 'Exit Date', type: 'dateTime', width: 300 }
+  { field: 'entryDate', headerName: 'Entry Date', type: 'dateTime', width: 200 },
+  { field: 'exitDate', headerName: 'Exit Date', type: 'dateTime', width: 200 }
 ];
 
 const rows = [
@@ -47,7 +47,8 @@ const rows = [
   { id: 6, lastName: 'Mercer', firstName: 'Max', contactNumber:'123-456-7890', emailAddress: "name@email.com", entryDate: new Date(2020, 10, 17, 3, 24, 0), exitDate: new Date(2020, 10, 17, 3, 26, 0) },
   { id: 7, lastName: 'Clifford', firstName: 'Fiona', contactNumber:'123-456-7890', emailAddress: "name@email.com", entryDate: new Date(2020, 5, 5, 5, 10, 0), exitDate: new Date(2020, 5, 5, 5, 45, 0) },
   { id: 8, lastName: 'Arrows', firstName: 'Ross', contactNumber:'123-456-7890', emailAddress: "name@email.com", entryDate: new Date(2020, 10, 17, 3, 23, 0), exitDate: new Date(2020, 10, 17, 3, 25, 0) },
-  { id: 9, lastName: 'Roxie', firstName: 'Harvey', contactNumber:'123-456-7890', emailAddress: "name@email.com", entryDate: new Date(2020, 5, 5, 5, 25, 0), exitDate: new Date(2020, 5, 5, 5, 35, 0) }
+  { id: 9, lastName: 'Roxie', firstName: 'Harvey', contactNumber:'123-456-7890', emailAddress: "name@email.com", entryDate: new Date(2020, 5, 5, 5, 25, 0), exitDate: new Date(2020, 5, 5, 5, 35, 0) },
+  { id: 10, lastName: 'Roxie', firstName: 'Harvey', contactNumber:'123-456-7890', emailAddress: "name@email.com", entryDate: new Date(2020, 5, 5, 5, 25, 0), exitDate: new Date(2020, 5, 5, 5, 35, 0) }
 ];
 
 class CustomersTable extends React.Component{
@@ -77,7 +78,7 @@ class CustomersTable extends React.Component{
     return (
       <div style={{ padding: 10 }}>
         <Title>Records</Title>
-        <div style={{ height: 300, width: '100%' }}>
+        <div style={{ height: 600, width: '100%' }}>
           <DataGrid
             rows={this.state.customers}
             columns={columns}
@@ -88,16 +89,6 @@ class CustomersTable extends React.Component{
             onSelectionChange={newSelectedRows => this.setState({selectedRows: newSelectedRows.rowIds})}
           />
         </div>
-        <br/>
-
-        {this.state.possibleContacts.map(possibleContact =>
-          <TableRow>
-          <TableCell>{possibleContact.id + " "}</TableCell>
-          <TableCell>{possibleContact.firstName}</TableCell>
-          <TableCell>{possibleContact.lastName}</TableCell>
-          <TableCell>{possibleContact.contactNumber}</TableCell>
-          <TableCell>{possibleContact.emailAddress}</TableCell>
-          </TableRow>)}
       </div>
     );
   }
