@@ -37,7 +37,8 @@ export default async ({ expressApp }) => {
     // Notice the require syntax and the '.default'
     model: require('../models/customer').default,
   }
-  const formModel = {
+
+  const OpenFormUUIDModel = {
     name: 'OpenFormUUIDModel',
     // Notice the require syntax and the '.default'
     model: require('../models/form').OpenFormUUIDModel,

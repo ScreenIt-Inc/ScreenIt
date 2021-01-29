@@ -76,7 +76,7 @@ class CustomersTable extends React.Component{
         this.setState({ customers: newCustomers });
       })
       .catch((error) => {
-        dispatchSnackbarError(error.response.data);
+        dispatchSnackbarError(error.response);
       });
     //History.push("/");
   };

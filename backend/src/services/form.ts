@@ -17,17 +17,19 @@ export function formSubmit(data: Object){
 	});
 }
 
-export function getForms(){
+export async function getForms(){
 	const Logger : Logger = Container.get('logger');
 	const formModel = Container.get('formModel') as mongoose.Model<IForm & mongoose.Document>;
-	return formModel.find({}); //should just be a single value, so pull all returns an array
+	//Logger.debug(JSON.stringify(formModel));
+	return formModel.find({});
 }
 
 export function contactTrace(data: Object){
 	const Logger : Logger = Container.get('logger');
 	const formModel = Container.get('formModel') as mongoose.Model<IForm & mongoose.Document>;
-	Logger.debug(JSON.stringify(data));
-	return formModel.find({}); //should just be a single value, so pull all returns an array
+	//var formModel = mongoose.model('Forms', new mongoose.Schema({ 'forms': []}), 'forms');
+	//Logger.debug(JSON.stringify(data));
+	return formModel.find({});
 }
 
 

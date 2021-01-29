@@ -181,9 +181,10 @@ class CustomerForm extends React.Component{
   		  	data.uuids.forEach(function (item, index, array) {
   		  		if (item == this.uuid){
   		  			this.setState({
-		  		  		approved: 'Yes',
-		  		  		return
+		  		  		approved: 'Yes'
+
 		  		  	});
+              return
   		  		}
   		  	});
 			this.setState({

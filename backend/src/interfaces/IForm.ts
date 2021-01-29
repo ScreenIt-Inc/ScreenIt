@@ -6,8 +6,7 @@ export interface IForm {
   address: string;
   phone: string;
   entry_time: Date;
-  exit_time: Date
-  uuid: string;
+  exit_time: Date;
   questionnaire: Array;
 }
 

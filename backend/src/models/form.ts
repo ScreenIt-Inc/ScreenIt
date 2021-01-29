@@ -3,10 +3,6 @@ import mongoose from 'mongoose';
 
 const Form = new mongoose.Schema(
   {
-    uuid: {
-      type: String,
-      required: true,
-    },
     firstname: {
       type: String,
       required: true,
@@ -56,7 +52,8 @@ const OpenFormUUID = new mongoose.Schema(
       type: String,
       required: true,
     },
+  },
   { timestamps: true },
 );
 var OpenFormUUIDModel = mongoose.model<IOpenFormUUID & mongoose.Document>('OpenFormUUID', OpenFormUUID)
-export OpenFormUUIDModel;
+export default OpenFormUUIDModel;
