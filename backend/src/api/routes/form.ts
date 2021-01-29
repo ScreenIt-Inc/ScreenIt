@@ -27,7 +27,7 @@ export default (app: Router) => {
 			  Logger.verbose(`Recieved get customers request`);
 				FormService.getForms().then(function(data) {
 				Logger.verbose(data);
-				res.json({data: data}); //sends json data back (only want the first value), method name 'json' is misleading
+				res.json(data); //sends json data back (only want the first value), method name 'json' is misleading
 			});
 		});
 

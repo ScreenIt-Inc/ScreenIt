@@ -1,4 +1,4 @@
-import { IForm, IOpenFormUUID } from '../interfaces/IForm';
+import { IForm } from '../interfaces/IForm';
 import mongoose from 'mongoose';
 
 const Form = new mongoose.Schema(
@@ -44,16 +44,3 @@ const Form = new mongoose.Schema(
 );
 
 export default mongoose.model<IForm & mongoose.Document>('Form', Form);
-
-
-const OpenFormUUID = new mongoose.Schema(
-  {
-    uuid: {
-      type: String,
-      required: true,
-    },
-  },
-  { timestamps: true },
-);
-var OpenFormUUIDModel = mongoose.model<IOpenFormUUID & mongoose.Document>('OpenFormUUID', OpenFormUUID)
-export default OpenFormUUIDModel;
