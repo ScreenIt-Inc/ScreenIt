@@ -37,7 +37,8 @@ const columns = [
   { field: 'lastName', headerName: 'Last name', width: 150 },
   { field: 'phone', headerName: 'Contact #', width: 150 },
   { field: 'email', headerName: 'Email Address', width: 200 },
-  { field: 'groupSize', headerName: 'Group Size', width: 150 },
+  { field: 'status', headerName: 'Status', width: 100 },
+  //{ field: 'groupSize', headerName: 'Group Size', width: 150 },
   { field: 'entryDate', headerName: 'Entry Date', type: 'dateTime', width: 200 },
   { field: 'exitDate', headerName: 'Exit Date', type: 'dateTime', width: 200 }
 ];
@@ -56,7 +57,7 @@ class CustomersTable extends React.Component{
 
   getCustomers(){
     axiosInstance
-      .get("/customer/getCustomers")
+      .get("/form/getForms")
       .then((response) => {
         const serverResponse = response.data;
         console.log(serverResponse);
@@ -67,9 +68,10 @@ class CustomersTable extends React.Component{
           lastName: item.lastname,
           phone: item.phone,
           email: item.email,
-          groupSize: item.group,
-          entryDate: item.entryDate,
-          exitDate: item.exitDate
+          //groupSize: item.group,
+          status: "safe",
+          entryDate: item.entry_time,
+          exitDate: item.exit_time
         }));
         this.setState({ customers: newCustomers });
       })
@@ -78,21 +80,7 @@ class CustomersTable extends React.Component{
       });
     //History.push("/");
   };
-/*
-  contactTrace = (selectedRows) => {
-    let infectedCustomers = this.state.customers.filter(customer => this.state.selectedRows.includes(customer.id.toString()));
-    let newPossibleContacts = this.state.customers.filter(possibleContact => (
-      infectedCustomers.some(infectedCustomer => (
-        (possibleContact.entryDate <= infectedCustomer.exitDate) && (possibleContact.exitDate >= infectedCustomer.entryDate)
-          && (possibleContact.id != infectedCustomer.id))
-    )
-    ));
 
-    this.setState({
-      possibleContacts: newPossibleContacts
-    })
-  }
-  */
 
   render(){
     return (
@@ -115,6 +103,22 @@ class CustomersTable extends React.Component{
 }
 
 export default CustomersTable;
+
+/*
+  contactTrace = (selectedRows) => {
+    let infectedCustomers = this.state.customers.filter(customer => this.state.selectedRows.includes(customer.id.toString()));
+    let newPossibleContacts = this.state.customers.filter(possibleContact => (
+      infectedCustomers.some(infectedCustomer => (
+        (possibleContact.entryDate <= infectedCustomer.exitDate) && (possibleContact.exitDate >= infectedCustomer.entryDate)
+          && (possibleContact.id != infectedCustomer.id))
+    )
+    ));
+
+    this.setState({
+      possibleContacts: newPossibleContacts
+    })
+  }
+  */
 /*
 const rows = [
   { id: 1, lastName: 'Snow', firstName: 'Jon', contactNumber:'123-456-7890', emailAddress: "name@email.com", entryDate: new Date(2020, 5, 5, 5, 20, 0), exitDate: new Date(2020, 5, 5, 5, 40, 0) },

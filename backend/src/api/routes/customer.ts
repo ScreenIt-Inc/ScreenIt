@@ -23,7 +23,6 @@ export default (app: Router) => {
 	  res.send("response");
 	});
 
-
 	route.get("/getCustomers", function(req: Request, res: Response){
 		  Logger.verbose(`Recieved get customers request`);
 			CustomerService.getCustomers().then(function(data) {

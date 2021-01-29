@@ -22,4 +22,20 @@ export default (app: Router) => {
 				res.json(data[0]);  //sends json data back (only want the first value), method name 'json' is misleading
 			});
 		});
+
+		route.get("/getForms", function(req: Request, res: Response){
+			  Logger.verbose(`Recieved get customers request`);
+				FormService.getForms().then(function(data) {
+				Logger.verbose(data[0]);
+				res.json(data); //sends json data back (only want the first value), method name 'json' is misleading
+			});
+		});
+
+		route.get("/contactTrace", function(req: Request, res: Response){
+			  Logger.verbose(`Recieved get customers request`);
+				FormService.contactTrace().then(function(data) {
+				Logger.verbose(data[0]);
+				res.json(data); //sends json data back (only want the first value), method name 'json' is misleading
+			});
+		});
 };

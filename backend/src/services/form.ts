@@ -15,8 +15,19 @@ export function formSubmit(data: Object){
 		Logger.verbose('New form data saved');
 		Logger.debug(JSON.stringify(data));
 	});
+}
 
+export function getForms(){
+	const Logger : Logger = Container.get('logger');
+	const formModel = Container.get('formModel') as mongoose.Model<IForm & mongoose.Document>;
+	return formModel.find({}); //should just be a single value, so pull all returns an array
+}
 
+export function contactTrace(data: Object){
+	const Logger : Logger = Container.get('logger');
+	const formModel = Container.get('formModel') as mongoose.Model<IForm & mongoose.Document>;
+	Logger.debug(JSON.stringify(data));
+	return formModel.find({}); //should just be a single value, so pull all returns an array
 }
 
 
