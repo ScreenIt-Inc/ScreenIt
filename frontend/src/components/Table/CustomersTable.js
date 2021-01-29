@@ -15,6 +15,9 @@ import Button from "@material-ui/core/Button";
 import Title from "./Title";
 import { dispatchSnackbarSuccess } from "../../utils/Shared";
 import {useSelector, useDispatch} from 'react-redux'
+import { axiosInstance } from "../../network/apis";
+import { dispatchSnackbarError } from "../../utils/Shared";
+import History from "../../routes/History";
 
 import { DataGrid } from '@material-ui/data-grid';
 import {TableContainer} from '@material-ui/core';
@@ -32,32 +35,49 @@ const columns = [
   { field: 'id', headerName: 'ID', width: 100 },
   { field: 'firstName', headerName: 'First name', width: 150 },
   { field: 'lastName', headerName: 'Last name', width: 150 },
-  { field: 'contactNumber', headerName: 'Contact #', width: 150 },
-  { field: 'emailAddress', headerName: 'Email Address', width: 170 },
+  { field: 'phone', headerName: 'Contact #', width: 150 },
+  { field: 'email', headerName: 'Email Address', width: 200 },
+  { field: 'groupSize', headerName: 'Group Size', width: 150 },
   { field: 'entryDate', headerName: 'Entry Date', type: 'dateTime', width: 200 },
   { field: 'exitDate', headerName: 'Exit Date', type: 'dateTime', width: 200 }
 ];
 
-const rows = [
-  { id: 1, lastName: 'Snow', firstName: 'Jon', contactNumber:'123-456-7890', emailAddress: "name@email.com", entryDate: new Date(2020, 5, 5, 5, 20, 0), exitDate: new Date(2020, 5, 5, 5, 40, 0) },
-  { id: 2, lastName: 'Lane', firstName: 'Carrie', contactNumber:'123-456-7890', emailAddress: "name@email.com", entryDate: new Date(2020, 5, 5, 5, 43, 0), exitDate: new Date(2020, 5, 5, 6, 0, 0) },
-  { id: 3, lastName: 'Lane', firstName: 'Jaime', contactNumber:'123-456-7890', emailAddress: "name@email.com", entryDate:new Date(2020, 5, 5, 5, 30, 0), exitDate:new Date(2020, 5, 5, 5, 45, 0) },
-  { id: 4, lastName: 'Stark', firstName: 'Aria', contactNumber:'123-456-7890', emailAddress: "name@email.com", entryDate: new Date(2020, 5, 5, 5, 0, 0), exitDate: new Date(2020, 5, 5, 5, 15, 0) },
-  { id: 5, lastName: 'Trails', firstName: 'Dan', contactNumber:'123-456-7890', emailAddress: "name@email.com", entryDate: new Date(2020, 5, 5, 5, 10, 0), exitDate: new Date(2020, 5, 5, 5, 30, 0) },
-  { id: 6, lastName: 'Mercer', firstName: 'Max', contactNumber:'123-456-7890', emailAddress: "name@email.com", entryDate: new Date(2020, 10, 17, 3, 24, 0), exitDate: new Date(2020, 10, 17, 3, 26, 0) },
-  { id: 7, lastName: 'Clifford', firstName: 'Fiona', contactNumber:'123-456-7890', emailAddress: "name@email.com", entryDate: new Date(2020, 5, 5, 5, 10, 0), exitDate: new Date(2020, 5, 5, 5, 45, 0) },
-  { id: 8, lastName: 'Arrows', firstName: 'Ross', contactNumber:'123-456-7890', emailAddress: "name@email.com", entryDate: new Date(2020, 10, 17, 3, 23, 0), exitDate: new Date(2020, 10, 17, 3, 25, 0) },
-  { id: 9, lastName: 'Roxie', firstName: 'Harvey', contactNumber:'123-456-7890', emailAddress: "name@email.com", entryDate: new Date(2020, 5, 5, 5, 25, 0), exitDate: new Date(2020, 5, 5, 5, 35, 0) },
-  { id: 10, lastName: 'Roxie', firstName: 'Harvey', contactNumber:'123-456-7890', emailAddress: "name@email.com", entryDate: new Date(2020, 5, 5, 5, 25, 0), exitDate: new Date(2020, 5, 5, 5, 35, 0) }
-];
-
 class CustomersTable extends React.Component{
   state = {
-    customers: rows,
+    customers: [],
     possibleContacts: [],
     selectedRows: [],
     loading: false
   }
+
+  componentDidMount(){
+    this.getCustomers();
+  }
+
+  getCustomers(){
+    axiosInstance
+      .get("/customer/getCustomers")
+      .then((response) => {
+        const serverResponse = response.data;
+        console.log(serverResponse);
+        var i = 1;
+        var newCustomers = serverResponse.map(item => ({
+          id: i++,
+          firstName: item.firstname,
+          lastName: item.lastname,
+          phone: item.phone,
+          email: item.email,
+          groupSize: item.group,
+          entryDate: item.entryDate,
+          exitDate: item.exitDate
+        }));
+        this.setState({ customers: newCustomers });
+      })
+      .catch((error) => {
+        dispatchSnackbarError(error.response.data);
+      });
+    //History.push("/");
+  };
 /*
   contactTrace = (selectedRows) => {
     let infectedCustomers = this.state.customers.filter(customer => this.state.selectedRows.includes(customer.id.toString()));
@@ -96,6 +116,21 @@ class CustomersTable extends React.Component{
 
 export default CustomersTable;
 /*
+const rows = [
+  { id: 1, lastName: 'Snow', firstName: 'Jon', contactNumber:'123-456-7890', emailAddress: "name@email.com", entryDate: new Date(2020, 5, 5, 5, 20, 0), exitDate: new Date(2020, 5, 5, 5, 40, 0) },
+  { id: 2, lastName: 'Lane', firstName: 'Carrie', contactNumber:'123-456-7890', emailAddress: "name@email.com", entryDate: new Date(2020, 5, 5, 5, 43, 0), exitDate: new Date(2020, 5, 5, 6, 0, 0) },
+  { id: 3, lastName: 'Lane', firstName: 'Jaime', contactNumber:'123-456-7890', emailAddress: "name@email.com", entryDate:new Date(2020, 5, 5, 5, 30, 0), exitDate:new Date(2020, 5, 5, 5, 45, 0) },
+  { id: 4, lastName: 'Stark', firstName: 'Aria', contactNumber:'123-456-7890', emailAddress: "name@email.com", entryDate: new Date(2020, 5, 5, 5, 0, 0), exitDate: new Date(2020, 5, 5, 5, 15, 0) },
+  { id: 5, lastName: 'Trails', firstName: 'Dan', contactNumber:'123-456-7890', emailAddress: "name@email.com", entryDate: new Date(2020, 5, 5, 5, 10, 0), exitDate: new Date(2020, 5, 5, 5, 30, 0) },
+  { id: 6, lastName: 'Mercer', firstName: 'Max', contactNumber:'123-456-7890', emailAddress: "name@email.com", entryDate: new Date(2020, 10, 17, 3, 24, 0), exitDate: new Date(2020, 10, 17, 3, 26, 0) },
+  { id: 7, lastName: 'Clifford', firstName: 'Fiona', contactNumber:'123-456-7890', emailAddress: "name@email.com", entryDate: new Date(2020, 5, 5, 5, 10, 0), exitDate: new Date(2020, 5, 5, 5, 45, 0) },
+  { id: 8, lastName: 'Arrows', firstName: 'Ross', contactNumber:'123-456-7890', emailAddress: "name@email.com", entryDate: new Date(2020, 10, 17, 3, 23, 0), exitDate: new Date(2020, 10, 17, 3, 25, 0) },
+  { id: 9, lastName: 'Roxie', firstName: 'Harvey', contactNumber:'123-456-7890', emailAddress: "name@email.com", entryDate: new Date(2020, 5, 5, 5, 25, 0), exitDate: new Date(2020, 5, 5, 5, 35, 0) },
+  { id: 10, lastName: 'Roxie', firstName: 'Harvey', contactNumber:'123-456-7890', emailAddress: "name@email.com", entryDate: new Date(2020, 5, 5, 5, 25, 0), exitDate: new Date(2020, 5, 5, 5, 35, 0) }
+];
+
+
+
 <div style={{ height: 300, width: '100%' }}>
   <DataGrid
     rows={this.state.possibleContacts}
