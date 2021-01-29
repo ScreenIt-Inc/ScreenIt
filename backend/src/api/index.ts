@@ -3,6 +3,7 @@ import auth from './routes/auth';
 import user from './routes/user';
 import agendash from './routes/agendash';
 import form from './routes/form';
+import notify from './routes/notify';
 import Logger from '../loaders/logger';
 // guaranteed to get dependencies
 export default () => {
@@ -11,6 +12,7 @@ export default () => {
 	user(app);
 	agendash(app);
 	form(app);
+	notify(app);
 
 	Logger.info(JSON.stringify(app.stack))
 	return app
