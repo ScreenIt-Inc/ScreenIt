@@ -6,7 +6,7 @@ import { Container, Row, Col, Jumbotron, Button, Form } from 'react-bootstrap';
 import Logo from "../../assets/images/ScreenitLogo.png"
 
 
-const BASE_URL = 'http://localhost:3001' //hardcode for now
+const BASE_URL = 'http://localhost:9000' //hardcode for now
 const SUBMIT_ENDPOINT = '/api/form/submission'
 const GET_ENDPOINT = '/api/form/questionnaire'
 
@@ -88,7 +88,7 @@ class CustomerForm extends React.Component{
 				'email': '',
 				'address': '',
 				'phone': '',
-				'questionaire': []
+				'questionnaire': {}
 			},
 			'pulled': false,
 			questionnaire:
@@ -96,47 +96,56 @@ class CustomerForm extends React.Component{
 					{
 						'question': 'Do you have any of the following new or worsening symptoms or signs?',
 						'answers': [],
-						'isHeader': true
+						'isHeader': true,
+						'id': 0
 					},
 					{
 						'question': 'Fevers or Chills',
 						'answers': ['Yes', 'No'],
-						'isHeader': false
+						'isHeader': false,
+						'id': 1
 					},
 					{
 						'question': 'Cough',
 						'answers': ['Yes', 'No'],
-						'isHeader': false
+						'isHeader': false,
+						'id': 2
 					},
 					{
 						'question': 'Difficulty breathing or shortness of breath',
 						'answers': ['Yes', 'No'],
-						'isHeader': false
+						'isHeader': false,
+						'id': 3
 					},
 					{
 						'question': 'Sore throat, trouble swallowing',
 						'answers': ['Yes', 'No'],
-						'isHeader': false
+						'isHeader': false,
+						'id': 4
 					},
 					{
 						'question': 'Runny or stuffy nose',
 						'answers': ['Yes', 'No'],
-						'isHeader': false
+						'isHeader': false,
+						'id': 5
 					},
 					{
 						'question': 'Decrease or loss of taste or smell',
 						'answers': ['Yes', 'No'],
-						'isHeader': false
+						'isHeader': false,
+						'id': 6
 					},
 					{
 						'question': 'Have you come in contact with someone who has tested postive for Covid-19?',
 						'answers':['Yes', 'No'],
-						'isHeader': true
+						'isHeader': true,
+						'id': 7
 					},
 					{
 						'question': 'Have you traveled outside of Canada in the past 14 days?',
 						'answers':['Yes', 'No'],
-						'isHeader': true
+						'isHeader': true,
+						'id': 8
 					},
 				]
 			}
@@ -149,6 +158,9 @@ class CustomerForm extends React.Component{
   		  	return stream.json() // convert 'ReadableStream' and returns a promise to convert to json
   		  }).then(function(data) {
   		  	console.log(data);
+  		  	data.questionnaire.forEach(function (item, index, array) {
+  		  		item['id'] = index
+  		  	});
   		  	this.setState({
   		  		pulled: true,
   		  		questionnaire: data.questionnaire
@@ -191,6 +203,11 @@ class CustomerForm extends React.Component{
 
   		this.postData.bind(this)();
 
+  	}
+
+  	handletoggle = (question, value) => {
+  		this.state.user_data.questionnaire[question] = value
+  		console.log(this.state.user_data)
   	}
 
   	render() {
@@ -256,18 +273,18 @@ class CustomerForm extends React.Component{
 						                this.state.questionnaire.map(Q =>
 							                	Q.isHeader
 									                ?
-									                	<div>
+									                	<div key={Q.id}>
 									                		<br />
-										                	<Row key={Q.question}>
+										                	<Row>
 										    					<Col>
 											                  		<Form.Label className={classes.headerQuestion}>{Q.question}</Form.Label>
 											                  	</Col>
 													    	</Row>
-													    	<Row key={Q.question}>
+													    	<Row>
 											                  	<Col>
 											                  		{
 											                  			Q.answers.map(A =>
-											                  				<Form.Check inline label={A} type='radio' id={A} />
+											                  				<Form.Check inline label={A} type='radio' id={A} onClick={(event) => {this.handletoggle.bind(this)(Q.question, A)}}/>
 											                  			)
 											                  		}
 											                  	</Col>
@@ -275,14 +292,14 @@ class CustomerForm extends React.Component{
 											            </div>
 
 								                	:
-								                		<Row key={Q.question}>
+								                		<Row key={Q.id}>
 									    					<Col>
 										                  		<Form.Label className={classes.baseQuestion}>{Q.question}</Form.Label>
 										                  	</Col>
 										                  	<Col>
 										                  		{
 										                  			Q.answers.map(A =>
-										                  				<Form.Check inline label={A} type='radio' id={A} />
+										                  				<Form.Check inline label={A} type='radio' id={A} onClick={(event) => {this.handletoggle.bind(this)(Q.question, A)}}/>
 										                  			)
 										                  		}
 										                  	</Col>
