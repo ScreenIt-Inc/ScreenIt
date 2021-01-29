@@ -22,4 +22,18 @@ export default (app: Router) => {
 				res.json(data[0]);  //sends json data back (only want the first value), method name 'json' is misleading
 			});
 		});
+
+  	route.get("/opennewformuuid", function(req: Request, res: Response){
+		    Logger.verbose(`Recieved new form endpoint get route`);
+		    uuid = FormService.newFormURL();
+			res.json(uuid)
+		});
+
+  	route.get("/openformuuids", function(req: Request, res: Response){
+		    Logger.verbose(`Recieved new form endpoint get route`);
+			FormService.getOpenFormUrls().then(function(data) {
+				Logger.verbose(data);
+				res.json(data);  //sends json data back (only want the first value), method name 'json' is misleading
+			});
+		});
 };
