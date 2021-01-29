@@ -11,10 +11,15 @@ import TableRow from "@material-ui/core/TableRow";
 import Checkbox from "@material-ui/core/Checkbox";
 import CircleCheckedFilled from "@material-ui/icons/CheckCircle";
 import CircleUnchecked from "@material-ui/icons/RadioButtonUnchecked";
+import UpdateIcon from "@material-ui/icons/Update";
+import IconButton from "@material-ui/core/IconButton";
 import Button from "@material-ui/core/Button";
 import Title from "./Title";
 import { dispatchSnackbarSuccess } from "../../utils/Shared";
 import { useSelector } from "react-redux";
+import Auth from "../../utils/Auth";
+
+URL = "http://localhost:9000/api/visitors/getInfo"; //hardcode for now
 
 const useStyles = makeStyles((theme) => ({
   seeMore: {
@@ -25,15 +30,33 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function createData(id, name, amount, item, date) {
-  return { id, name, amount, item, date };
+function createData(_id, firstname, lastname, phone, date) {
+  return { _id, firstname, lastname, phone, date };
 }
 
-const rows = [
-  createData(0, "Justeen Randev", "416-342-5436", "2", "78", 312.44),
-  createData(1, "Gurnain Saini", "416-342-5436", "5", "75", 866.99),
-  createData(2, "Tasmiha Hassan", "416-342-5436", "4", "98", 100.81),
-  createData(3, "Beyonce Knowles", "416-342-5436", "1", "87", 654.39),
+const rowsDefault = [
+  createData(
+    0,
+    "Justeen",
+    "Randev",
+    "416-342-5436",
+    "2021-01-28T23:31:04.915Z"
+  ),
+  createData(1, "Gurnain", "Saini", "416-342-5436", "2021-01-28T23:31:04.915Z"),
+  createData(
+    2,
+    "Tasmiha",
+    "Hassan",
+    "416-342-5436",
+    "2021-01-28T23:31:04.915Z"
+  ),
+  createData(
+    3,
+    "Beyonce",
+    "Knowles",
+    "416-342-5436",
+    "2021-01-28T23:31:04.915Z"
+  ),
   createData(
     4,
     "Khaleesi Mother of Dragons",
@@ -47,7 +70,8 @@ const rows = [
 export default function TableQ(props) {
   const category = useSelector((state) => state.table.category);
   const [viewAll, setViewAll] = useState(false);
-  const [paid] = useState(rows);
+  const [rows, setRows] = useState([]);
+
   function preventDefault(event) {
     setViewAll(!viewAll);
     event.preventDefault();
@@ -59,6 +83,32 @@ export default function TableQ(props) {
     dispatchSnackbarSuccess(message);
   };
   const date = new Date();
+
+  const getVisitorInfo = () => {
+    console.log("getting visitor information");
+    fetch(URL, {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + Auth.isAuth(),
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        var newEntries = data.filter((obj1) => {
+          return !rows.some((obj2) => {
+            return obj1._id == obj2._id;
+          });
+        });
+        setRows(rows.concat(newEntries));
+        console.log(rows);
+      })
+      .catch();
+  };
+
   return (
     <React.Fragment>
       <div
@@ -70,6 +120,14 @@ export default function TableQ(props) {
       >
         <Title>{category}</Title>
         <div className={classes.seeMore}>
+          <IconButton
+            onClick={getVisitorInfo}
+            style={{ marginRight: "10px" }}
+            color="primary"
+            aria-label="add to shopping cart"
+          >
+            <UpdateIcon />
+          </IconButton>
           <Link color="primary" href="#" onClick={preventDefault}>
             View All
           </Link>
@@ -98,42 +156,45 @@ export default function TableQ(props) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {paid.map((row, i) => {
-            return (
-              (i < maxEvents || viewAll) && (
-                <TableRow key={row.id}>
-                  <TableCell>
-                    <Checkbox
-                      icon={<CircleUnchecked />}
-                      checkedIcon={<CircleCheckedFilled />}
-                      onClick={() => {
-                        console.log("checked");
-                      }}
-                    />
-                  </TableCell>
-                  <TableCell>{row.name}</TableCell>
-                  <TableCell>{row.amount}</TableCell>
-                  <TableCell>{row.item}</TableCell>
-                  <TableCell>{row.date}</TableCell>
-                  <TableCell>{date.getHours.toString()}</TableCell>
-                  <TableCell align="right">
-                    {" "}
-                    <Button
-                      variant="contained"
-                      classes={classes.button}
-                      color="primary"
-                      style={{ borderRadius: 5 }}
-                      onClick={() =>
-                        handlePaid("Notification sent to " + row.name)
-                      }
-                    >
-                      <span style={{ color: "white" }}>Notify</span>
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              )
-            );
-          })}
+          {rows !== undefined &&
+            rows.map((row, i) => {
+              return (
+                (i < maxEvents || viewAll) && (
+                  <TableRow key={row._id}>
+                    <TableCell>
+                      <Checkbox
+                        icon={<CircleUnchecked />}
+                        checkedIcon={<CircleCheckedFilled />}
+                        onClick={() => {
+                          console.log("checked");
+                        }}
+                      />
+                    </TableCell>
+                    <TableCell>{row.firstname + " " + row.lastname}</TableCell>
+                    <TableCell>{row.phone.slice(0, 10)}</TableCell>
+                    <TableCell>{1}</TableCell>
+                    <TableCell>{35}</TableCell>
+                    <TableCell>
+                      {new Date(row.createdAt).toLocaleTimeString()}
+                    </TableCell>
+                    <TableCell align="right">
+                      {" "}
+                      <Button
+                        variant="contained"
+                        classes={classes.button}
+                        color="primary"
+                        style={{ borderRadius: 5 }}
+                        onClick={() =>
+                          handlePaid("Notification sent to " + row.name)
+                        }
+                      >
+                        <span style={{ color: "white" }}>Notify</span>
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                )
+              );
+            })}
         </TableBody>
       </Table>
     </React.Fragment>
