@@ -9,6 +9,8 @@ import * as LazyComponent from "../utils/LazyLoaded";
 import Loader from "../components/Loader/Loader";
 import PrivateRoute from "../utils/PrivateRoute";
 
+
+
 const Routes = () => {
 
   return (
@@ -16,7 +18,7 @@ const Routes = () => {
       <Router history={history}>
         <Switch>
           <LazyComponent.Login path="/login" exact />
-          <LazyComponent.CustomerForm path="/customerform" exact />  
+          <LazyComponent.CustomerForm path="/customerform/:uuid" exact />
           <PrivateRoute component={LazyComponent.Home} path="/queue" exact />
           <Redirect from="**" to={"/queue"} exact />
         </Switch>

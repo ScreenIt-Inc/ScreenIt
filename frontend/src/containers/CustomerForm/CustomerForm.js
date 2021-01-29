@@ -4,11 +4,12 @@ import { connect } from 'react-redux';
 import TextField from '@material-ui/core/TextField';
 import { Container, Row, Col, Jumbotron, Button, Form } from 'react-bootstrap';
 import Logo from "../../assets/images/ScreenitLogo.png"
-
+var qs = require('qs');
 
 const BASE_URL = 'http://localhost:9000' //hardcode for now
 const SUBMIT_ENDPOINT = '/api/form/submission'
-const GET_ENDPOINT = '/api/form/questionnaire'
+const GET_NAIRE_ENDPOINT = '/api/form/questionnaire'
+const GET_UUIDS_ENDPOINT = '/api/form/openformuuids'
 
 const useStyles = theme => ({
   content: {
@@ -81,16 +82,21 @@ const useStyles = theme => ({
 class CustomerForm extends React.Component{
 	constructor(props){
 		super(props);
+		this.uuid = this.props.computedMatch.params.uuid;
 		this.state = {
 			user_data: {
+				'uuid': '',
 				'firstname': '',
 				'lastname': '',
 				'email': '',
 				'address': '',
 				'phone': '',
-				'questionnaire': {}
+				'questionnaire': {},
+				'entry_time': new Date(0,0,0,0,0,0,0),
+				'exit_time': new Date(0,0,0,0,0,0,0)
 			},
 			'pulled': false,
+			'approved': 'Unkown',
 			questionnaire:
 				[
 					{
@@ -153,11 +159,10 @@ class CustomerForm extends React.Component{
 
 	componentDidMount() {
 
-	    fetch(BASE_URL + GET_ENDPOINT)
+	    fetch(BASE_URL + GET_NAIRE_ENDPOINT)
   		  .then(function(stream) {
   		  	return stream.json() // convert 'ReadableStream' and returns a promise to convert to json
   		  }).then(function(data) {
-  		  	console.log(data);
   		  	data.questionnaire.forEach(function (item, index, array) {
   		  		item['id'] = index
   		  	});
@@ -165,6 +170,27 @@ class CustomerForm extends React.Component{
   		  		pulled: true,
   		  		questionnaire: data.questionnaire
   		  	});
+  		  }.bind(this)).catch(function(error) { //make sure to bind for above set state
+		  	console.log('Error pulling database questions, using default')
+		  	console.log(error)
+		  });
+
+	    fetch(BASE_URL + GET_UUIDS_ENDPOINT)
+  		  .then(function(stream) {
+  		  	return stream.json() // convert 'ReadableStream' and returns a promise to convert to json
+  		  }).then(function(data) {
+  		  	data.uuids.forEach(function (item, index, array) {
+  		  		if (item == this.uuid){
+  		  			this.setState({
+		  		  		approved: 'Yes',
+		  		  		return
+		  		  	});
+  		  		}
+  		  	});
+			this.setState({
+		  		approved: 'Denied',
+		  	});
+
   		  }.bind(this)).catch(function(error) { //make sure to bind for above set state
 		  	console.log('Error pulling database questions, using default')
 		  	console.log(error)
@@ -183,6 +209,7 @@ class CustomerForm extends React.Component{
 
 
   	postData = () => {
+  		console.log(JSON.stringify(this.state.user_data))
   		fetch(BASE_URL + SUBMIT_ENDPOINT, {
 		  method: 'POST',
 		  headers: {
@@ -206,13 +233,23 @@ class CustomerForm extends React.Component{
   	}
 
   	handletoggle = (question, value) => {
-  		this.state.user_data.questionnaire[question] = value
-  		console.log(this.state.user_data)
+  		this.state.user_data.questionnaire[question] = value;
+  		this.setState({
+  			user_data: this.state.user_data
+  		})
   	}
 
   	render() {
   		const { classes } = this.props;
-  		if (!this.state.pulled){
+		if (this.state.approved == 'Denied'){
+	  		return (
+	  			<div>
+	  				Denied...
+	  			</div>
+
+	  		)
+		}
+  		else if (!(this.state.pulled && (this.state.approved == 'Yes'))){
 	  		return (
 	  			<div>
 	  				LOADING...
