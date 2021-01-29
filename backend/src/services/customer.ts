@@ -15,20 +15,24 @@ export function createCustomer(data: Object){
 		Logger.debug(JSON.stringify(data));
 	});
 }
-/*
-export default function updateCustomer(data: Object){
+
+export function updateCustomer(data: Object) {
 	const Logger : Logger = Container.get('logger');
-
-	const customerModel = Container.get('customerModel') as mongoose.Model<ICustomer & mongoose.Document>;
-	const newCustomerData = customerModel.findOne();
-
-	newCustomerData.save(function (err) {
-		if (err) return Logger.error('New customer data not saved');
-		Logger.verbose('New customer data saved');
-		Logger.debug(JSON.stringify(data));
-	});
-}
-*/
+    try {
+      Logger.verbose('Creating user db record');
+      const query = {},
+    	update = { ...data},
+    	options = { upsert: true, new: true, setDefaultsOnInsert: true };
+			const customerModel = Container.get('customerModel') as mongoose.Model<ICustomer & mongoose.Document>;
+      const updatedRecord = customerModel.findOneAndUpdate(query, update, options)
+      Logger.verbose('updated Record');
+      const record = updatedRecord.toObject();
+      return JSON.stringify(record);
+    } catch (e) {
+      Logger.verbose(e);
+      throw e;
+    }
+  }
 
 export function getCustomers(){
 	const Logger : Logger = Container.get('logger');

@@ -15,14 +15,14 @@ export default (app: Router) => {
 		CustomerService.createCustomer(req.body);
 	  res.send("response");
 	});
-/*
-  route.put("/update", function(req: Request, res: Response, next: NextFunction){
+
+  route.post("/update", function(req: Request, res: Response, next: NextFunction){
 	  Logger.verbose(`Recieved update customer request`);
 		Logger.debug(JSON.stringify(req.body));
-		createCustomer(req.body);
+		CustomerService.updateCustomer(req.body);
 	  res.send("response");
 	});
-*/
+
 
 	route.get("/getCustomers", function(req: Request, res: Response){
 		  Logger.verbose(`Recieved get customers request`);
