@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import TextField from '@material-ui/core/TextField';
 import { Container, Row, Col, Jumbotron, Button, Form } from 'react-bootstrap';
 import Logo from "../../assets/images/ScreenitLogo.png"
-var qs = require('qs');
 
 const BASE_URL = 'http://localhost:9000' //hardcode for now
 const SUBMIT_ENDPOINT = '/api/form/submission'
