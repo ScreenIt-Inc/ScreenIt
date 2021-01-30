@@ -3,6 +3,7 @@ import { NextFunction, Request, Response, Router } from 'express';
 import { Container } from 'typedi';
 import { Logger } from 'winston';
 import { IEstablishmentInputDTO } from '../../interfaces/IEstablishment';
+import { IUserInputDTO } from '../../interfaces/IUser';
 import SettingService from '../../services/settings';
 import middlewares from '../middlewares';
 
@@ -39,8 +40,8 @@ export default (app: Router) => {
       logger.debug('Calling Get-General endpoint with body: %o', req.body );
       try {
         const settingServiceInstance = Container.get(SettingService);
-        const generalSettings = await settingServiceInstance.GetGeneral(req.currentUser.establishmentId);
-        return res.status(201).json({ generalSettings });
+        const {establishment, userRecord } = await settingServiceInstance.GetGeneral(req.currentUser.establishmentId);
+        return res.status(201).json({ generalSettings: establishment, permissions: userRecord });
       } catch (e) {
         logger.error('🔥 error: %o', e);
         return next(e);
@@ -52,17 +53,19 @@ export default (app: Router) => {
     '/addUser',middlewares.isAuth, middlewares.attachCurrentUser,
     celebrate({
       body: Joi.object({
-        establishmentName: Joi.string().required(),
-        maxCapacity: Joi.number().required(),
-        notificationMessage: Joi.string().required()
+        name: Joi.string().required(),
+        email: Joi.string().required(),
+        phone: Joi.string().required(),
+        password: Joi.string().required(),
+        role: Joi.string().required()
       }),
     }),
     async (req: Request, res: Response, next: NextFunction) => {
       const logger:Logger = Container.get('logger');
-      logger.debug('Calling Save-General endpoint with body: %o', req.body );
+      logger.debug('Calling Add-User endpoint with body: %o', req.body );
       try {
         const settingServiceInstance = Container.get(SettingService);
-        await settingServiceInstance.Save(req.body as IEstablishmentInputDTO, req.currentUser.establishmentId);
+        await settingServiceInstance.AddUser(req.body as IUserInputDTO, req.currentUser.establishmentId);
         return res.status(201).json({ success: true });
       } catch (e) {
         logger.error('🔥 error: %o', e);
@@ -72,20 +75,21 @@ export default (app: Router) => {
   );
 
   route.post(
-    '/editUser',middlewares.isAuth, middlewares.attachCurrentUser,
+    '/saveUser',middlewares.isAuth, middlewares.attachCurrentUser,
     celebrate({
       body: Joi.object({
-        establishmentName: Joi.string().required(),
-        maxCapacity: Joi.number().required(),
-        notificationMessage: Joi.string().required()
+        name: Joi.string().required(),
+        email: Joi.string().required(),
+        phone: Joi.string().required(),
+        role: Joi.string().required()
       }),
     }),
     async (req: Request, res: Response, next: NextFunction) => {
       const logger:Logger = Container.get('logger');
-      logger.debug('Calling Save-General endpoint with body: %o', req.body );
+      logger.debug('Calling Edit-User endpoint with body: %o', req.body );
       try {
         const settingServiceInstance = Container.get(SettingService);
-        await settingServiceInstance.Save(req.body as IEstablishmentInputDTO, req.currentUser.establishmentId);
+        await settingServiceInstance.SaveUser(req.body as IUserInputDTO, req.currentUser.establishmentId);
         return res.status(201).json({ success: true });
       } catch (e) {
         logger.error('🔥 error: %o', e);
@@ -98,17 +102,18 @@ export default (app: Router) => {
     '/deleteUser',middlewares.isAuth, middlewares.attachCurrentUser,
     celebrate({
       body: Joi.object({
-        establishmentName: Joi.string().required(),
-        maxCapacity: Joi.number().required(),
-        notificationMessage: Joi.string().required()
+        name: Joi.string().required(),
+        email: Joi.string().required(),
+        phone: Joi.string().required(),
+        role: Joi.string().required()
       }),
     }),
     async (req: Request, res: Response, next: NextFunction) => {
       const logger:Logger = Container.get('logger');
-      logger.debug('Calling Save-General endpoint with body: %o', req.body );
+      logger.debug('Calling Delete-User endpoint with body: %o', req.body );
       try {
         const settingServiceInstance = Container.get(SettingService);
-        await settingServiceInstance.Save(req.body as IEstablishmentInputDTO, req.currentUser.establishmentId);
+        await settingServiceInstance.DeleteUser(req.body as IUserInputDTO, req.currentUser.establishmentId);
         return res.status(201).json({ success: true });
       } catch (e) {
         logger.error('🔥 error: %o', e);
@@ -121,9 +126,7 @@ export default (app: Router) => {
     '/addQuestion',middlewares.isAuth, middlewares.attachCurrentUser,
     celebrate({
       body: Joi.object({
-        establishmentName: Joi.string().required(),
-        maxCapacity: Joi.number().required(),
-        notificationMessage: Joi.string().required()
+        question: Joi.string().required(),
       }),
     }),
     async (req: Request, res: Response, next: NextFunction) => {
@@ -144,9 +147,7 @@ export default (app: Router) => {
     '/deleteQuestion',middlewares.isAuth, middlewares.attachCurrentUser,
     celebrate({
       body: Joi.object({
-        establishmentName: Joi.string().required(),
-        maxCapacity: Joi.number().required(),
-        notificationMessage: Joi.string().required()
+        question: Joi.string().required(),
       }),
     }),
     async (req: Request, res: Response, next: NextFunction) => {

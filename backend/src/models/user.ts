@@ -1,17 +1,17 @@
-import { IUser } from '../interfaces/IUser';
 import mongoose from 'mongoose';
+import { IUser } from '../interfaces/IUser';
 
 const User = new mongoose.Schema(
   {
     name: {
       type: String,
       required: [true, 'Please enter a full name'],
-      index: true,
     },
 
     email: {
       type: String,
       lowercase: true,
+      required: [true, 'Please enter valid email'],
       index: true,
     },
 

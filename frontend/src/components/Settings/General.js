@@ -5,9 +5,15 @@ import Paper from "@material-ui/core/Paper";
 import { makeStyles } from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
 import { Save } from "@material-ui/icons";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { axiosInstance } from "../../network/apis";
 import { setCurrentSetting } from "../../store/Setting/SettingAction";
+import Auth from "../../utils/Auth";
+import {
+  dispatchSnackbarError,
+  dispatchSnackbarSuccess,
+} from "../../utils/Shared";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -37,8 +43,64 @@ export default function General(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const category = useSelector((state) => state.setting.category);
-  const stateValues = useSelector((state) => state.setting.general);
-  const [values, setValues] = useState({ ...stateValues });
+  const [values, setValues] = useState({});
+  const token = Auth.isAuth();
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = () => {
+    const config = {
+      headers: { Authorization: `Bearer ${token}` },
+    };
+    axiosInstance
+      .get("/settings/getSettings", config)
+      .then((response) => {
+        console.log(response);
+        const {
+          establishmentId,
+          establishmentName,
+          maxCapacity,
+          notificationMessage,
+        } = response.data.generalSettings;
+        setValues({
+          establishmentId,
+          establishmentName,
+          maxCapacity,
+          notificationMessage,
+        });
+        dispatch(setCurrentSetting({ general: values }));
+      })
+      .catch((error) => {
+        console.log(error);
+        if (error.response != undefined)
+          dispatchSnackbarError(error.response.data);
+        else console.log(error);
+      });
+  };
+
+  const handleSave = async () => {
+    const config = {
+      headers: { Authorization: `Bearer ${token}` },
+    };
+    const { establishmentName, maxCapacity, notificationMessage } = values;
+    const requestOptions = {
+      establishmentName,
+      maxCapacity,
+      notificationMessage,
+    };
+    await axiosInstance
+      .post("/settings/saveGeneral", requestOptions, config)
+      .then((response) => {
+        dispatch(setCurrentSetting({ general: values }));
+        dispatchSnackbarSuccess("Settings Saved");
+      })
+      .catch((error) => {
+        // console.log(error.response.data.errors.message);
+        dispatchSnackbarError(error.response.data);
+      });
+  };
 
   return (
     <Paper className={classes.paper}>
@@ -51,7 +113,7 @@ export default function General(props) {
             <IconButton
               aria-label="save"
               style={{ marginTop: -15 }}
-              onClick={() => dispatch(setCurrentSetting({ general: values }))}
+              onClick={handleSave}
             >
               <Save />
             </IconButton>
@@ -116,8 +178,10 @@ export default function General(props) {
             variant="outlined"
             multiline
             rows={3}
-            value={values.message}
-            onChange={(e) => setValues({ ...values, message: e.target.value })}
+            value={values.notificationMessage}
+            onChange={(e) =>
+              setValues({ ...values, notificationMessage: e.target.value })
+            }
           />
         </Grid>
       </Grid>

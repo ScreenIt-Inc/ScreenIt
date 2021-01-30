@@ -26,19 +26,19 @@ function createData(name, email, number, role) {
 }
 
 const rows = [
-  createData("Cupcake", "test", 3.7, 67),
-  createData("Donut", 452, 25.0, 51),
-  createData("Eclair", 262, 16.0, 24),
-  createData("Frozen yoghurt", 159, 6.0, 24),
-  createData("Gingerbread", 356, 16.0, 49),
-  createData("Honeycomb", 408, 3.2, 87),
-  createData("Ice cream sandwich", 237, 9.0, 37),
-  createData("Jelly Bean", 375, 0.0, 94),
-  createData("KitKat", 518, 26.0, 65),
-  createData("Lollipop", 392, 0.2, 98),
-  createData("Marshmallow", 318, 0, 81),
-  createData("Nougat", 360, 19.0, 9),
-  createData("Oreo", 437, 18.0, 63),
+  createData("Cupcake", "test", 3.7, "Admin"),
+  createData("Donut", 452, 25.0, "Admin"),
+  createData("Eclair", 262, 16.0, "Admin"),
+  createData("Frozen yoghurt", 159, 6.0, "Admin"),
+  createData("Gingerbread", 356, 16.0, "Admin"),
+  createData("Honeycomb", 408, 3.2, "Admin"),
+  createData("Ice cream sandwich", 237, 9.0, "Admin"),
+  createData("Jelly Bean", 375, 0.0, "Admin"),
+  createData("KitKat", 518, 26.0, "Admin"),
+  createData("Lollipop", 392, 0.2, "Admin"),
+  createData("Marshmallow", 318, 0, "Admin"),
+  createData("Nougat", 360, 19.0, "Admin"),
+  createData("Oreo", 437, 18.0, "Admin"),
 ];
 
 function descendingComparator(a, b, orderBy) {
@@ -331,7 +331,7 @@ export default function Permissions() {
                     return (
                       <TableRow
                         hover
-                        onClick={(event) => handleClick(event, row.name)}
+                        // onClick={(event) => handleClick(event, row.name)}
                         role="checkbox"
                         aria-checked={isItemSelected}
                         tabIndex={-1}
@@ -342,6 +342,7 @@ export default function Permissions() {
                           <Checkbox
                             checked={isItemSelected}
                             inputProps={{ "aria-labelledby": labelId }}
+                            onClick={(event) => handleClick(event, row.name)}
                           />
                         </TableCell>
                         <TableCell
@@ -358,15 +359,18 @@ export default function Permissions() {
                           <FormControl className={classes.formControl}>
                             <Select
                               native
-                              value={row.role === "Admin" ? 1 : 0}
-                              //   onChange={handleChange}
+                              value={row.role}
+                              onChange={(e) => {
+                                console.log(e.target.value);
+                                row.role = e.target.value;
+                              }}
                               inputProps={{
                                 name: "row",
                                 id: "row-native-simple",
                               }}
                             >
-                              <option value={1}>Admin</option>
-                              <option value={0}>User</option>
+                              <option value={"Admin"}>Admin</option>
+                              <option value={"User"}>User</option>
                             </Select>
                           </FormControl>
                         </TableCell>

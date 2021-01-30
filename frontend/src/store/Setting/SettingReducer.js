@@ -6,7 +6,7 @@ const INITIAL_STATE = {
     establishmentName: "",
     establishmentId: 123321,
     maxCapacity: 250,
-    message: "You may now enter.",
+    notficationMessage: "You may now enter.",
   },
 };
 
