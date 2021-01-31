@@ -1,10 +1,11 @@
+import mongoose from 'mongoose';
 import { Container } from 'typedi';
 import { Logger } from 'winston';
 import mongoose from 'mongoose';
 import { IForm, IOpenFormUUID} from '../interfaces/IForm';
 import { v4 as uuidv4 } from 'uuid';
 
-//this might be the wrong place for this but ill fix as I learn
+
 export function formSubmit(data: Object){
 	const Logger : Logger = Container.get('logger');
 	const formModel = Container.get('formModel') as mongoose.Model<IForm & mongoose.Document>;
@@ -29,7 +30,6 @@ export function contactTrace(data: Object){
 	//Logger.debug(JSON.stringify(data));
 	return formModel.find({});
 }
-
 
 var qModel = mongoose.model('Questionnaire', new mongoose.Schema({ 'questionnaire': []}), 'questionnaire'); // last arg to connect model to collection questionaire
 export async function formPull(){

@@ -2,6 +2,7 @@ import pyqrcode
 import requests
 FORM_ENDPOINT = '/customerform'
 UUID_ENDPOINT = '/api/form/opennewformuuid'
+
 '''
 Argument INFO
 
@@ -35,4 +36,3 @@ def generateQR(siteBaseUrl, error='Q', save_Location='url.svg', scale=8):
 		url = pyqrcode.create(siteBaseUrl + FORM_ENDPOINT + '/' + uuid_data['data']['uuid'], error=error)
 		url.svg(save_Location, scale=scale)
 	return 0
-
