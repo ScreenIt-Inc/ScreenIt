@@ -6,6 +6,7 @@ const Form = new mongoose.Schema(
     uuid: {
       type: String,
       required: true,
+      index: true
     },
     temp: {
       type: Number,
@@ -24,7 +25,7 @@ const Form = new mongoose.Schema(
     email: {
       type: String,
       lowercase: true,
-      unique: true,
+      unique: false,
     },
     address: {
       type: String,
