@@ -18,6 +18,8 @@ import adafruit_amg88xx
 
 from detect_mask import FaceMaskDetector
 
+from generateQR import generateQR
+
 os.putenv('SDL_FBDEV', '/dev/fb1')
 pygame.init()
 
@@ -53,6 +55,9 @@ class TemperatureScreener:
     MASK_DETECTOR_NAME = "my_mask_detector"
     CONFIDENCE_THRESHOLD = 0.5
     
+    FORM_URL = "http://2971e5d3c256.ngrok.io"
+    QR_URL = "http://042aa62f6512.ngrok.io"
+    
     def __init__(self):
         self.maskDetected = False
         self.font = pygame.font.Font('freesansbold.ttf',20)
@@ -68,19 +73,19 @@ class TemperatureScreener:
         return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
 
     def displayQR(self, temperature, lcd):
-#        global maskDetected, displayMaskText, displayMaskTextRect
+        url = generateQR(TemperatureScreener.FORM_URL, TemperatureScreener.QR_URL, temperature, scale=9)
         print("HERE IS THE QR CODE")
-        url_str = 'https://docs.google.com/forms/d/e/1FAIpQLSdT-DBapgWGKcHGVlQj9MGPwh2uMVD8NWoPoFuR41yXDRBD_w/viewform?usp=pp_url&entry.1891876285=33'
-        url_str = url_str[:-2] + str(round(temperature, 1))
-        url = pyqrcode.create(url_str, error='Q')
-        url.png('url.png', scale=7)
         lcd.fill((255,255,255))
         image = pygame.image.load('./url.png')
         lcd.blit(image, (0, 0))
-        displayURL = self.font.render("google.ca/entry=32", True, (0,0,0))
-        displayURLRect = displayURL.get_rect()
-        displayURLRect.center = (TemperatureScreener.windowWidth * 3 // 4, TemperatureScreener.windowHeight // 2)
-        lcd.blit(displayURL, displayURLRect)
+        displayURL1 = self.font.render("Scan QR Code or Open the Link:", True, (0,0,0))
+        displayURLRect1 = displayURL1.get_rect()
+        displayURLRect1.center = (TemperatureScreener.windowWidth * 3 // 4, TemperatureScreener.windowHeight // 2.2)
+        lcd.blit(displayURL1, displayURLRect1)
+        displayURL2 = self.font.render(url, True, (0,0,0))
+        displayURLRect2 = displayURL2.get_rect()
+        displayURLRect2.center = (TemperatureScreener.windowWidth * 3 // 4, TemperatureScreener.windowHeight // 1.8)
+        lcd.blit(displayURL2, displayURLRect2)
         pygame.display.update()
         time.sleep(20)
         if os.path.exists("url.png"):
@@ -167,7 +172,7 @@ class TemperatureScreener:
                     calTemps = []
                     
                 if(len(calTemps) >= 5):
-                    self.displayQR(max(calTemps), lcd)
+                    self.displayQR(round(max(calTemps),1), lcd)
                     calTemps = []
                     
                 
