@@ -6,7 +6,8 @@ export interface IForm {
   address: string;
   phone: string;
   entry_time: Date;
-  exit_time: Date;
+  exit_time: Date
+  uuid: string;
   questionnaire: Array;
 }
 
@@ -14,3 +15,4 @@ export interface IOpenFormUUID {
   _id: string;
   uuid: string;
 }
+

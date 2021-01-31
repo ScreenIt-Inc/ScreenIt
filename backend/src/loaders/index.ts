@@ -49,6 +49,12 @@ export default async ({ expressApp }) => {
     name: 'establishmentModel',
     // Notice the require syntax and the '.default'
     model: require('../models/establishment').default,
+  }
+  
+  const OpenFormUUIDModel = {
+    name: 'OpenFormUUIDModel',
+    // Notice the require syntax and the '.default'
+    model: require('../models/form').OpenFormUUIDModel,
   };
 
   // It returns the agenda instance because it's needed in the subsequent loaders
@@ -60,6 +66,7 @@ export default async ({ expressApp }) => {
       customerModel,
       openFormUUIDModel,
       establishmentModel,
+      OpenFormUUIDModel,
     ],
   });
   Logger.info('✌️ Dependency Injector loaded');

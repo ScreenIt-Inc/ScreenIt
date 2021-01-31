@@ -70,7 +70,6 @@ export default function General(props) {
           maxCapacity,
           notificationMessage,
         });
-        dispatch(setCurrentSetting({ general: values }));
       })
       .catch((error) => {
         console.log(error);

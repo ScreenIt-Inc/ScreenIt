@@ -1,8 +1,8 @@
-import { Router, Request, Response, NextFunction } from 'express';
-const route = Router()
-import { Logger } from 'winston';
+import { NextFunction, Request, Response, Router } from 'express';
 import { Container } from 'typedi';
+import { Logger } from 'winston';
 import * as FormService from '../../services/form';
+const route = Router()
 
 export default (app: Router) => {
 	app.use('/form', route);

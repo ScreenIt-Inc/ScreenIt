@@ -16,27 +16,18 @@ import Typography from "@material-ui/core/Typography";
 import { Delete } from "@material-ui/icons";
 import clsx from "clsx";
 import PropTypes from "prop-types";
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import AddQuestionDialog from "../../components/Settings/AddQuestionDialog";
-function createData(id, question) {
-  return { id, question };
-}
-
-const rows = [
-  createData(1, "asdasd"),
-  createData(2, "asdasd"),
-  createData(3, "asdasd"),
-  createData(4, "asdasd"),
-  createData(5, "asdasd"),
-  createData(6, "asdasd"),
-  createData(7, "asdasd"),
-  createData(8, "asdasd"),
-  createData(9, "asdasd"),
-  createData(10, "asdasd"),
-];
+import { axiosInstance } from "../../network/apis";
+import Auth from "../../utils/Auth";
+import {
+  dispatchSnackbarError,
+  dispatchSnackbarSuccess,
+} from "../../utils/Shared";
 
 function descendingComparator(a, b, orderBy) {
+  console.log(a, b, orderBy);
   if (b[orderBy] < a[orderBy]) {
     return -1;
   }
@@ -99,18 +90,18 @@ function EnhancedTableHead(props) {
         </TableCell>
         {headCells.map((headCell) => (
           <TableCell
-            key={headCell.id}
+            key={headCell.qid}
             align={headCell.numeric ? "right" : "left"}
             padding={headCell.disablePadding ? "none" : "default"}
-            sortDirection={orderBy === headCell.id ? order : false}
+            sortDirection={orderBy === headCell.qid ? order : false}
           >
             <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : "asc"}
-              onClick={createSortHandler(headCell.id)}
+              active={orderBy === headCell.qid}
+              direction={orderBy === headCell.qid ? order : "asc"}
+              onClick={createSortHandler(headCell.qid)}
             >
               {headCell.label}
-              {orderBy === headCell.id ? (
+              {orderBy === headCell.qid ? (
                 <span className={classes.visuallyHidden}>
                   {order === "desc" ? "sorted descending" : "sorted ascending"}
                 </span>
@@ -157,8 +148,35 @@ const useToolbarStyles = makeStyles((theme) => ({
 
 const EnhancedTableToolbar = (props) => {
   const classes = useToolbarStyles();
-  const { numSelected } = props;
+  const { numSelected, loadData, selected, setSelected } = props;
   const category = useSelector((state) => state.setting.category);
+  const token = Auth.isAuth();
+
+  const handleDelete = async () => {
+    const config = {
+      headers: { Authorization: `Bearer ${token}` },
+    };
+    const requestOptions = { questions: selected };
+    await axiosInstance
+      .post("/settings/deleteQuestion", requestOptions, config)
+      .then((response) => {
+        // const { name, email, role } = values;
+        // dispatch(
+        //   setCurrentSetting({
+        //     permissions: [...currentUsers, { name, email, role }],
+        //   })
+        // );
+        setSelected([]);
+        dispatchSnackbarSuccess("Questions Deleted");
+      })
+      .catch((error) => {
+        console.log(error);
+        if (error.response != undefined)
+          dispatchSnackbarError(error.response.data);
+        else console.log(error);
+      });
+    loadData();
+  };
 
   return (
     <Toolbar
@@ -181,12 +199,12 @@ const EnhancedTableToolbar = (props) => {
 
       {numSelected > 0 ? (
         <Tooltip title="Delete">
-          <IconButton aria-label="delete">
+          <IconButton aria-label="delete" onClick={handleDelete}>
             <Delete />
           </IconButton>
         </Tooltip>
       ) : (
-        <AddQuestionDialog />
+        <AddQuestionDialog loadData={loadData} />
       )}
     </Toolbar>
   );
@@ -233,11 +251,45 @@ const useStyles = makeStyles((theme) => ({
 export default function Form() {
   const classes = useStyles();
   const [order, setOrder] = React.useState("asc");
-  const [orderBy, setOrderBy] = React.useState("calories");
+  const [orderBy, setOrderBy] = React.useState("qid");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
-  const [dense, setDense] = React.useState(false);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [dense] = React.useState(false);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [rows, setRows] = React.useState([]);
+  const token = Auth.isAuth();
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = () => {
+    const config = {
+      headers: { Authorization: `Bearer ${token}` },
+    };
+
+    axiosInstance
+      .get("/form/questionnaire", config)
+      .then((response) => {
+        const questions = response.data.questionnaire
+          .filter((question) => !question.isHeader)
+          .map((question, i) => {
+            return {
+              qid: i + 1,
+              question: question.question,
+            };
+          });
+        console.log("questions", questions);
+        setRows(questions);
+        // dispatch(setCurrentSetting({ permissions: rows }));
+      })
+      .catch((error) => {
+        console.log(error);
+        if (error.response != undefined)
+          dispatchSnackbarError(error.response.data);
+        else console.log(error);
+      });
+  };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -247,19 +299,19 @@ export default function Form() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = rows.map((n) => n.name);
+      const newSelecteds = rows.map((n) => n.question);
       setSelected(newSelecteds);
       return;
     }
     setSelected([]);
   };
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
+  const handleClick = (event, question) => {
+    const selectedIndex = selected.indexOf(question);
     let newSelected = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
+      newSelected = newSelected.concat(selected, question);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -283,7 +335,7 @@ export default function Form() {
     setPage(0);
   };
 
-  const isSelected = (name) => selected.indexOf(name) !== -1;
+  const isSelected = (question) => selected.indexOf(question) !== -1;
 
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
@@ -292,7 +344,12 @@ export default function Form() {
     <div className={classes.root}>
       <Paper className={classes.paper}>
         <div className={classes.container}>
-          <EnhancedTableToolbar numSelected={selected.length} />
+          <EnhancedTableToolbar
+            numSelected={selected.length}
+            loadData={loadData}
+            selected={selected}
+            setSelected={setSelected}
+          />
           <TableContainer>
             <Table
               className={classes.table}
@@ -313,17 +370,17 @@ export default function Form() {
                 {stableSort(rows, getComparator(order, orderBy))
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => {
-                    const isItemSelected = isSelected(row.id);
+                    const isItemSelected = isSelected(row.question);
                     const labelId = `enhanced-table-checkbox-${index}`;
 
                     return (
                       <TableRow
                         hover
-                        onClick={(event) => handleClick(event, row.id)}
+                        onClick={(event) => handleClick(event, row.question)}
                         role="checkbox"
                         aria-checked={isItemSelected}
                         tabIndex={-1}
-                        key={row.id}
+                        key={row.question}
                         selected={isItemSelected}
                       >
                         <TableCell padding="checkbox" width="10%">
@@ -340,7 +397,7 @@ export default function Form() {
                           align="right"
                           width="5%"
                         >
-                          {row.id}
+                          {row.qid}
                         </TableCell>
                         <TableCell align="left">{row.question}</TableCell>
                       </TableRow>
