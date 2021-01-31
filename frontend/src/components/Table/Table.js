@@ -1,6 +1,7 @@
 // Boilerplate for the orders table found on every page.
-import * as React from "react";
-import { useState } from "react";
+import Button from "@material-ui/core/Button";
+import Checkbox from "@material-ui/core/Checkbox";
+import IconButton from "@material-ui/core/IconButton";
 import Link from "@material-ui/core/Link";
 import { makeStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
@@ -8,16 +9,19 @@ import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import Checkbox from "@material-ui/core/Checkbox";
 import CircleCheckedFilled from "@material-ui/icons/CheckCircle";
 import CircleUnchecked from "@material-ui/icons/RadioButtonUnchecked";
 import UpdateIcon from "@material-ui/icons/Update";
-import IconButton from "@material-ui/core/IconButton";
-import Button from "@material-ui/core/Button";
-import Title from "./Title";
-import { dispatchSnackbarSuccess } from "../../utils/Shared";
+import * as React from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { axiosInstance } from "../../network/apis";
 import Auth from "../../utils/Auth";
+import {
+  dispatchSnackbarError,
+  dispatchSnackbarSuccess,
+} from "../../utils/Shared";
+import Title from "./Title";
 
 URL = "http://localhost:9000/api/visitors/getInfo"; //hardcode for now
 
@@ -29,43 +33,6 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.primary.light,
   },
 }));
-
-function createData(_id, firstname, lastname, phone, date) {
-  return { _id, firstname, lastname, phone, date };
-}
-
-const rowsDefault = [
-  createData(
-    0,
-    "Justeen",
-    "Randev",
-    "416-342-5436",
-    "2021-01-28T23:31:04.915Z"
-  ),
-  createData(1, "Gurnain", "Saini", "416-342-5436", "2021-01-28T23:31:04.915Z"),
-  createData(
-    2,
-    "Tasmiha",
-    "Hassan",
-    "416-342-5436",
-    "2021-01-28T23:31:04.915Z"
-  ),
-  createData(
-    3,
-    "Beyonce",
-    "Knowles",
-    "416-342-5436",
-    "2021-01-28T23:31:04.915Z"
-  ),
-  createData(
-    4,
-    "Khaleesi Mother of Dragons",
-    "416-342-5436",
-    "4",
-    "77",
-    212.79
-  ),
-];
 
 export default function TableQ(props) {
   const category = useSelector((state) => state.table.category);
@@ -82,20 +49,22 @@ export default function TableQ(props) {
   const handlePaid = (message) => {
     dispatchSnackbarSuccess(message);
   };
-  const date = new Date();
 
-  const getVisitorInfo = () => {
-    console.log("getting visitor information");
-    fetch(URL, {
-      method: "GET",
-      headers: {
-        Authorization: "Bearer " + Auth.isAuth(),
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    })
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      getVisitorInfo();
+    }, 2000);
+    return () => clearInterval(intervalId);
+  }, []);
+
+  const getVisitorInfo = async () => {
+    const config = {
+      headers: { Authorization: `Bearer ${Auth.isAuth()}` },
+    };
+    axiosInstance
+      .get("/visitors/getInfo", config)
       .then((response) => {
-        return response.json();
+        return response.data;
       })
       .then((data) => {
         var newEntries = data.filter((obj1) => {
@@ -103,10 +72,14 @@ export default function TableQ(props) {
             return obj1._id == obj2._id;
           });
         });
-        setRows(rows.concat(newEntries));
-        console.log(rows);
+        setRows([...rows, ...newEntries]);
       })
-      .catch();
+      .catch((error) => {
+        console.log(error);
+        if (error.response != undefined)
+          dispatchSnackbarError(error.response.data);
+        else console.log(error);
+      });
   };
 
   return (

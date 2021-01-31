@@ -5,7 +5,7 @@ const INITIAL_STATE = {
   category: "General",
   general: {
     establishmentName: "",
-    establishmentId: Auth.getUser().establishmentId,
+    establishmentId: Auth.getUser(),
     maxCapacity: 250,
     notficationMessage: "You may now enter.",
   },
