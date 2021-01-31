@@ -2,17 +2,21 @@ import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import FormControl from "@material-ui/core/FormControl";
 import IconButton from "@material-ui/core/IconButton";
-import InputLabel from "@material-ui/core/InputLabel";
-import Select from "@material-ui/core/Select";
 import Slide from "@material-ui/core/Slide";
 import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import Tooltip from "@material-ui/core/Tooltip";
 import { PostAdd } from "@material-ui/icons";
-import React from "react";
+import React, { useState } from "react";
+import { axiosInstance } from "../../network/apis";
+import Auth from "../../utils/Auth";
+import {
+  dispatchSnackbarError,
+  dispatchSnackbarSuccess,
+} from "../../utils/Shared";
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -28,10 +32,12 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function AddQuestionDialog() {
+export default function AddQuestionDialog({ loadData }) {
   const classes = useStyles();
 
   const [open, setOpen] = React.useState(false);
+  const [question, setQuestion] = useState("");
+  const token = Auth.isAuth();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -39,6 +45,33 @@ export default function AddQuestionDialog() {
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const handleAdd = async () => {
+    const config = {
+      headers: { Authorization: `Bearer ${token}` },
+    };
+    const requestOptions = {
+      question,
+    };
+    await axiosInstance
+      .post("/settings/addQuestion", requestOptions, config)
+      .then((response) => {
+        // dispatch(
+        //   setCurrentSetting({
+        //     permissions: [...currentUsers, { name, email, role }],
+        //   })
+        // );
+        dispatchSnackbarSuccess("Question Added");
+      })
+      .catch((error) => {
+        console.log(error);
+        if (error.response != undefined)
+          dispatchSnackbarError(error.response.data);
+        else console.log(error);
+      });
+    loadData();
+    handleClose();
   };
 
   return (
@@ -54,53 +87,27 @@ export default function AddQuestionDialog() {
         aria-labelledby="form-dialog-title"
         TransitionComponent={Transition}
       >
-        <DialogTitle id="form-dialog-title">Add User</DialogTitle>
+        <DialogTitle id="form-dialog-title">Add Question</DialogTitle>
         <DialogContent>
+          <DialogContentText>
+            The header of the question is "Do you have any of the following new
+            or worsening symptoms or signs?", followed by Yes or No answers.
+          </DialogContentText>
           <TextField
             autoFocus
             margin="normal"
-            id="name"
-            label="Full Name"
-            type="name"
-          />
-          <TextField
-            autoFocus
-            margin="normal"
-            id="email"
-            label="Email Address"
-            type="email"
-          />
-          <TextField
-            autoFocus
-            margin="normal"
-            id="number"
-            label="Phone Number"
-            type="number"
+            id="symptom"
+            label="Sign or Symptom"
+            type="symptom"
             fullWidth
+            onChange={(e) => setQuestion(e.target.value)}
           />
-          <FormControl variant="outlined" className={classes.formControl}>
-            <InputLabel htmlFor="outlined-age-native-simple">Age</InputLabel>
-            <Select
-              native
-              value={1}
-              //   onChange={handleChange}
-              label="Role"
-              inputProps={{
-                name: "age",
-                id: "outlined-age-native-simple",
-              }}
-            >
-              <option aria-label="None" value="" />
-              <option value={1}>Admin</option>
-              <option value={0}>User</option>
-            </Select>
-          </FormControl>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
             Cancel
           </Button>
-          <Button onClick={handleClose} color="primary">
+          <Button onClick={handleAdd} color="primary">
             Add
           </Button>
         </DialogActions>

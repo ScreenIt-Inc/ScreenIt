@@ -4,6 +4,7 @@ import { Container } from 'typedi';
 import { Logger } from 'winston';
 import { IEstablishmentInputDTO } from '../../interfaces/IEstablishment';
 import { IUserInputDTO } from '../../interfaces/IUser';
+import * as FormService from '../../services/form';
 import SettingService from '../../services/settings';
 import middlewares from '../middlewares';
 
@@ -125,10 +126,9 @@ export default (app: Router) => {
     }),
     async (req: Request, res: Response, next: NextFunction) => {
       const logger:Logger = Container.get('logger');
-      logger.debug('Calling Save-General endpoint with body: %o', req.body );
+      logger.debug('Calling Adding-Question endpoint with body: %o', req.body );
       try {
-        const settingServiceInstance = Container.get(SettingService);
-        await settingServiceInstance.Save(req.body as IEstablishmentInputDTO, req.currentUser.establishmentId);
+        FormService.AddQuestion(req.body.question);
         return res.status(201).json({ success: true });
       } catch (e) {
         logger.error('🔥 error: %o', e);
@@ -140,16 +140,14 @@ export default (app: Router) => {
   route.post(
     '/deleteQuestion',middlewares.isAuth, middlewares.attachCurrentUser,
     celebrate({
-      body: Joi.object({
-        question: Joi.string().required(),
-      }),
-    }),
+      body: {
+        questions: Joi.array()
+    }}),
     async (req: Request, res: Response, next: NextFunction) => {
       const logger:Logger = Container.get('logger');
-      logger.debug('Calling Save-General endpoint with body: %o', req.body );
+      logger.debug('Calling Delete-Question endpoint with body: %o', req.body );
       try {
-        const settingServiceInstance = Container.get(SettingService);
-        await settingServiceInstance.Save(req.body as IEstablishmentInputDTO, req.currentUser.establishmentId);
+        FormService.DeleteQuestion(req.body.questions);
         return res.status(201).json({ success: true });
       } catch (e) {
         logger.error('🔥 error: %o', e);

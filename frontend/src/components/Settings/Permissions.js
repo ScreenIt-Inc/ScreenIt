@@ -18,28 +18,15 @@ import Typography from "@material-ui/core/Typography";
 import { Delete } from "@material-ui/icons";
 import clsx from "clsx";
 import PropTypes from "prop-types";
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import AddUserDialog from "../../components/Settings/AddUserDialog";
-function createData(name, email, number, role) {
-  return { name, email, number, role };
-}
-
-const rows = [
-  createData("Cupcake", "test", 3.7, "Admin"),
-  createData("Donut", 452, 25.0, "Admin"),
-  createData("Eclair", 262, 16.0, "Admin"),
-  createData("Frozen yoghurt", 159, 6.0, "Admin"),
-  createData("Gingerbread", 356, 16.0, "Admin"),
-  createData("Honeycomb", 408, 3.2, "Admin"),
-  createData("Ice cream sandwich", 237, 9.0, "Admin"),
-  createData("Jelly Bean", 375, 0.0, "Admin"),
-  createData("KitKat", 518, 26.0, "Admin"),
-  createData("Lollipop", 392, 0.2, "Admin"),
-  createData("Marshmallow", 318, 0, "Admin"),
-  createData("Nougat", 360, 19.0, "Admin"),
-  createData("Oreo", 437, 18.0, "Admin"),
-];
+import { axiosInstance } from "../../network/apis";
+import Auth from "../../utils/Auth";
+import {
+  dispatchSnackbarError,
+  dispatchSnackbarSuccess,
+} from "../../utils/Shared";
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -75,12 +62,6 @@ const headCells = [
     label: "Name",
   },
   { id: "email", numeric: false, disablePadding: false, label: "Email" },
-  {
-    id: "number",
-    numeric: false,
-    disablePadding: false,
-    label: "Phone Number",
-  },
   { id: "role", numeric: false, disablePadding: false, label: "Role" },
 ];
 
@@ -169,8 +150,35 @@ const useToolbarStyles = makeStyles((theme) => ({
 
 const EnhancedTableToolbar = (props) => {
   const classes = useToolbarStyles();
-  const { numSelected } = props;
+  const { numSelected, loadData, selected, setSelected } = props;
   const category = useSelector((state) => state.setting.category);
+  const token = Auth.isAuth();
+
+  const handleDelete = async () => {
+    const config = {
+      headers: { Authorization: `Bearer ${token}` },
+    };
+    const requestOptions = { emails: selected };
+    await axiosInstance
+      .post("/settings/deleteUser", requestOptions, config)
+      .then((response) => {
+        // const { name, email, role } = values;
+        // dispatch(
+        //   setCurrentSetting({
+        //     permissions: [...currentUsers, { name, email, role }],
+        //   })
+        // );
+        setSelected([]);
+        dispatchSnackbarSuccess("Users Deleted");
+      })
+      .catch((error) => {
+        console.log(error);
+        if (error.response != undefined)
+          dispatchSnackbarError(error.response.data);
+        else console.log(error);
+      });
+    loadData();
+  };
 
   return (
     <Toolbar
@@ -193,12 +201,12 @@ const EnhancedTableToolbar = (props) => {
 
       {numSelected > 0 ? (
         <Tooltip title="Delete">
-          <IconButton aria-label="delete">
+          <IconButton aria-label="delete" onClick={handleDelete}>
             <Delete />
           </IconButton>
         </Tooltip>
       ) : (
-        <AddUserDialog />
+        <AddUserDialog loadData={loadData} />
       )}
     </Toolbar>
   );
@@ -245,11 +253,69 @@ const useStyles = makeStyles((theme) => ({
 export default function Permissions() {
   const classes = useStyles();
   const [order, setOrder] = React.useState("asc");
-  const [orderBy, setOrderBy] = React.useState("calories");
+  const [orderBy, setOrderBy] = React.useState("name");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rows, setRows] = React.useState([]);
+  const token = Auth.isAuth();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = () => {
+    const config = {
+      headers: { Authorization: `Bearer ${token}` },
+    };
+    axiosInstance
+      .get("/settings/getSettings", config)
+      .then((response) => {
+        console.log(response);
+        const users = response.data.permissions.map((user) => {
+          return {
+            name: user.name,
+            email: user.email,
+            role: user.role,
+          };
+        });
+        setRows(users);
+        // dispatch(setCurrentSetting({ permissions: rows }));
+      })
+      .catch((error) => {
+        console.log(error);
+        if (error.response != undefined)
+          dispatchSnackbarError(error.response.data);
+        else console.log(error);
+      });
+  };
+
+  const handleEdit = async (role, user) => {
+    const config = {
+      headers: { Authorization: `Bearer ${token}` },
+    };
+    const requestOptions = { ...user, role: role };
+    await axiosInstance
+      .post("/settings/saveUser", requestOptions, config)
+      .then((response) => {
+        // const { name, email, role } = values;
+        // dispatch(
+        //   setCurrentSetting({
+        //     permissions: [...currentUsers, { name, email, role }],
+        //   })
+        // );
+        dispatchSnackbarSuccess("Users Settings Saved");
+      })
+      .catch((error) => {
+        console.log(error);
+        if (error.response != undefined)
+          dispatchSnackbarError(error.response.data);
+        else console.log(error);
+      });
+    loadData();
+  };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -259,19 +325,19 @@ export default function Permissions() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = rows.map((n) => n.name);
+      const newSelecteds = rows.map((n) => n.email);
       setSelected(newSelecteds);
       return;
     }
     setSelected([]);
   };
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
+  const handleClick = (event, email) => {
+    const selectedIndex = selected.indexOf(email);
     let newSelected = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
+      newSelected = newSelected.concat(selected, email);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -295,7 +361,7 @@ export default function Permissions() {
     setPage(0);
   };
 
-  const isSelected = (name) => selected.indexOf(name) !== -1;
+  const isSelected = (email) => selected.indexOf(email) !== -1;
 
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
@@ -304,7 +370,12 @@ export default function Permissions() {
     <div className={classes.root}>
       <Paper className={classes.paper}>
         <div className={classes.container}>
-          <EnhancedTableToolbar numSelected={selected.length} />
+          <EnhancedTableToolbar
+            numSelected={selected.length}
+            loadData={loadData}
+            selected={selected}
+            setSelected={setSelected}
+          />
           <TableContainer>
             <Table
               className={classes.table}
@@ -325,24 +396,23 @@ export default function Permissions() {
                 {stableSort(rows, getComparator(order, orderBy))
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => {
-                    const isItemSelected = isSelected(row.name);
+                    const isItemSelected = isSelected(row.email);
                     const labelId = `enhanced-table-checkbox-${index}`;
 
                     return (
                       <TableRow
                         hover
-                        // onClick={(event) => handleClick(event, row.name)}
                         role="checkbox"
                         aria-checked={isItemSelected}
                         tabIndex={-1}
-                        key={row.name}
+                        key={row.email}
                         selected={isItemSelected}
                       >
                         <TableCell padding="checkbox">
                           <Checkbox
                             checked={isItemSelected}
                             inputProps={{ "aria-labelledby": labelId }}
-                            onClick={(event) => handleClick(event, row.name)}
+                            onClick={(event) => handleClick(event, row.email)}
                           />
                         </TableCell>
                         <TableCell
@@ -354,15 +424,27 @@ export default function Permissions() {
                           {row.name}
                         </TableCell>
                         <TableCell align="left">{row.email}</TableCell>
-                        <TableCell align="left">{row.number}</TableCell>
                         <TableCell align="left">
                           <FormControl className={classes.formControl}>
                             <Select
                               native
                               value={row.role}
+                              // onChange={(e) => {
+                              //   console.log(e.target.value);
+                              //   let newRows = rows;
+                              //   const objIndex = newRows.findIndex(
+                              //     (element) => element.email === row.email
+                              //   );
+                              //   newRows[objIndex] = {
+                              //     ...newRows[objIndex],
+                              //     role: e.target.value,
+                              //   };
+
+                              //   console.log(newRows);
+                              //   setRows(newRows);
+                              // }}
                               onChange={(e) => {
-                                console.log(e.target.value);
-                                row.role = e.target.value;
+                                handleEdit(e.target.value, row);
                               }}
                               inputProps={{
                                 name: "row",

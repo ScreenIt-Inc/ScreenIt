@@ -10,6 +10,8 @@ export default async ({ expressApp }) => {
   const mongoConnection = await mongooseLoader();
   Logger.info('✌️ DB loaded and connected!');
 
+  //if questionaire does not exist, push default here
+
   /**
    * WTF is going on here?
    *
@@ -34,6 +36,12 @@ export default async ({ expressApp }) => {
     name: 'establishmentModel',
     // Notice the require syntax and the '.default'
     model: require('../models/establishment').default,
+  }
+  
+  const OpenFormUUIDModel = {
+    name: 'OpenFormUUIDModel',
+    // Notice the require syntax and the '.default'
+    model: require('../models/form').OpenFormUUIDModel,
   };
 
   // It returns the agenda instance because it's needed in the subsequent loaders
@@ -43,6 +51,7 @@ export default async ({ expressApp }) => {
       userModel,
       formModel,
       establishmentModel,
+      OpenFormUUIDModel,
     ],
   });
   Logger.info('✌️ Dependency Injector loaded');
