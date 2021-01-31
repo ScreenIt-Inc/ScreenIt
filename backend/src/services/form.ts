@@ -1,7 +1,9 @@
+import React from 'react'
+import uuid from 'react-uuid'
 import { Container } from 'typedi';
 import { Logger } from 'winston';
 import mongoose from 'mongoose';
-import { IForm } from '../interfaces/IForm';
+import { IForm, IOpenFormUUID} from '../interfaces/IForm';
 
 //this might be the wrong place for this but ill fix as I learn
 export function formSubmit(data: Object){
@@ -37,4 +39,16 @@ var qModel = mongoose.model('Questionnaire', new mongoose.Schema({ 'questionnair
 export async function formPull(){
 	const Logger : Logger = Container.get('logger');
 	return qModel.find({}) //should just be a single value, so pull all returns an array
+}
+
+export function newFormURL() {
+	const OpenFormUUIDModel = Container.get('OpenFormUUIDModel') as mongoose.Model<IOpenFormUUID & mongoose.Document>;
+	let uuid = {'uuid':  uuid()};
+	const newModel = new OpenFormUUIDModel(uuid);
+	newModel.save(function (err) {
+		if (err) return Logger.error('New uuid not saved');
+		Logger.verbose('New uuid saved');
+		Logger.debug(JSON.stringify(uuid));
+	});
+	return uuid
 }
