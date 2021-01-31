@@ -47,7 +47,7 @@ const Form = new mongoose.Schema(
   { timestamps: true },
 );
 
-export default mongoose.model<IForm & mongoose.Document>('Form', Form);
+exports.Form = mongoose.model<IForm & mongoose.Document>('Form', Form);
 
 
 const OpenFormUUID = new mongoose.Schema(
@@ -55,9 +55,10 @@ const OpenFormUUID = new mongoose.Schema(
     uuid: {
       type: String,
       required: true,
-    }
+      index: true,
+      unique: true,
+    },
   },
   { timestamps: true },
 );
-var OpenFormUUIDModel = mongoose.model<IOpenFormUUID & mongoose.Document>('OpenFormUUID', OpenFormUUID)
-export { OpenFormUUIDModel };
+exports.OpenFormUUIDModel = mongoose.model<IOpenFormUUID & mongoose.Document>('OpenFormUUID', OpenFormUUID);

@@ -5,6 +5,8 @@ import * as LazyComponent from "../utils/LazyLoaded";
 import PrivateRoute from "../utils/PrivateRoute";
 import history from "./History";
 
+
+
 const Routes = () => {
   return (
     <Suspense fallback={<Loader />}>

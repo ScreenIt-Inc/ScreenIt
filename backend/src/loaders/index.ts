@@ -29,7 +29,20 @@ export default async ({ expressApp }) => {
   const formModel = {
     name: 'formModel',
     // Notice the require syntax and the '.default'
-    model: require('../models/form').default,
+    model: require('../models/form').Form,
+  };
+
+  const customerModel = {
+    name: 'customerModel',
+    // Notice the require syntax and the '.default'
+    model: require('../models/customer').default,
+  }
+
+
+  const openFormUUIDModel = {
+    name: 'OpenFormUUIDModel',
+    // Notice the require syntax and the '.default'
+    model: require('../models/form').OpenFormUUIDModel,
   };
 
   const establishmentModel = {
@@ -50,6 +63,8 @@ export default async ({ expressApp }) => {
     models: [
       userModel,
       formModel,
+      customerModel,
+      openFormUUIDModel,
       establishmentModel,
       OpenFormUUIDModel,
     ],

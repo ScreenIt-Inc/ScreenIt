@@ -155,7 +155,7 @@ export default function Navbar({ props }) {
                 onClick={() => setSelected(i)}
                 component={Link}
                 to={page.route}
-                disabled={page.adminRequired && Auth.getUser().role === "Admin"}
+
               >
                 <ListItemIcon
                   className={
@@ -175,7 +175,6 @@ export default function Navbar({ props }) {
             <ListItem
               button
               key="Sign Out"
-              onClick={() => Auth.signOut()}
               component={Link}
               to={"/login"}
             >

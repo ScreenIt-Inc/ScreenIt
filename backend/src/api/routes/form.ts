@@ -23,15 +23,30 @@ export default (app: Router) => {
 			});
 		});
 
+	route.get("/getForms", function(req: Request, res: Response){
+		  Logger.verbose(`Recieved get customers request`);
+			FormService.getForms().then(function(data) {
+			Logger.verbose(data);
+			res.json(data); //sends json data back (only want the first value), method name 'json' is misleading
+		});
+	});
+
+	route.get("/contactTrace", function(req: Request, res: Response){
+		  Logger.verbose(`Recieved get customers request`);
+			FormService.contactTrace().then(function(data) {
+			Logger.verbose(data[0]);
+			res.json(data); //sends json data back (only want the first value), method name 'json' is misleading
+		});
+	});
+
   	route.get("/opennewformuuid", function(req: Request, res: Response){
 		    Logger.verbose(`Recieved new form endpoint get route`);
-		    const uuid = FormService.newFormURL();
-			res.json(uuid)
+		    var uuid = FormService.newFormURL(res); //response handled by service this time, maybe worth moving here
 		});
 
   	route.get("/openformuuids", function(req: Request, res: Response){
 		    Logger.verbose(`Recieved new form endpoint get route`);
-			FormService.newFormURL().then(function(data) {
+			FormService.getOpenFormUrls().then(function(data) {
 				Logger.verbose(data);
 				res.json(data);  //sends json data back (only want the first value), method name 'json' is misleading
 			});

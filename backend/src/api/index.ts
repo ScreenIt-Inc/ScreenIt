@@ -4,6 +4,7 @@ import user from "./routes/user";
 import agendash from "./routes/agendash";
 import form from "./routes/form";
 import visitor from "./routes/visitor";
+import customer from './routes/customer';
 import Logger from "../loaders/logger";
 import settings from './routes/settings';
 
@@ -16,6 +17,7 @@ export default () => {
   form(app);
   visitor(app);
   settings(app);
+  customer(app);
 
   Logger.info(JSON.stringify(app.stack));
   return app;
