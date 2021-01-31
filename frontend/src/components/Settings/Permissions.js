@@ -253,7 +253,7 @@ const useStyles = makeStyles((theme) => ({
 export default function Permissions() {
   const classes = useStyles();
   const [order, setOrder] = React.useState("asc");
-  const [orderBy, setOrderBy] = React.useState("calories");
+  const [orderBy, setOrderBy] = React.useState("name");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
@@ -290,6 +290,31 @@ export default function Permissions() {
           dispatchSnackbarError(error.response.data);
         else console.log(error);
       });
+  };
+
+  const handleEdit = async (role, user) => {
+    const config = {
+      headers: { Authorization: `Bearer ${token}` },
+    };
+    const requestOptions = { ...user, role: role };
+    await axiosInstance
+      .post("/settings/saveUser", requestOptions, config)
+      .then((response) => {
+        // const { name, email, role } = values;
+        // dispatch(
+        //   setCurrentSetting({
+        //     permissions: [...currentUsers, { name, email, role }],
+        //   })
+        // );
+        dispatchSnackbarSuccess("Users Settings Saved");
+      })
+      .catch((error) => {
+        console.log(error);
+        if (error.response != undefined)
+          dispatchSnackbarError(error.response.data);
+        else console.log(error);
+      });
+    loadData();
   };
 
   const handleRequestSort = (event, property) => {
@@ -377,7 +402,6 @@ export default function Permissions() {
                     return (
                       <TableRow
                         hover
-                        // onClick={(event) => handleClick(event, row.name)}
                         role="checkbox"
                         aria-checked={isItemSelected}
                         tabIndex={-1}
@@ -405,9 +429,22 @@ export default function Permissions() {
                             <Select
                               native
                               value={row.role}
+                              // onChange={(e) => {
+                              //   console.log(e.target.value);
+                              //   let newRows = rows;
+                              //   const objIndex = newRows.findIndex(
+                              //     (element) => element.email === row.email
+                              //   );
+                              //   newRows[objIndex] = {
+                              //     ...newRows[objIndex],
+                              //     role: e.target.value,
+                              //   };
+
+                              //   console.log(newRows);
+                              //   setRows(newRows);
+                              // }}
                               onChange={(e) => {
-                                console.log(e.target.value);
-                                row.role = e.target.value;
+                                handleEdit(e.target.value, row);
                               }}
                               inputProps={{
                                 name: "row",

@@ -26,6 +26,21 @@ export async function formPull(){
 	return qModel.find({}) //should just be a single value, so pull all returns an array
 }
 
+// last arg to connect model to collection questionaire
+export async function AddQuestion(question: string){
+	const Logger : Logger = Container.get('logger');
+	Logger.silly('Adding question', question);
+	const results = await qModel.updateOne({_id: "600deff3cef12d5f393a3b49"}, { $addToSet: { questionnaire: {question, answers: ["Yes", "No"], isHeader: false}}}) 
+	console.log(results)//should just be a single value, so pull all returns an array
+  }
+
+  export async function DeleteQuestion(questions: Array<string>){
+	const Logger : Logger = Container.get('logger');
+	Logger.silly('Deletingg question', questions);
+	const results = await qModel.updateMany({_id: "600deff3cef12d5f393a3b49"}, { $pull: { questionnaire: {question: { $in: questions} }}}) 
+	console.log(results)//should just be a single value, so pull all returns an array
+  }
+
 // to generate UUID https://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid
 function uuidv4() {
   return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
