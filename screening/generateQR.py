@@ -30,11 +30,11 @@ scale:
     This method will accept fractional scales (e.g. 2.5).
 '''
 #saves to url
-def generateQR(siteBaseUrl, temp, error='Q', save_Location='url.png', scale=8):
-    url_str = siteBaseUrl + UUID_ENDPOINT + '/' + str(temp)
+def generateQR(formBaseUrl, qrBaseUrl, temp, error='Q', save_Location='url.png', scale=8):
+    url_str = qrBaseUrl + UUID_ENDPOINT + '/' + str(temp)
     r = requests.get(url=url_str)
     uuid_data = r.json()
     if uuid_data['success']:
-        url = pyqrcode.create(siteBaseUrl + FORM_ENDPOINT + '/' + uuid_data['data']['uuid'], error=error)
+        url = pyqrcode.create(formBaseUrl + FORM_ENDPOINT + '/' + uuid_data['data']['uuid'], error=error)
         url.png(save_Location, scale=scale)
     return url_str
