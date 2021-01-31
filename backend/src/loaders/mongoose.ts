@@ -1,5 +1,5 @@
-import mongoose from 'mongoose';
 import { Db } from 'mongodb';
+import mongoose from 'mongoose';
 import config from '../config';
 
 export default async (): Promise<Db> => {
@@ -7,6 +7,7 @@ export default async (): Promise<Db> => {
     useNewUrlParser: true,
     useCreateIndex: true,
     useUnifiedTopology: true,
+    useFindAndModify: false,
   });
   return connection.connection.db;
 };

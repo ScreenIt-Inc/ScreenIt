@@ -1,10 +1,10 @@
-import expressLoader from './express';
 import dependencyInjectorLoader from './dependencyInjector';
-import mongooseLoader from './mongoose';
-import jobsLoader from './jobs';
-import Logger from './logger';
 //We have to import at least all the events once so they can be triggered
 import './events';
+import expressLoader from './express';
+import jobsLoader from './jobs';
+import Logger from './logger';
+import mongooseLoader from './mongoose';
 
 export default async ({ expressApp }) => {
   const mongoConnection = await mongooseLoader();
@@ -30,12 +30,19 @@ export default async ({ expressApp }) => {
     model: require('../models/form').default,
   };
 
+  const establishmentModel = {
+    name: 'establishmentModel',
+    // Notice the require syntax and the '.default'
+    model: require('../models/establishment').default,
+  };
+
   // It returns the agenda instance because it's needed in the subsequent loaders
   const { agenda } = await dependencyInjectorLoader({
     mongoConnection,
     models: [
       userModel,
       formModel,
+      establishmentModel,
     ],
   });
   Logger.info('✌️ Dependency Injector loaded');

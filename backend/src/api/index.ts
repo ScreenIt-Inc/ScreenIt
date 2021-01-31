@@ -5,6 +5,8 @@ import agendash from "./routes/agendash";
 import form from "./routes/form";
 import visitor from "./routes/visitor";
 import Logger from "../loaders/logger";
+import settings from './routes/settings';
+
 // guaranteed to get dependencies
 export default () => {
   const app = Router();
@@ -13,6 +15,7 @@ export default () => {
   agendash(app);
   form(app);
   visitor(app);
+  settings(app);
 
   Logger.info(JSON.stringify(app.stack));
   return app;
