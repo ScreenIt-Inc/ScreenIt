@@ -55,7 +55,6 @@ export default (app: Router) => {
       body: Joi.object({
         name: Joi.string().required(),
         email: Joi.string().required(),
-        phone: Joi.string().required(),
         password: Joi.string().required(),
         role: Joi.string().required()
       }),
@@ -80,7 +79,6 @@ export default (app: Router) => {
       body: Joi.object({
         name: Joi.string().required(),
         email: Joi.string().required(),
-        phone: Joi.string().required(),
         role: Joi.string().required()
       }),
     }),
@@ -101,19 +99,15 @@ export default (app: Router) => {
   route.post(
     '/deleteUser',middlewares.isAuth, middlewares.attachCurrentUser,
     celebrate({
-      body: Joi.object({
-        name: Joi.string().required(),
-        email: Joi.string().required(),
-        phone: Joi.string().required(),
-        role: Joi.string().required()
-      }),
-    }),
+      body: {
+        emails: Joi.array()
+    }}),
     async (req: Request, res: Response, next: NextFunction) => {
       const logger:Logger = Container.get('logger');
       logger.debug('Calling Delete-User endpoint with body: %o', req.body );
       try {
         const settingServiceInstance = Container.get(SettingService);
-        await settingServiceInstance.DeleteUser(req.body as IUserInputDTO, req.currentUser.establishmentId);
+        await settingServiceInstance.DeleteUser(req.body.emails, req.currentUser.establishmentId);
         return res.status(201).json({ success: true });
       } catch (e) {
         logger.error('🔥 error: %o', e);

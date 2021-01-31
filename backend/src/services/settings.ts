@@ -90,14 +90,14 @@ export default class SettingService {
     }
   }
 
-  public async DeleteUser(userInputDTO: IUserInputDTO, establishmentId: string): Promise<{ user: IUser; }> {
+  public async DeleteUser(emails: Array<string>, establishmentId: string) {
     try {
-      this.logger.silly('Creating user db record');
-      const deleteUser = { email: userInputDTO.email, establishmentId }
-      const userRecord = await this.userModel.findOneAndDelete(deleteUser)
+      this.logger.silly('Deleting users');
+      console.log(emails)
+      const query = { email: { $in: emails }, establishmentId }
+      const userRecord = await this.userModel.deleteMany(query)
       this.logger.silly('User Delete');
-      const user = userRecord.toObject();
-      return {user};
+      return {userRecord};
     } catch (e) {
       this.logger.error(e);
       throw e;
