@@ -59,24 +59,18 @@ export async function getOpenFormUrls() {
 }
 
 
-var qModel = mongoose.model('Questionnaire', new mongoose.Schema({ 'questionnaire': []}), 'questionnaire'); // last arg to connect model to collection questionaire
-export async function formPull(){
-	const Logger : Logger = Container.get('logger');
-	return qModel.find({}) //should just be a single value, so pull all returns an array
-}
-
 // last arg to connect model to collection questionaire
 export async function AddQuestion(question: string){
 	const Logger : Logger = Container.get('logger');
 	Logger.silly('Adding question', question);
-	const results = await qModel.updateOne({_id: "600deff3cef12d5f393a3b49"}, { $addToSet: { questionnaire: {question, answers: ["Yes", "No"], isHeader: false}}}) 
+	const results = await qModel.updateOne({_id: "600deff3cef12d5f393a3b49"}, { $addToSet: { questionnaire: {question, answers: ["Yes", "No"], isHeader: false}}})
 	console.log(results)//should just be a single value, so pull all returns an array
   }
 
   export async function DeleteQuestion(questions: Array<string>){
 	const Logger : Logger = Container.get('logger');
 	Logger.silly('Deletingg question', questions);
-	const results = await qModel.updateMany({_id: "600deff3cef12d5f393a3b49"}, { $pull: { questionnaire: {question: { $in: questions} }}}) 
+	const results = await qModel.updateMany({_id: "600deff3cef12d5f393a3b49"}, { $pull: { questionnaire: {question: { $in: questions} }}})
 	console.log(results)//should just be a single value, so pull all returns an array
   }
 
