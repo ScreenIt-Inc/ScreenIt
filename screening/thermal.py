@@ -1,6 +1,3 @@
-"""This example is for Raspberry Pi (Linux) only!
-   It will not work on microcontrollers running CircuitPython!"""
-
 import os
 import math
 import time
@@ -11,6 +8,7 @@ import board
 
 import numpy as np
 import pygame
+import sys
 from scipy.interpolate import griddata
 
 from colour import Color
@@ -18,166 +16,207 @@ import pyqrcode
 
 import adafruit_amg88xx
 
-i2c_bus = busio.I2C(board.SCL, board.SDA)
-
-#low range of the sensor (this will be blue on the screen)
-MINTEMP = 26.
-
-#high range of the sensor (this will be red on the screen)
-MAXTEMP = 32.
-
-#how many color values we can have
-COLORDEPTH = 1024
+from detect_mask import FaceMaskDetector
 
 os.putenv('SDL_FBDEV', '/dev/fb1')
 pygame.init()
 
-#initialize the sensor
-sensor = adafruit_amg88xx.AMG88XX(i2c_bus)
+class TemperatureScreener:
+    #low range of the sensor (this will be blue on the screen)
+    MINTEMP = 26.
 
-# width, height interpolated from 8x8
-interpolatedSize = 128j
+    #high range of the sensor (this will be red on the screen)
+    #assumed to be the temperature at which thermal sensor can start detecting heat from human body
+    MAXTEMP = 32.
 
-displayBoxes = 120
-
-# pylint: disable=invalid-slice-index
-points = [(math.floor(ix / 8), (ix % 8)) for ix in range(0, 64)]
-grid_x, grid_y = np.mgrid[0:7:interpolatedSize, 0:7:interpolatedSize]
-# pylint: enable=invalid-slice-index
-
-#sensor is an 8x8 grid so lets do a square
-height = 480
-width = 480
-
-#the list of colors we can choose from
-blue = Color("indigo")
-colors = list(blue.range_to(Color("red"), COLORDEPTH))
-
-#create the array of colors
-colors = [(int(c.red * 255), int(c.green * 255), int(c.blue * 255)) for c in colors]
-
-displayPixelWidth = width / displayBoxes
-displayPixelHeight = height / displayBoxes
-
-lcd = pygame.display.set_mode((width, height))
-
-lcd.fill((255, 0, 0))
-
-pygame.display.update()
-pygame.mouse.set_visible(False)
-
-lcd.fill((0, 0, 0))
-pygame.display.update()
-
-#some utility functions
-def constrain(val, min_val, max_val):
-    return min(max_val, max(min_val, val))
-
-def map_value(x, in_min, in_max, out_min, out_max):
-    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
-
-def displayQR(temperature):
-    print("HERE IS THE QR CODE")
-    url_str = 'https://docs.google.com/forms/d/e/1FAIpQLSdT-DBapgWGKcHGVlQj9MGPwh2uMVD8NWoPoFuR41yXDRBD_w/viewform?usp=pp_url&entry.1891876285=33'
-    url_str = url_str[:-2] + str(round(temperature, 1))
-    url = pyqrcode.create(url_str, error='Q')
-    url.png('url.png', scale=7)
-    lcd.fill((255,255,255))
-    image = pygame.image.load('./url.png')
-    lcd.blit(image, (0, 0))
-    pygame.display.update()
-    time.sleep(20)
-    if os.path.exists("url.png"):
-        os.remove("url.png")
+    #how many color values we can have
+    COLORDEPTH = 1024
     
-def displayHighTempSign():
-    print("TEMPERATURE ABOVE 37 DEGREES! PLEASE CONTACT BUILDING ADMINISTRATION")
-    messagePart1 = "TEMPERATURE ABOVE 37 DEGREES!"
-    messagePart2 = "PLEASE CONTACT BUILDING ADMINISTRATION."
-    font = pygame.font.Font('freesansbold.ttf',20)
-    displayText1 = font.render(messagePart1, True, (255,255,255))
-    displayTextRect1 = displayText1.get_rect()
-    displayTextRect1.center = (width // 2, height // 4)
-    displayText2 = font.render(messagePart2, True, (255,255,255))
-    displayTextRect2 = displayText2.get_rect()
-    displayTextRect2.center = (width // 2, height // 2)
-    lcd.fill((255,0,0))
-    lcd.blit(displayText1, displayTextRect1)
-    lcd.blit(displayText2, displayTextRect2)
-    pygame.display.update()
-    time.sleep(15)
+    # width, height interpolated from 8x8
+    interpolatedSize = 128j
 
-#let the sensor initialize
-time.sleep(.1)
-
-safeTemps = []
-highTemps = []
-hint = "Please get close to the sensor for 5 seconds"
-font = pygame.font.Font('freesansbold.ttf',20)
-displayText = font.render(hint, True, (255,0,0))
-displayTextRect = displayText.get_rect()
-displayTextRect.center = (width // 2, height // 10)
-
-while True:
+    displayBoxes = 120
     
-    #read the pixels
-    pixels = []
-    for row in sensor.pixels:
-        pixels = pixels + row
-    temps = copy.deepcopy(pixels)
-    temps = np.reshape(temps, (-1, 8))
-#    print(np.matrix(temps))
-#    print()
-#    print()
-    time.sleep(1)
-#    print(pixels)
-#    print()
-    pixels = [map_value(p, MINTEMP, MAXTEMP, 0, COLORDEPTH - 1) for p in pixels]
-#    print(pixels)
-
-    #perform interpolation
-    bicubic = griddata(points, pixels, (grid_x, grid_y), method='cubic')
-#    print(bicubic.shape)
-#    rect_arr = bicubic[8:24, 8:24]
-    rect_arr = bicubic[int(interpolatedSize.imag)//4:int(interpolatedSize.imag)*3//4, int(interpolatedSize.imag)//4:int(interpolatedSize.imag)*3//4]
-    temp_check_rect = rect_arr.flatten()
-    temp_check_rect = [map_value(pixel, 0, COLORDEPTH - 1, MINTEMP, MAXTEMP) for pixel in temp_check_rect]
-    print(max(temp_check_rect))
+    # pylint: disable=invalid-slice-index
+    points = [(math.floor(ix / 8), (ix % 8)) for ix in range(0, 64)]
+    grid_x, grid_y = np.mgrid[0:7:interpolatedSize, 0:7:interpolatedSize]
+    # pylint: enable=invalid-slice-index
     
-    if (max(temp_check_rect) > 34 and max(temp_check_rect) <= 37):
-        print("Temperature is between 34 and 37")
-        safeTemps.append(max(temp_check_rect))
-    elif (max(temp_check_rect) > 37):
-        print("Higher than 37")
-        highTemps.append(max(temp_check_rect))
-    elif (max(temp_check_rect) < 32 and (len(highTemps) != 0 or len(safeTemps) != 0)):
-        safeTemps = []
-        highTemps = []
+    windowHeight = 480
+    windowWidth = 1000
+
+    #sensor is an 8x8 grid so lets do a square
+    height = 480
+    width = 480
+    
+    FACE_DETECTOR_NAME = "face_detector"
+    MASK_DETECTOR_NAME = "my_mask_detector"
+    CONFIDENCE_THRESHOLD = 0.5
+    
+    def __init__(self):
+        self.maskDetected = False
+        self.font = pygame.font.Font('freesansbold.ttf',20)
+        self.displayMaskText = self.font.render("Mask not detected!", True, (255,0,0))
+        self.displayMaskTextRect = self.displayMaskText.get_rect()
+        self.displayMaskTextRect.center = (TemperatureScreener.windowWidth * 3 // 4, TemperatureScreener.windowHeight * 1 // 4)
+
+    #some utility functions
+    def constrain(self, val, min_val, max_val):
+        return min(max_val, max(min_val, val))
+
+    def map_value(self, x, in_min, in_max, out_min, out_max):
+        return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
+
+    def displayQR(self, temperature, lcd):
+#        global maskDetected, displayMaskText, displayMaskTextRect
+        print("HERE IS THE QR CODE")
+        url_str = 'https://docs.google.com/forms/d/e/1FAIpQLSdT-DBapgWGKcHGVlQj9MGPwh2uMVD8NWoPoFuR41yXDRBD_w/viewform?usp=pp_url&entry.1891876285=33'
+        url_str = url_str[:-2] + str(round(temperature, 1))
+        url = pyqrcode.create(url_str, error='Q')
+        url.png('url.png', scale=7)
+        lcd.fill((255,255,255))
+        image = pygame.image.load('./url.png')
+        lcd.blit(image, (0, 0))
+        displayURL = self.font.render("google.ca/entry=32", True, (0,0,0))
+        displayURLRect = displayURL.get_rect()
+        displayURLRect.center = (TemperatureScreener.windowWidth * 3 // 4, TemperatureScreener.windowHeight // 2)
+        lcd.blit(displayURL, displayURLRect)
+        pygame.display.update()
+        time.sleep(20)
+        if os.path.exists("url.png"):
+            os.remove("url.png")
+        lcd.fill((255,255,255))
+        self.maskDetected = False
+        self.displayMaskText = self.font.render("Mask not detected!", True, (255,0,0))
+        self.displayMaskTextRect = self.displayMaskText.get_rect()
+        self.displayMaskTextRect.center = (TemperatureScreener.windowWidth * 3 // 4, TemperatureScreener.windowHeight * 1 // 4)
+
+
+    def main(self):
+        mask_detector = FaceMaskDetector(TemperatureScreener.FACE_DETECTOR_NAME, TemperatureScreener.MASK_DETECTOR_NAME, TemperatureScreener.CONFIDENCE_THRESHOLD)
+        i2c_bus = busio.I2C(board.SCL, board.SDA)
+
+        #initialize the sensor
+        sensor = adafruit_amg88xx.AMG88XX(i2c_bus)
+
+        lcd = pygame.display.set_mode((TemperatureScreener.windowWidth, TemperatureScreener.windowHeight))
+
+        #the list of colors we can choose from
+        blue = Color("indigo")
+        colors = list(blue.range_to(Color("red"), TemperatureScreener.COLORDEPTH))
+
+        #create the array of colors
+        colors = [(int(c.red * 255), int(c.green * 255), int(c.blue * 255)) for c in colors]
+
+        displayPixelWidth = TemperatureScreener.width / TemperatureScreener.displayBoxes
+        displayPixelHeight = TemperatureScreener.height / TemperatureScreener.displayBoxes
+
+        lcd.fill((255, 0, 0))
+
+        pygame.display.update()
+        pygame.mouse.set_visible(False)
+
+        lcd.fill((255, 255, 255))
+        pygame.display.update()
+
+        calTemps = []
+        hint = "Please get close to the sensor for 5 seconds"
+        displayHint = self.font.render(hint, True, (255,0,0))
+        displayHintRect = displayHint.get_rect()
+        displayHintRect.center = (TemperatureScreener.windowWidth * 3 // 4, TemperatureScreener.windowHeight // 2)
         
-    if(len(highTemps) == 5):
-        displayHighTempSign()
-        highTemps = []
-        safeTemps = []
-    elif(len(safeTemps) == 5):
-        displayQR(max(safeTemps))
-        safeTemps = []
-        highTemps = []
         
-#    temps_rect = np.reshape(temp_check_rect, (-1, 16))
-#    print(np.matrix(temps_rect))
-#    print()
-#    print()
+        #let the sensor initialize
+        time.sleep(.1)
+        
+        while True:
+        
+            #read the pixels
+            pixels = []
+            for row in sensor.pixels:
+                pixels = pixels + row
+            #temps = copy.deepcopy(pixels)
+            #temps = np.reshape(temps, (-1, 8))
+        #    print(np.matrix(temps))
+        #    print()
+        #    print()
+            time.sleep(1)
+        #    print(pixels)
+        #    print()
+            pixels = [self.map_value(p, TemperatureScreener.MINTEMP, TemperatureScreener.MAXTEMP, 0, TemperatureScreener.COLORDEPTH - 1) for p in pixels]
+            
+        #    print(pixels)
 
-    #draw everything
-    for ix, row in enumerate(bicubic):
-        for jx, pixel in enumerate(row):
-            pygame.draw.rect(lcd, colors[constrain(int(pixel), 0, COLORDEPTH- 1)],
-                             (displayPixelHeight * ix, displayPixelWidth * jx,
-                              displayPixelHeight, displayPixelWidth))
+            #perform interpolation
+            bicubic = griddata(TemperatureScreener.points, pixels, (TemperatureScreener.grid_x, TemperatureScreener.grid_y), method='cubic')
+        #    print(bicubic.shape)
+        #    rect_arr = bicubic[8:24, 8:24]
+            
+            if self.maskDetected:
+                rect_arr = bicubic[int(TemperatureScreener.interpolatedSize.imag)//4:int(TemperatureScreener.interpolatedSize.imag)*3//4, int(TemperatureScreener.interpolatedSize.imag)//4:int(TemperatureScreener.interpolatedSize.imag)*3//4]
+                temp_check_rect = rect_arr.flatten()
+                print(temp_check_rect)
+                temp_check_rect = [self.map_value(pixel, 0, TemperatureScreener.COLORDEPTH - 1, TemperatureScreener.MINTEMP, TemperatureScreener.MAXTEMP) for pixel in temp_check_rect]
+                
+                print(max(temp_check_rect))
+                
+                if (max(temp_check_rect) > 32):
+                    print("Temperature Added")
+                    calTemps.append(max(temp_check_rect))
+                elif (max(temp_check_rect) < 32 and len(calTemps) != 0):
+                    calTemps = []
+                    
+                if(len(calTemps) >= 5):
+                    self.displayQR(max(calTemps), lcd)
+                    calTemps = []
+                    
+                
+        #    temps_rect = np.reshape(temp_check_rect, (-1, 16))
+        #    print(np.matrix(temps_rect))
+        #    print()
+        #    print()
 
-    pygame.draw.rect(lcd, (255,255,0), (width//4, height//4, width//2, height//2), 5)
+            #draw everything
+            for ix, row in enumerate(bicubic):
+                for jx, pixel in enumerate(row):
+                    pygame.draw.rect(lcd, colors[self.constrain(int(pixel), 0, TemperatureScreener.COLORDEPTH- 1)],
+                                     (displayPixelHeight * ix, displayPixelWidth * jx,
+                                      displayPixelHeight, displayPixelWidth))
+
+            if self.maskDetected:
+                pygame.draw.rect(lcd, (255,255,0), (TemperatureScreener.width//4, TemperatureScreener.height//4, TemperatureScreener.width//2, TemperatureScreener.height//2), 5)
+            
+            if (self.maskDetected and max(temp_check_rect) < 32):
+                print(hint)
+                lcd.blit(displayHint, displayHintRect)
+                
+            lcd.blit(self.displayMaskText, self.displayMaskTextRect)
+            pygame.display.update()
+            
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    pygame.display.quit()
+                    sys.exit()
+            
+            if not self.maskDetected:
+                maskHint1 = self.font.render("Wear a mask and look into", True, (255,0,0))
+                displayMaskHint1 = maskHint1.get_rect()
+                displayMaskHint1.center = (TemperatureScreener.windowWidth * 3 // 4, TemperatureScreener.windowHeight // 2)
+                lcd.blit(maskHint1, displayMaskHint1)
+                maskHint2 = self.font.render("the camera for 5 seconds", True, (255,0,0))
+                displayMaskHint2 = maskHint2.get_rect()
+                displayMaskHint2.center = (TemperatureScreener.windowWidth * 3 // 4, TemperatureScreener.windowHeight // 1.8)
+                lcd.blit(maskHint2, displayMaskHint2)
+                pygame.display.update()
+                self.maskDetected = mask_detector.start_detection()
+                lcd.fill((255,255,255))
+                self.displayMaskText = self.font.render("Mask detected!", True, (0,128,0))
+                self.displayMaskTextRect = self.displayMaskText.get_rect()
+                self.displayMaskTextRect.center = (TemperatureScreener.windowWidth * 3 // 4, TemperatureScreener.windowHeight * 1 // 4)
+                lcd.blit(self.displayMaskText, self.displayMaskTextRect)
+                pygame.display.update()
+        
     
-    if (max(temp_check_rect) < 32):
-        print(hint)
-        lcd.blit(displayText, displayTextRect)
-    pygame.display.update()
+if __name__ == "__main__":
+    TemperatureScreener().main()
