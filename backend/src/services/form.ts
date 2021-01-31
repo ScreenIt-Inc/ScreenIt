@@ -1,13 +1,11 @@
-import React from 'react'
-import uuid from 'react-uuid'
 import { Container } from 'typedi';
 import { Logger } from 'winston';
 import mongoose from 'mongoose';
 import { IForm, IOpenFormUUID} from '../interfaces/IForm';
+import { v4 as uuidv4 } from 'uuid';
 
 //this might be the wrong place for this but ill fix as I learn
 export function formSubmit(data: Object){
-
 	const Logger : Logger = Container.get('logger');
 	const formModel = Container.get('formModel') as mongoose.Model<IForm & mongoose.Document>;
 	const newCustomerData = new formModel(data);
@@ -20,9 +18,7 @@ export function formSubmit(data: Object){
 }
 
 export async function getForms(){
-	const Logger : Logger = Container.get('logger');
 	const formModel = Container.get('formModel') as mongoose.Model<IForm & mongoose.Document>;
-	//Logger.debug(JSON.stringify(formModel));
 	return formModel.find({});
 }
 
@@ -41,14 +37,24 @@ export async function formPull(){
 	return qModel.find({}) //should just be a single value, so pull all returns an array
 }
 
-export function newFormURL() {
+export function newFormURL(res) {
+	const Logger : Logger = Container.get('logger');
 	const OpenFormUUIDModel = Container.get('OpenFormUUIDModel') as mongoose.Model<IOpenFormUUID & mongoose.Document>;
-	let uuid = {'uuid':  uuid()};
+	let uuid = {'uuid':  uuidv4()};
 	const newModel = new OpenFormUUIDModel(uuid);
-	newModel.save(function (err) {
-		if (err) return Logger.error('New uuid not saved');
-		Logger.verbose('New uuid saved');
-		Logger.debug(JSON.stringify(uuid));
-	});
-	return uuid
+
+	newModel
+	      .save()
+	      .then(doc => {
+	        res.json({ success: true, data: doc });
+	      })
+	      .catch(err => {
+	        console.log(err);
+	        res.status(500).send({ error: err });
+	      })
+}
+
+export async function getOpenFormUrls() {
+	const formModel = Container.get('OpenFormUUIDModel') as mongoose.Model<IOpenFormUUID & mongoose.Document>;
+	return formModel.find({});
 }

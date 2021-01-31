@@ -41,8 +41,7 @@ export default (app: Router) => {
 
   	route.get("/opennewformuuid", function(req: Request, res: Response){
 		    Logger.verbose(`Recieved new form endpoint get route`);
-		    uuid = FormService.newFormURL();
-			res.json(uuid)
+		    var uuid = FormService.newFormURL(res); //response handled by service this time, maybe worth moving here
 		});
 
   	route.get("/openformuuids", function(req: Request, res: Response){

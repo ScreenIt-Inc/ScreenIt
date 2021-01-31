@@ -160,40 +160,44 @@ class CustomerForm extends React.Component{
 
 	    fetch(BASE_URL + GET_NAIRE_ENDPOINT)
   		  .then(function(stream) {
-  		  	return stream.json() // convert 'ReadableStream' and returns a promise to convert to json
+  		  		return stream.json() // convert 'ReadableStream' and returns a promise to convert to json
   		  }).then(function(data) {
-  		  	data.questionnaire.forEach(function (item, index, array) {
-  		  		item['id'] = index
-  		  	});
-  		  	this.setState({
-  		  		pulled: true,
-  		  		questionnaire: data.questionnaire
-  		  	});
+	  		  	data.questionnaire.forEach(function (item, index, array) {
+	  		  		item['id'] = index
+	  		  	});
+	  		  	this.setState({
+	  		  		pulled: true,
+	  		  		questionnaire: data.questionnaire
+	  		  	});
   		  }.bind(this)).catch(function(error) { //make sure to bind for above set state
-		  	console.log('Error pulling database questions, using default')
-		  	console.log(error)
+			  	console.log('Error pulling database questions, using default')
+			  	console.log(error)
 		  });
 
 	    fetch(BASE_URL + GET_UUIDS_ENDPOINT)
   		  .then(function(stream) {
-  		  	return stream.json() // convert 'ReadableStream' and returns a promise to convert to json
+  		  		return stream.json() // convert 'ReadableStream' and returns a promise to convert to json
   		  }).then(function(data) {
-  		  	data.uuids.forEach(function (item, index, array) {
-  		  		if (item == this.uuid){
-  		  			this.setState({
-		  		  		approved: 'Yes'
+	  		  	console.log(data)
+	  		  	console.log(this.uuid)
+	  		  	for (var i = 0; i < data.length; i++){
+	  		  		console.log(data[i].uuid, this.uuid)
+	  		  		if (data[i].uuid == this.uuid){
+	  		  			this.setState({
+			  		  		approved: 'Yes'
 
-		  		  	});
-              return
-  		  		}
-  		  	});
-			this.setState({
-		  		approved: 'Denied',
-		  	});
+			  		  	});
+			  		  	return
+			  		}
+	  		  	}
+
+				this.setState({
+			  		approved: 'Denied',
+			  	});
 
   		  }.bind(this)).catch(function(error) { //make sure to bind for above set state
-		  	console.log('Error pulling database questions, using default')
-		  	console.log(error)
+			  	console.log('Error pulling uuid, unable to grant access')
+			  	console.log(error)
 		  });
   	}
 
