@@ -156,8 +156,10 @@ export default function TableQ(props) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows !== undefined &&
-            rows.map((row, i) => {
+          {category === "Queue" &&
+            rows !== undefined &&
+            rows.filter((r) => r.hasEntered === undefined)
+              .map((row, i) => {
               return (
                 (i < maxEvents || viewAll) && (
                   <TableRow key={row._id}>
@@ -166,6 +168,11 @@ export default function TableQ(props) {
                         icon={<CircleUnchecked />}
                         checkedIcon={<CircleCheckedFilled />}
                         onClick={() => {
+                          const newRows = rows;
+                          newRows[i]["hasEntered"] = true;
+                          newRows[i]["entry_time"] = new Date().toLocaleDateString();
+                          setRows(newRows);
+                                                    
                           console.log("checked");
                         }}
                       />
@@ -185,10 +192,48 @@ export default function TableQ(props) {
                         color="primary"
                         style={{ borderRadius: 5 }}
                         onClick={() =>
-                          handlePaid("Notification sent to " + row.name)
+                          handlePaid("Notification sent to " + row.firstname + ' ' + row.lastname)
                         }
                       >
                         <span style={{ color: "white" }}>Notify</span>
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                )
+              );
+            })}
+            {category === "Capacity" &&
+            rows !== undefined &&
+            rows.filter((r) => r.hasEntered === true)
+              .map((row, i) => {
+              return (
+                (i < maxEvents || viewAll) && (
+                  <TableRow key={row._id}>
+                    <TableCell>{row.firstname + " " + row.lastname}</TableCell>
+                    <TableCell>{row.phone.slice(0, 10)}</TableCell>
+                    <TableCell>{1}</TableCell>
+                    <TableCell>{35}</TableCell>
+                    <TableCell>
+                      {new Date(row.createdAt).toLocaleTimeString()}
+                    </TableCell>
+                    <TableCell align="right">
+                      {" "}
+                      <Button
+                        variant="contained"
+                        classes={classes.button}
+                        color="primary"
+                        style={{ borderRadius: 5 }}
+                        onClick={() => { 
+                          const newRows = rows;
+                          const message = row.firstname + " " + row.lastname + " has been removed.";
+                          dispatchSnackbarSuccess(message);
+                          newRows[i]["exit_time"] = new Date().toLocaleDateString();
+                          newRows.splice(i, 1);
+                          setRows(newRows);                          
+                          }
+                        }
+                      >
+                        <span style={{ color: "white" }}>Exit</span>
                       </Button>
                     </TableCell>
                   </TableRow>
