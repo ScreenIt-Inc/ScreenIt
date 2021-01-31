@@ -29,8 +29,8 @@ scale:
 	This method will accept fractional scales (e.g. 2.5).
 '''
 #saves to url
-def generateQR(siteBaseUrl, error='Q', save_Location='url.svg', scale=8):
-	r = requests.get(url=siteBaseUrl+UUID_ENDPOINT)
+def generateQR(siteBaseUrl, temp, error='Q', save_Location='url.svg', scale=8):
+	r = requests.get(url=siteBaseUrl+UUID_ENDPOINT+'/'+str(temp))
 	uuid_data = r.json()
 	if uuid_data['success']:
 		url = pyqrcode.create(siteBaseUrl + FORM_ENDPOINT + '/' + uuid_data['data']['uuid'], error=error)

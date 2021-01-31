@@ -7,6 +7,10 @@ const Form = new mongoose.Schema(
       type: String,
       required: true,
     },
+    temp: {
+      type: Number,
+      required: true,
+    },
     firstname: {
       type: String,
       required: true,
@@ -32,11 +36,11 @@ const Form = new mongoose.Schema(
     },
     entry_time: {
       type: Date,
-      required: true,
+      required: false,
     },
     exit_time: {
       type: Date,
-      required: true,
+      required: false,
     },
     questionnaire: {
       type: Array,
@@ -57,6 +61,10 @@ const OpenFormUUID = new mongoose.Schema(
       required: true,
       index: true,
       unique: true,
+    },
+    temp: {
+      type: Number,
+      required: true,
     },
   },
   { timestamps: true },

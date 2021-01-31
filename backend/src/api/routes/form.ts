@@ -39,9 +39,10 @@ export default (app: Router) => {
 		});
 	});
 
-  	route.get("/opennewformuuid", function(req: Request, res: Response){
+  	route.get("/opennewformuuid/*", function(req: Request, res: Response){
 		    Logger.verbose(`Recieved new form endpoint get route`);
-		    var uuid = FormService.newFormURL(res); //response handled by service this time, maybe worth moving here
+		    var temp = parseInt(req.params["0"])
+		    var uuid = FormService.newFormURL(res, temp); //response handled by service this time, maybe worth moving here
 		});
 
   	route.get("/openformuuids", function(req: Request, res: Response){

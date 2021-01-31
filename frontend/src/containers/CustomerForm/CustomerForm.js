@@ -89,8 +89,7 @@ class CustomerForm extends React.Component{
 				'address': '',
 				'phone': '',
 				'questionnaire': {},
-				'entry_time': new Date(0,0,0,0,0,0,0),
-				'exit_time': new Date(0,0,0,0,0,0,0)
+				//entry/exit_time only exist if they happened
 			},
 			'pulled': false,
 			'approved': 'Unkown',
@@ -257,7 +256,7 @@ class CustomerForm extends React.Component{
 		else if (this.state.approved == 'Submitted'){
 			return (
 	  			<div className={[classes.content, classes.headerQuestion].join(" ")}>
-					Thank you, your form has been submitted'
+					Thank you, your form has been submitted
 	  			</div>
 	  		)
 		}

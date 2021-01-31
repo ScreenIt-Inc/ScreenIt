@@ -5,15 +5,23 @@ import mongoose from 'mongoose';
 import { IForm, IOpenFormUUID} from '../interfaces/IForm';
 import { v4 as uuidv4 } from 'uuid';
 
-export function formSubmit(data: Object){
+export async function formSubmit(data: Object){
 	const Logger : Logger = Container.get('logger');
 	const formModel = Container.get('formModel') as mongoose.Model<IForm & mongoose.Document>;
-	const newCustomerData = new formModel(data);
+	const OpenFormUUIDModel = Container.get('OpenFormUUIDModel') as mongoose.Model<IOpenFormUUID & mongoose.Document>;
+	const uuidData = await OpenFormUUIDModel.find({'uuid': data.uuid})
+	if (!(uuidData)){
+		return
+	}
+
+	data.temp = Number(uuidData[0].temp)
 	Logger.verbose('Attemping Save...');
-	newCustomerData.save(function (err) {
-		if (err) return Logger.error('New form data not saved');
+	const newCustomerData = new formModel(data);
+	newCustomerData.save(async function (err) {
+		if (err) return Logger.error(err);
 		Logger.verbose('New form data saved');
 		Logger.debug(JSON.stringify(data));
+		await OpenFormUUIDModel.deleteOne({'uuid': data.uuid}); //remove the uuid now that its been used
 	});
 }
 
@@ -36,10 +44,10 @@ export async function formPull(){
 	return qModel.find({}) //should just be a single value, so pull all returns an array
 }
 
-export function newFormURL(res) {
+export function newFormURL(res, temp) {
 	const Logger : Logger = Container.get('logger');
 	const OpenFormUUIDModel = Container.get('OpenFormUUIDModel') as mongoose.Model<IOpenFormUUID & mongoose.Document>;
-	let uuid = {'uuid':  uuidv4()};
+	let uuid = {'uuid':  uuidv4(), 'temp': temp};
 	const newModel = new OpenFormUUIDModel(uuid);
 
 	newModel
@@ -73,22 +81,3 @@ export async function AddQuestion(question: string){
 	const results = await qModel.updateMany({_id: "600deff3cef12d5f393a3b49"}, { $pull: { questionnaire: {question: { $in: questions} }}})
 	console.log(results)//should just be a single value, so pull all returns an array
   }
-
-// to generate UUID https://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid
-function uuidv4() {
-  return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
-    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
-  );
-}
-
-export function newFormURL() {
-	const OpenFormUUIDModel = Container.get('OpenFormUUIDModel') as mongoose.Model<IOpenFormUUID & mongoose.Document>;
-	let uuid = {'uuid':  uuidv4()};
-	const newModel = new OpenFormUUIDModel(uuid);
-	newModel.save(function (err) {
-		if (err) return Logger.error('New uuid not saved');
-		Logger.verbose('New uuid saved');
-		Logger.debug(JSON.stringify(uuid));
-	});
-	return uuid
-}
