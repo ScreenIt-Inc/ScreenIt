@@ -1,8 +1,12 @@
-import { IForm } from '../interfaces/IForm';
 import mongoose from 'mongoose';
+import { IForm, IOpenFormUUID } from '../interfaces/IForm';
 
 const Form = new mongoose.Schema(
   {
+    uuid: {
+      type: String,
+      required: true,
+    },
     firstname: {
       type: String,
       required: true,
@@ -26,9 +30,34 @@ const Form = new mongoose.Schema(
       type: String,
       required: true,
     },
+    entry_time: {
+      type: Date,
+      required: true,
+    },
+    exit_time: {
+      type: Date,
+      required: true,
+    },
+    questionnaire: {
+      type: Array,
+      required: true,
+    },
 
   },
   { timestamps: true },
 );
 
 export default mongoose.model<IForm & mongoose.Document>('Form', Form);
+
+
+const OpenFormUUID = new mongoose.Schema(
+  {
+    uuid: {
+      type: String,
+      required: true,
+    }
+  },
+  { timestamps: true },
+);
+var OpenFormUUIDModel = mongoose.model<IOpenFormUUID & mongoose.Document>('OpenFormUUID', OpenFormUUID)
+export { OpenFormUUIDModel };
