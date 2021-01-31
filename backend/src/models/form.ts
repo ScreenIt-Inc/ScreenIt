@@ -55,6 +55,8 @@ const OpenFormUUID = new mongoose.Schema(
     uuid: {
       type: String,
       required: true,
+      index: true,
+      unique: true,
     },
   },
   { timestamps: true },
