@@ -82,7 +82,7 @@ class CustomerForm extends React.Component{
 		this.uuid = this.props.computedMatch.params.uuid;
 		this.state = {
 			user_data: {
-				'uuid': '',
+				'uuid': this.uuid,
 				'firstname': '',
 				'lastname': '',
 				'email': '',
