@@ -233,6 +233,9 @@ class CustomerForm extends React.Component{
   		}
 
   		this.postData.bind(this)();
+  		this.setState({
+  			approved: 'Submitted'
+  		})
 
   	}
 
@@ -247,15 +250,22 @@ class CustomerForm extends React.Component{
   		const { classes } = this.props;
 		if (this.state.approved == 'Denied'){
 	  		return (
-	  			<div>
+	  			<div className={[classes.content, classes.headerQuestion].join(" ")}>
 	  				Denied...
 	  			</div>
 
 	  		)
 		}
+		else if (this.state.approved == 'Submitted'){
+			return (
+	  			<div className={[classes.content, classes.headerQuestion].join(" ")}>
+					Thank you, your form has been submitted'
+	  			</div>
+	  		)
+		}
   		else if (!(this.state.pulled && (this.state.approved == 'Yes'))){
 	  		return (
-	  			<div>
+	  			<div className={[classes.content, classes.headerQuestion].join(" ")}>
 	  				LOADING...
 	  			</div>
 
