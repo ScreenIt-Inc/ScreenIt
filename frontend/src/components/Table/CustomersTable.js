@@ -68,7 +68,7 @@ class CustomersTable extends React.Component{
           email: item.email,
           status: "Safe",
           entryDate: (item.hasOwnProperty("entry_time")) ? (new Date(item.entry_time)).getMonth().toString() + "/" + (new Date(item.entry_time)).getDay().toString() + "/" + (new Date(item.entry_time)).getFullYear().toString() : "has not entered",
-          timeDuration: (item.hasOwnProperty("entry_time") && item.hasOwnProperty("exit_time")) ? (new Date(item.entry_time)).getHours().toString() + ":" + (new Date(item.entry_time)).getMinutes().toString() + " to " + (new Date(item.exit_time)).getHours().toString() + ":" + (new Date(item.entry_time)).getMinutes().toString() : "has not exited",
+          timeDuration: (item.hasOwnProperty("entry_time") && item.hasOwnProperty("exit_time")) ? (new Date(item.entry_time)).getHours().toString() + ":" + this.addZero((new Date(item.entry_time)).getMinutes()).toString() + " to " + (new Date(item.exit_time)).getHours().toString() + ":" + this.addZero((new Date(item.exit_time)).getMinutes()).toString() : "has not exited",
           temperature: item.temp,
           //exitDate: item.exit_time
           //groupSize: item.group,
@@ -97,6 +97,13 @@ class CustomersTable extends React.Component{
       .catch((error) => {
         dispatchSnackbarError(error.response);
       });
+  }
+
+  addZero(i){
+    if (i < 10) {
+      i = "0" + i;
+    }
+    return i;
   }
 
   updateStatus(possibleContacts, selectedRows){
