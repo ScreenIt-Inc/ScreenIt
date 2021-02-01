@@ -178,10 +178,7 @@ class CustomerForm extends React.Component{
   		  .then(function(stream) {
   		  		return stream.json() // convert 'ReadableStream' and returns a promise to convert to json
   		  }).then(function(data) {
-	  		  	console.log(data)
-	  		  	console.log(this.uuid)
 	  		  	for (var i = 0; i < data.length; i++){
-	  		  		console.log(data[i].uuid, this.uuid)
 	  		  		if (data[i].uuid == this.uuid){
 	  		  			this.setState({
 			  		  		approved: 'Yes'
@@ -213,7 +210,6 @@ class CustomerForm extends React.Component{
 
 
   	postData = () => {
-  		console.log(JSON.stringify(this.state.user_data))
   		fetch(BASE_URL + SUBMIT_ENDPOINT, {
 		  method: 'POST',
 		  headers: {
@@ -239,8 +235,14 @@ class CustomerForm extends React.Component{
 
   	}
 
-  	handletoggle = (question, value) => {
-  		this.state.user_data.questionnaire[question] = value;
+  	handletoggle = (Q, value) => {
+
+  		this.state.user_data.questionnaire[Q.question] = value;
+  		for (var i = 0; i < Q.answers.length;  i++){ //not the most efficient but its fine based on expected usage
+  			if (Q.answers[i] != value){
+  				document.getElementById(Q.id.toString() + Q.answers[i]).checked = false;
+  			}
+  		}
   		this.setState	({
   			user_data: this.state.user_data
   		})
@@ -339,7 +341,7 @@ class CustomerForm extends React.Component{
 											                  	<Col>
 											                  		{
 											                  			Q.answers.map(A =>
-											                  				<Form.Check inline label={A} type='radio' id={A} onClick={(event) => {this.handletoggle.bind(this)(Q.question, A)}}/>
+											                  				<Form.Check inline label={A} type='radio' id={Q.id.toString() + A} onClick={(event) => {this.handletoggle.bind(this)(Q, A)}}/>
 											                  			)
 											                  		}
 											                  	</Col>
@@ -354,7 +356,7 @@ class CustomerForm extends React.Component{
 										                  	<Col>
 										                  		{
 										                  			Q.answers.map(A =>
-										                  				<Form.Check inline label={A} type='radio' id={A} onClick={(event) => {this.handletoggle.bind(this)(Q.question, A)}}/>
+										                  				<Form.Check inline label={A} type='radio' id={Q.id.toString() + A} onClick={(event) => {this.handletoggle.bind(this)(Q, A)}}/>
 										                  			)
 										                  		}
 										                  	</Col>
