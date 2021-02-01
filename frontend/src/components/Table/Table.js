@@ -209,6 +209,14 @@ export default function TableQ(props) {
               return (
                 (i < maxEvents || viewAll) && (
                   <TableRow key={row._id}>
+                    <TableCell>
+                      <Checkbox 
+                        disabled = {true}
+                        checked = {true}
+                        icon={<CircleUnchecked />}
+                        checkedIcon={<CircleCheckedFilled />}
+                      />
+                    </TableCell>
                     <TableCell>{row.firstname + " " + row.lastname}</TableCell>
                     <TableCell>{row.phone.slice(0, 10)}</TableCell>
                     <TableCell>{1}</TableCell>
