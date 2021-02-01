@@ -35,9 +35,9 @@ const columns = [
   { field: 'customer', headerName: 'Customers', width: 200 },
   { field: 'phone', headerName: 'Contact Information', width: 200 },
   { field: 'entryDate', headerName: 'Entry Date', width: 150 },
-  { field: 'timeDuration', headerName: 'Time Duration', width: 150 },
+  { field: 'timeDuration', headerName: 'Time Duration', width: 170 },
   { field: 'status', headerName: 'Status', width: 100 },
-  { field: 'temperature', headerName: 'Entry Temperature', width: 200 }
+  { field: 'temperature', headerName: 'Entry Temperature', width: 180 }
 ];
 
 class CustomersTable extends React.Component{
@@ -68,7 +68,16 @@ class CustomersTable extends React.Component{
           email: item.email,
           status: "Safe",
           entryDate: (item.hasOwnProperty("entry_time")) ? (new Date(item.entry_time)).getMonth().toString() + "/" + (new Date(item.entry_time)).getDay().toString() + "/" + (new Date(item.entry_time)).getFullYear().toString() : "has not entered",
-          timeDuration: (item.hasOwnProperty("entry_time") && item.hasOwnProperty("exit_time")) ? (new Date(item.entry_time)).getHours().toString() + ":" + this.addZero((new Date(item.entry_time)).getMinutes()).toString() + " to " + (new Date(item.exit_time)).getHours().toString() + ":" + this.addZero((new Date(item.exit_time)).getMinutes()).toString() : "has not exited",
+          timeDuration: (item.hasOwnProperty("entry_time") && item.hasOwnProperty("exit_time"))
+                ? this.make12hour((new Date(item.entry_time)).getHours()).toString() + ":"
+                 + this.addZero((new Date(item.entry_time)).getMinutes()).toString()
+                 + this.getAbbrieviation((new Date(item.entry_time)).getHours())
+                 + " to "
+                 + this.make12hour((new Date(item.exit_time)).getHours()).toString()+ ":"
+                 + this.addZero((new Date(item.exit_time)).getMinutes()).toString()
+                 + this.getAbbrieviation((new Date(item.exit_time)).getHours())
+                :
+                "has not exited",
           temperature: item.temp,
           //exitDate: item.exit_time
           //groupSize: item.group,
@@ -106,15 +115,32 @@ class CustomersTable extends React.Component{
     return i;
   }
 
+  getAbbrieviation(i){
+    if (i < 12){
+      return "AM"
+    }
+    return "PM"
+  }
+
+  make12hour(i){
+    if (i == 0){
+      return 12;
+    }
+    if (i > 12){
+      return i-12;
+    }
+    return i;
+  }
+
   updateStatus(possibleContacts, selectedRows){
     var newCustomers = [...this.state.customers]
 
     for (var i = 0; i < newCustomers.length; i++) {
-      if (possibleContacts.includes(newCustomers[i].id)){
-        newCustomers[i].status = "At Risk";
-      }
-      else if (selectedRows.includes(newCustomers[i].id)){
+      if (selectedRows.includes(newCustomers[i].id)){
         newCustomers[i].status = "Infected";
+      }
+      else if (possibleContacts.includes(newCustomers[i].id)){
+        newCustomers[i].status = "At Risk";
       }
       else{
         newCustomers[i].status = "Safe";
@@ -123,7 +149,6 @@ class CustomersTable extends React.Component{
     console.log(newCustomers)
     this.setState({ customers: [...newCustomers] });
   }
-
 
   render(){
     return (
