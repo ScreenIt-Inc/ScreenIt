@@ -33,10 +33,47 @@ export async function getForms(){
 export function contactTrace(data: Object){
 	const Logger : Logger = Container.get('logger');
 	const formModel = Container.get('formModel') as mongoose.Model<IForm & mongoose.Document>;
-	//var formModel = mongoose.model('Forms', new mongoose.Schema({ 'forms': []}), 'forms');
-	Logger.debug(JSON.stringify(data));
-	return data//formModel.find({});
+
+	Logger.verbose("in service layer");
+
+	return formModel.find({}).then(function (forms) {
+		var atRiskList = [];
+		for (let index = 0; index < data.infectedCustomerIds.length; index++) {
+			var infectedCustomer = forms.find(form => form._id == data.infectedCustomerIds[index])
+			Logger.verbose(infectedCustomer);
+
+			var tempAtRisk = forms.filter(form => (form.entry_time <= infectedCustomer.exit_time)
+																					&& (form.exit_time >= infectedCustomer.entry_time)
+																					&& (form._id != infectedCustomer._id));
+
+			tempAtRisk.forEach(element => (!atRiskList.includes(element._id)) ? atRiskList.push(element._id) : null);
+			Logger.verbose(tempAtRisk);
+		}
+		Logger.verbose(atRiskList);
+		return atRiskList;
+	});
+
 }
+
+	/*
+	for (let index = 0; index < data.infectedCustomerIds.length; index++) {
+		Logger.verbose(data.infectedCustomerIds[index])
+
+		formModel.findById(data.infectedCustomerIds[index]).then(function (infectedCustomer) {
+			Logger.verbose(infectedCustomer);
+			var atRisk = formModel.find({ entry_time: { $lte: infectedCustomer.exit_time }, exit_time: { $gte: infectedCustomer.entry_time } }).then( function (elements) {
+				//elements.forEach(element => atRiskList.push(element));
+				Logger.verbose(elements);
+				//element.exit_date
+				//element.entry_date
+			});
+		});
+	}
+	//var formModel = mongoose.model('Forms', new mongoose.Schema({ 'forms': []}), 'forms');
+	//Logger.debug(JSON.stringify(data));
+	return data//formModel.find({});
+
+}*/
 
 var qModel = mongoose.model('Questionnaire', new mongoose.Schema({ 'questionnaire': []}), 'questionnaire'); // last arg to connect model to collection questionaire
 export async function formPull(){

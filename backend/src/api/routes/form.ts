@@ -33,11 +33,11 @@ export default (app: Router) => {
 
 	route.get("/contactTrace", function(req: Request, res: Response){
 		  Logger.verbose(`Recieved get customers request`);
-			res.json({success: "backend received the response"});
-			//FormService.contactTrace(req.body).then(function(data) {
-			//Logger.verbose(data[0]);
-			//res.json({success: "backend received the response"})//({data});
-		//});
+			Logger.verbose(req.body);
+			FormService.contactTrace(req.body).then(function(data) {
+			Logger.verbose(data);
+			res.json({data});
+		});
 	});
 
   	route.get("/opennewformuuid/*", function(req: Request, res: Response){
