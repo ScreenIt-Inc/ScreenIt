@@ -88,6 +88,7 @@ class CustomerForm extends React.Component{
 				'email': '',
 				'address': '',
 				'phone': '',
+				'group_size': '',
 				'questionnaire': {},
         'entry_time':new Date(2021, 1, 17, 3, 24, 0),
         'exit_time':new Date(2021, 1, 17, 4, 24, 0),
@@ -240,7 +241,7 @@ class CustomerForm extends React.Component{
 
   	handletoggle = (question, value) => {
   		this.state.user_data.questionnaire[question] = value;
-  		this.setState({
+  		this.setState	({
   			user_data: this.state.user_data
   		})
   	}
@@ -318,6 +319,10 @@ class CustomerForm extends React.Component{
 								    <Form.Text className="text-muted">
 								      We'll never share your information with anyone else.
 								    </Form.Text>
+								  <Form.Group >
+								    <Form.Label className={classes.headerQuestion}>Group Size</Form.Label>
+								    <Form.Control type="Number" onChange={(event) => {this.handleFormChange.bind(this)('group_size', event.target.value)}}/>
+								  </Form.Group>
 								  </Form.Group>
 							    	{
 						                this.state.questionnaire.map(Q =>
