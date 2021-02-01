@@ -32,15 +32,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const columns = [
-  { field: 'id', headerName: 'ID', width: 100 },
-  { field: 'firstName', headerName: 'First name', width: 150 },
-  { field: 'lastName', headerName: 'Last name', width: 150 },
-  { field: 'phone', headerName: 'Contact #', width: 150 },
-  { field: 'email', headerName: 'Email Address', width: 200 },
+  { field: 'customer', headerName: 'Customers', width: 200 },
+  { field: 'phone', headerName: 'Contact Information', width: 200 },
+  { field: 'entryDate', headerName: 'Entry Date', width: 150 },
+  { field: 'timeDuration', headerName: 'Time Duration', width: 150 },
   { field: 'status', headerName: 'Status', width: 100 },
-  //{ field: 'groupSize', headerName: 'Group Size', width: 150 },
-  { field: 'entryDate', headerName: 'Entry Date', type: 'dateTime', width: 200 },
-  { field: 'exitDate', headerName: 'Exit Date', type: 'dateTime', width: 200 }
+  { field: 'temperature', headerName: 'Entry Temperature', width: 200 }
 ];
 
 class CustomersTable extends React.Component{
@@ -63,22 +60,24 @@ class CustomersTable extends React.Component{
         console.log(serverResponse);
         var i = 1;
         var newCustomers = serverResponse.map(item => ({
-          id: i++,
+          id: item._id,
+          customer: item.firstname + " " + item.lastname,
           firstName: item.firstname,
           lastName: item.lastname,
           phone: item.phone,
           email: item.email,
-          //groupSize: item.group,
           status: "safe",
-          entryDate: item.entry_time,
-          exitDate: item.exit_time
+          entryDate: (item.hasOwnProperty("entry_time")) ? (new Date(item.entry_time)).getMonth().toString() + "/" + (new Date(item.entry_time)).getDay().toString() + "/" + (new Date(item.entry_time)).getFullYear().toString() : "has not entered",
+          timeDuration: (item.hasOwnProperty("entry_time") && item.hasOwnProperty("exit_time")) ? (new Date(item.entry_time)).getHours().toString() + ":" + (new Date(item.entry_time)).getMinutes().toString() + " to " + (new Date(item.exit_time)).getHours().toString() + ":" + (new Date(item.entry_time)).getMinutes().toString() : "has not exited",
+          temperature: item.temp,
+          //exitDate: item.exit_time
+          //groupSize: item.group,
         }));
         this.setState({ customers: newCustomers });
       })
       .catch((error) => {
         dispatchSnackbarError(error.response);
       });
-    //History.push("/");
   };
 
 
