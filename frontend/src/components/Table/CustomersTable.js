@@ -66,7 +66,7 @@ class CustomersTable extends React.Component{
           lastName: item.lastname,
           phone: item.phone,
           email: item.email,
-          status: "safe",
+          status: "Safe",
           entryDate: (item.hasOwnProperty("entry_time")) ? (new Date(item.entry_time)).getMonth().toString() + "/" + (new Date(item.entry_time)).getDay().toString() + "/" + (new Date(item.entry_time)).getFullYear().toString() : "has not entered",
           timeDuration: (item.hasOwnProperty("entry_time") && item.hasOwnProperty("exit_time")) ? (new Date(item.entry_time)).getHours().toString() + ":" + (new Date(item.entry_time)).getMinutes().toString() + " to " + (new Date(item.exit_time)).getHours().toString() + ":" + (new Date(item.entry_time)).getMinutes().toString() : "has not exited",
           temperature: item.temp,
@@ -82,18 +82,39 @@ class CustomersTable extends React.Component{
 
   contactTrace(newSelectedRows){
     console.log(newSelectedRows.rowIds);
+    this.setState({ selectedRows: newSelectedRows.rowIds })
     const requestOptions = {
-      infectedCustomerIds: newSelectedRows.rowIds
+        infectedCustomerIds:  newSelectedRows.rowIds
     };
     axiosInstance
-      .get("/form/contactTrace", requestOptions)
+      .post("/form/contactTrace", requestOptions)
       .then((response) => {
         const serverResponse = response.data;
         console.log(serverResponse);
+
+        this.setState({ possibleContacts: [...serverResponse.data] }, this.updateStatus(serverResponse.data, newSelectedRows.rowIds));
       })
       .catch((error) => {
         dispatchSnackbarError(error.response);
       });
+  }
+
+  updateStatus(possibleContacts, selectedRows){
+    var newCustomers = [...this.state.customers]
+
+    for (var i = 0; i < newCustomers.length; i++) {
+      if (possibleContacts.includes(newCustomers[i].id)){
+        newCustomers[i].status = "At Risk";
+      }
+      else if (selectedRows.includes(newCustomers[i].id)){
+        newCustomers[i].status = "Infected";
+      }
+      else{
+        newCustomers[i].status = "Safe";
+      }
+    }
+    console.log(newCustomers)
+    this.setState({ customers: [...newCustomers] });
   }
 
 

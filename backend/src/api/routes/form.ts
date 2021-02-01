@@ -31,9 +31,9 @@ export default (app: Router) => {
 		});
 	});
 
-	route.get("/contactTrace", function(req: Request, res: Response){
-		  Logger.verbose(`Recieved get customers request`);
-			Logger.verbose(req.body);
+	route.post("/contactTrace", function(req: Request, res: Response){
+		  Logger.verbose(`Recieved contactTrace request`);
+			Logger.verbose(JSON.stringify(req.body));
 			FormService.contactTrace(req.body).then(function(data) {
 			Logger.verbose(data);
 			res.json({data});
