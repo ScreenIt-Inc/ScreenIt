@@ -43,6 +43,10 @@ const Form = new mongoose.Schema(
       type: Date,
       required: false,
     },
+    group_size: {
+      type: Number,
+      required: false,
+    },
     questionnaire: {
       type: Array,
       required: true,

@@ -9,6 +9,7 @@ export interface IForm {
   exit_time: Date
   uuid: string;
   temp: number;
+  group_size: number;
   questionnaire: Array;
 }
 
