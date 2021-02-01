@@ -27,16 +27,17 @@ export default (app: Router) => {
 		  Logger.verbose(`Recieved get customers request`);
 			FormService.getForms().then(function(data) {
 			Logger.verbose(data);
-			res.json(data); //sends json data back (only want the first value), method name 'json' is misleading
+			res.json(data);
 		});
 	});
 
 	route.get("/contactTrace", function(req: Request, res: Response){
 		  Logger.verbose(`Recieved get customers request`);
-			FormService.contactTrace().then(function(data) {
-			Logger.verbose(data[0]);
-			res.json(data); //sends json data back (only want the first value), method name 'json' is misleading
-		});
+			res.json({success: "backend received the response"});
+			//FormService.contactTrace(req.body).then(function(data) {
+			//Logger.verbose(data[0]);
+			//res.json({success: "backend received the response"})//({data});
+		//});
 	});
 
   	route.get("/opennewformuuid/*", function(req: Request, res: Response){

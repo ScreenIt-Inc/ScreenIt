@@ -34,8 +34,8 @@ export function contactTrace(data: Object){
 	const Logger : Logger = Container.get('logger');
 	const formModel = Container.get('formModel') as mongoose.Model<IForm & mongoose.Document>;
 	//var formModel = mongoose.model('Forms', new mongoose.Schema({ 'forms': []}), 'forms');
-	//Logger.debug(JSON.stringify(data));
-	return formModel.find({});
+	Logger.debug(JSON.stringify(data));
+	return data//formModel.find({});
 }
 
 var qModel = mongoose.model('Questionnaire', new mongoose.Schema({ 'questionnaire': []}), 'questionnaire'); // last arg to connect model to collection questionaire
