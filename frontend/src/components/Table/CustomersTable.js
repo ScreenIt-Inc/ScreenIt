@@ -80,6 +80,22 @@ class CustomersTable extends React.Component{
       });
   };
 
+  contactTrace(newSelectedRows){
+    console.log(newSelectedRows.rowIds);
+    const requestOptions = {
+      infectedCustomerIds: newSelectedRows.rowIds
+    };
+    axiosInstance
+      .get("/form/contactTrace", requestOptions)
+      .then((response) => {
+        const serverResponse = response.data;
+        console.log(serverResponse);
+      })
+      .catch((error) => {
+        dispatchSnackbarError(error.response);
+      });
+  }
+
 
   render(){
     return (
@@ -93,7 +109,7 @@ class CustomersTable extends React.Component{
             sortingMode='client' sortingOrder={['asc', 'desc', null]}
             loading={this.state.loading}
             checkboxSelection
-            onSelectionChange={newSelectedRows => this.setState({selectedRows: newSelectedRows.rowIds})}
+            onSelectionChange={newSelectedRows => this.contactTrace(newSelectedRows)}
           />
         </div>
       </div>
@@ -102,7 +118,7 @@ class CustomersTable extends React.Component{
 }
 
 export default CustomersTable;
-
+//this.setState({selectedRows: newSelectedRows.rowIds})}
 /*
   contactTrace = (selectedRows) => {
     let infectedCustomers = this.state.customers.filter(customer => this.state.selectedRows.includes(customer.id.toString()));
