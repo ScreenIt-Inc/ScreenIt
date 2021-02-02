@@ -42,8 +42,9 @@ const useStyles = makeStyles((theme) => ({
 export default function General(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const generalRedux = useSelector((state) => state.setting.general);
   const category = useSelector((state) => state.setting.category);
-  const [values, setValues] = useState({});
+  const [values, setValues] = useState(generalRedux ? generalRedux : {});
   const token = Auth.isAuth();
 
   useEffect(() => {
@@ -70,6 +71,16 @@ export default function General(props) {
           maxCapacity,
           notificationMessage,
         });
+        dispatch(
+          setCurrentSetting({
+            general: {
+              establishmentId,
+              establishmentName,
+              maxCapacity,
+              notificationMessage,
+            },
+          })
+        );
       })
       .catch((error) => {
         console.log(error);

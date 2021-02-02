@@ -2,6 +2,10 @@ import * as types from "./TableTypes";
 
 const INITIAL_STATE = {
   category: "Queue",
+  capacity: [],
+  queue: [],
+  alert: [],
+  notification: [],
 };
 
 export default function locale(state = INITIAL_STATE, action) {

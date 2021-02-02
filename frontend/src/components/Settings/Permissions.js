@@ -22,6 +22,7 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import AddUserDialog from "../../components/Settings/AddUserDialog";
 import { axiosInstance } from "../../network/apis";
+import { setCurrentSetting } from "../../store/Setting/SettingAction";
 import Auth from "../../utils/Auth";
 import {
   dispatchSnackbarError,
@@ -162,12 +163,6 @@ const EnhancedTableToolbar = (props) => {
     await axiosInstance
       .post("/settings/deleteUser", requestOptions, config)
       .then((response) => {
-        // const { name, email, role } = values;
-        // dispatch(
-        //   setCurrentSetting({
-        //     permissions: [...currentUsers, { name, email, role }],
-        //   })
-        // );
         setSelected([]);
         dispatchSnackbarSuccess("Users Deleted");
       })
@@ -258,7 +253,10 @@ export default function Permissions() {
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [rows, setRows] = React.useState([]);
+  const permissionRedux = useSelector((state) => state.setting.permissions);
+  const [rows, setRows] = React.useState(
+    permissionRedux ? permissionRedux : []
+  );
   const token = Auth.isAuth();
   const dispatch = useDispatch();
 
@@ -282,7 +280,7 @@ export default function Permissions() {
           };
         });
         setRows(users);
-        // dispatch(setCurrentSetting({ permissions: rows }));
+        dispatch(setCurrentSetting({ permissions: [...users] }));
       })
       .catch((error) => {
         console.log(error);

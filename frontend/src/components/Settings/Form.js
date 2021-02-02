@@ -17,9 +17,10 @@ import { Delete } from "@material-ui/icons";
 import clsx from "clsx";
 import PropTypes from "prop-types";
 import React, { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import AddQuestionDialog from "../../components/Settings/AddQuestionDialog";
 import { axiosInstance } from "../../network/apis";
+import { setCurrentSetting } from "../../store/Setting/SettingAction";
 import Auth from "../../utils/Auth";
 import {
   dispatchSnackbarError,
@@ -250,13 +251,15 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Form() {
   const classes = useStyles();
+  const dispatch = useDispatch();
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("qid");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [dense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  const [rows, setRows] = React.useState([]);
+  const formRedux = useSelector((state) => state.setting.form);
+  const [rows, setRows] = React.useState(formRedux ? formRedux : []);
   const token = Auth.isAuth();
 
   useEffect(() => {
@@ -281,7 +284,7 @@ export default function Form() {
           });
         console.log("questions", questions);
         setRows(questions);
-        // dispatch(setCurrentSetting({ permissions: rows }));
+        dispatch(setCurrentSetting({ form: questions }));
       })
       .catch((error) => {
         console.log(error);
