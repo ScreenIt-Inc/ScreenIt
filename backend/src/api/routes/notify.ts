@@ -16,7 +16,7 @@ export default (app: Router) => {
   client.messages
     .create({
       body: req.body.msg,
-      from: '+12266405423',
+      from: config.twilio.number,
       to: req.body.phoneNumber
     })
     .then(message => {response = message})
@@ -31,7 +31,7 @@ export default (app: Router) => {
       client.messages
       .create({
         body: "You may be at risk for Covid. Please get tested",
-        from: '+12266405423',
+        from: config.twilio.number,
         to: number
       })
       .then(message => {response = message})

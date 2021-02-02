@@ -47,16 +47,20 @@ export default function TableQ(props) {
 
   const classes = useStyles();
   const handlePaid = async (row, message) => {
-    dispatchSnackbarSuccess("Notification sent to " + row.name);
+    dispatchSnackbarSuccess(
+      "Notification sent to " + row.firstname + " " + row.lastname
+    );
     const token = Auth.isAuth();
     const config = {
       headers: { Authorization: `Bearer ${token}` },
     };
     const requestOptions = {
       msg: message,
-      phoneNumber: row.number,
-      name: row.name,
+      phoneNumber: row.phone,
+      name: row.firstname + " " + row.lastname,
     };
+    console.log(requestOptions);
+    console.log("row", row);
     await axiosInstance
       .post("/notify/sendText", requestOptions, config)
       .then((response) => {
