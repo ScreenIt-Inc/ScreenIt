@@ -1,7 +1,6 @@
-import { Router, Request, Response } from 'express';
-import middlewares from '../middlewares';
+import { Request, Response, Router } from 'express';
 import config from "../../config";
-import { Logger } from 'winston';
+import middlewares from '../middlewares';
 
 // Download the helper library from https://www.twilio.com/docs/node/install
 // Your Account Sid and Auth Token from twilio.com/console
@@ -20,7 +19,24 @@ export default (app: Router) => {
       from: '+12266405423',
       to: req.body.phoneNumber
     })
-    .then(message => {response = message});
+    .then(message => {response = message})
+    .catch(error => console.log(error));
+    return res.json({ res: response }).status(200);
+  })
+
+  route.post('/alertAtRisk', middlewares.isAuth, middlewares.attachCurrentUser, (req: Request, res: Response) => {
+    var response = "";
+    req.body.numbers.forEach((number) => {
+      console.log(number)
+      client.messages
+      .create({
+        body: "You may be at risk for Covid. Please get tested",
+        from: '+12266405423',
+        to: number
+      })
+      .then(message => {response = message})
+      .catch(error => console.log(error));
+    })
 
     return res.json({ res: response }).status(200);
   });

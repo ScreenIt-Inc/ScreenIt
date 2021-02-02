@@ -1,27 +1,13 @@
 // Boilerplate for the orders table found on every page.
-import * as React from "react";
-import { useState } from "react";
-import Link from "@material-ui/core/Link";
-import { makeStyles } from "@material-ui/core/styles";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import Checkbox from "@material-ui/core/Checkbox";
-import CircleCheckedFilled from "@material-ui/icons/CheckCircle";
-import CircleUnchecked from "@material-ui/icons/RadioButtonUnchecked";
 import Button from "@material-ui/core/Button";
-import Title from "./Title";
-import { dispatchSnackbarSuccess } from "../../utils/Shared";
-import {useSelector, useDispatch} from 'react-redux'
+import { makeStyles } from "@material-ui/core/styles";
+import { DataGrid } from "@material-ui/data-grid";
+import * as React from "react";
+import { CSVLink } from "react-csv";
 import { axiosInstance } from "../../network/apis";
+import Auth from "../../utils/Auth";
 import { dispatchSnackbarError } from "../../utils/Shared";
-import History from "../../routes/History";
-import { CSVLink, CSVDownload } from "react-csv";
-
-import { DataGrid } from '@material-ui/data-grid';
-import {TableContainer} from '@material-ui/core';
+import Title from "./Title";
 
 const useStyles = makeStyles((theme) => ({
   seeMore: {
@@ -33,34 +19,34 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const columns = [
-  { field: 'customer', headerName: 'Customers', width: 200 },
-  { field: 'phone', headerName: 'Contact Information', width: 200 },
-  { field: 'entryDate', headerName: 'Entry Date', width: 150 },
-  { field: 'timeDuration', headerName: 'Time Duration', width: 170 },
-  { field: 'status', headerName: 'Status', width: 100 },
-  { field: 'temperature', headerName: 'Entry Temperature', width: 180 }
+  { field: "customer", headerName: "Customers", width: 200 },
+  { field: "phone", headerName: "Contact Information", width: 200 },
+  { field: "entryDate", headerName: "Entry Date", width: 150 },
+  { field: "timeDuration", headerName: "Time Duration", width: 170 },
+  { field: "status", headerName: "Status", width: 100 },
+  { field: "temperature", headerName: "Entry Temperature", width: 180 },
 ];
 
-class CustomersTable extends React.Component{
+class CustomersTable extends React.Component {
   state = {
     customers: [],
     possibleContacts: [],
     selectedRows: [],
-    loading: false
-  }
+    loading: false,
+  };
 
-  componentDidMount(){
+  componentDidMount() {
     this.getCustomers();
   }
 
-  getCustomers(){
+  getCustomers() {
     axiosInstance
       .get("/form/getForms")
       .then((response) => {
         const serverResponse = response.data;
         console.log(serverResponse);
         var i = 1;
-        var newCustomers = serverResponse.map(item => ({
+        var newCustomers = serverResponse.map((item) => ({
           id: item._id,
           customer: item.firstname + " " + item.lastname,
           firstName: item.firstname,
@@ -68,17 +54,32 @@ class CustomersTable extends React.Component{
           phone: item.phone,
           email: item.email,
           status: "Safe",
-          entryDate: (item.hasOwnProperty("entry_time")) ? (new Date(item.entry_time)).getMonth().toString() + "/" + (new Date(item.entry_time)).getDay().toString() + "/" + (new Date(item.entry_time)).getFullYear().toString() : "has not entered",
-          timeDuration: (item.hasOwnProperty("entry_time") && item.hasOwnProperty("exit_time"))
-                ? this.make12hour((new Date(item.entry_time)).getHours()).toString() + ":"
-                 + this.addZero((new Date(item.entry_time)).getMinutes()).toString()
-                 + this.getAbbrieviation((new Date(item.entry_time)).getHours())
-                 + " to "
-                 + this.make12hour((new Date(item.exit_time)).getHours()).toString()+ ":"
-                 + this.addZero((new Date(item.exit_time)).getMinutes()).toString()
-                 + this.getAbbrieviation((new Date(item.exit_time)).getHours())
-                :
-                "has not exited",
+          entryDate: item.hasOwnProperty("entry_time")
+            ? new Date(item.entry_time).getMonth().toString() +
+              "/" +
+              new Date(item.entry_time).getDay().toString() +
+              "/" +
+              new Date(item.entry_time).getFullYear().toString()
+            : "has not entered",
+          timeDuration:
+            item.hasOwnProperty("entry_time") &&
+            item.hasOwnProperty("exit_time")
+              ? this.make12hour(
+                  new Date(item.entry_time).getHours()
+                ).toString() +
+                ":" +
+                this.addZero(
+                  new Date(item.entry_time).getMinutes()
+                ).toString() +
+                this.getAbbrieviation(new Date(item.entry_time).getHours()) +
+                " to " +
+                this.make12hour(
+                  new Date(item.exit_time).getHours()
+                ).toString() +
+                ":" +
+                this.addZero(new Date(item.exit_time).getMinutes()).toString() +
+                this.getAbbrieviation(new Date(item.exit_time).getHours())
+              : "has not exited",
           temperature: item.temp,
           //exitDate: item.exit_time
           //groupSize: item.group,
@@ -88,13 +89,13 @@ class CustomersTable extends React.Component{
       .catch((error) => {
         dispatchSnackbarError(error.response);
       });
-  };
+  }
 
-  contactTrace(newSelectedRows){
+  contactTrace(newSelectedRows) {
     console.log(newSelectedRows.rowIds);
-    this.setState({ selectedRows: newSelectedRows.rowIds })
+    this.setState({ selectedRows: newSelectedRows.rowIds });
     const requestOptions = {
-        infectedCustomerIds:  newSelectedRows.rowIds
+      infectedCustomerIds: newSelectedRows.rowIds,
     };
     axiosInstance
       .post("/form/contactTrace", requestOptions)
@@ -102,77 +103,121 @@ class CustomersTable extends React.Component{
         const serverResponse = response.data;
         console.log(serverResponse);
 
-        this.setState({ possibleContacts: [...serverResponse.data] }, this.updateStatus(serverResponse.data, newSelectedRows.rowIds));
+        this.setState(
+          { possibleContacts: [...serverResponse.data] },
+          this.updateStatus(serverResponse.data, newSelectedRows.rowIds)
+        );
       })
       .catch((error) => {
         dispatchSnackbarError(error.response);
       });
   }
 
-  addZero(i){
+  handleNotify = () => {
+    // console.log(this.state.selectedRows);
+    const numbers = this.state.customers
+      .filter((customer) => customer.status === "At Risk")
+      .map((customer) => customer.phone);
+    const config = {
+      headers: { Authorization: `Bearer ${Auth.isAuth()}` },
+    };
+    const requestOptions = {
+      numbers,
+    };
+    axiosInstance
+      .post("/notify/alertAtRisk", requestOptions, config)
+      .then((response) => {
+        console.log(requestOptions);
+        console.log("notified");
+      })
+      .catch((error) => {
+        dispatchSnackbarError(error.response);
+      });
+  };
+
+  addZero(i) {
     if (i < 10) {
       i = "0" + i;
     }
     return i;
   }
 
-  getAbbrieviation(i){
-    if (i < 12){
-      return "AM"
+  getAbbrieviation(i) {
+    if (i < 12) {
+      return "AM";
     }
-    return "PM"
+    return "PM";
   }
 
-  make12hour(i){
-    if (i == 0){
+  make12hour(i) {
+    if (i == 0) {
       return 12;
     }
-    if (i > 12){
-      return i-12;
+    if (i > 12) {
+      return i - 12;
     }
     return i;
   }
 
-  updateStatus(possibleContacts, selectedRows){
-    var newCustomers = [...this.state.customers]
+  updateStatus(possibleContacts, selectedRows) {
+    var newCustomers = [...this.state.customers];
 
     for (var i = 0; i < newCustomers.length; i++) {
-      if (selectedRows.includes(newCustomers[i].id)){
+      if (selectedRows.includes(newCustomers[i].id)) {
         newCustomers[i].status = "Infected";
-      }
-      else if (possibleContacts.includes(newCustomers[i].id)){
+      } else if (possibleContacts.includes(newCustomers[i].id)) {
         newCustomers[i].status = "At Risk";
-      }
-      else{
+      } else {
         newCustomers[i].status = "Safe";
       }
     }
-    console.log(newCustomers)
+    console.log(newCustomers);
     this.setState({ customers: [...newCustomers] });
   }
 
-  render(){
+  render() {
     return (
       <div style={{ padding: 10 }}>
         <Title>Records</Title>
-        <div style={{ height: 600, width: '100%' }}>
+        <div style={{ height: 600, width: "100%" }}>
           <DataGrid
             rows={this.state.customers}
             columns={columns}
             pageSize={9}
-            sortingMode='client' sortingOrder={['asc', 'desc', null]}
+            sortingMode="client"
+            sortingOrder={["asc", "desc", null]}
             loading={this.state.loading}
             checkboxSelection
-            onSelectionChange={newSelectedRows => this.contactTrace(newSelectedRows)}
+            onSelectionChange={(newSelectedRows) =>
+              this.contactTrace(newSelectedRows)
+            }
           />
         </div>
-        <br/>
-        <CSVLink
-          data={this.state.customers}
-          filename={(new Date()).getDate().toString() + "-" + ((new Date()).getMonth() + 1).toString() + "-" + (new Date()).getFullYear().toString() +".csv"}
+        <br />
+        <Button variant="contained" color="primary">
+          <CSVLink
+            data={this.state.customers}
+            filename={
+              new Date().getDate().toString() +
+              "-" +
+              (new Date().getMonth() + 1).toString() +
+              "-" +
+              new Date().getFullYear().toString() +
+              ".csv"
+            }
+            style={{ color: "white" }}
           >
-          Download Records
-        </CSVLink>
+            Download Records
+          </CSVLink>
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          style={{ marginLeft: 20 }}
+          onClick={() => this.handleNotify()}
+        >
+          Notify
+        </Button>
       </div>
     );
   }
