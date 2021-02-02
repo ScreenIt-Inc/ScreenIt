@@ -1,24 +1,24 @@
-import React, { useState } from "react";
-import clsx from "clsx";
-import { makeStyles } from "@material-ui/core/styles";
-import Drawer from "@material-ui/core/Drawer";
-import List from "@material-ui/core/List";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Divider from "@material-ui/core/Divider";
+import Drawer from "@material-ui/core/Drawer";
 import IconButton from "@material-ui/core/IconButton";
-import MenuIcon from "@material-ui/icons/Menu";
-import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
+import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
+import { makeStyles } from "@material-ui/core/styles";
+import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import DeveloperBoardIcon from "@material-ui/icons/DeveloperBoard";
-import PeopleAltIcon from "@material-ui/icons/PeopleAlt";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import MenuIcon from "@material-ui/icons/Menu";
+import PeopleAltIcon from "@material-ui/icons/PeopleAlt";
 import SettingsIcon from "@material-ui/icons/Settings";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import clsx from "clsx";
+import React, { useState } from "react";
+import { BrowserRouter as Router, Link, Route, Switch } from "react-router-dom";
 import Logo from "../../assets/images/ScreenitLogo.png";
-import Queue from "../../containers/Queue/Queue";
 import ContactTracing from "../../containers/ContactTracing/ContactTracing";
+import Queue from "../../containers/Queue/Queue";
 import Settings from "../../containers/Settings/Settings";
 import history from "../../routes/History";
 import Auth from "../../utils/Auth";
@@ -155,7 +155,6 @@ export default function Navbar({ props }) {
                 onClick={() => setSelected(i)}
                 component={Link}
                 to={page.route}
-
               >
                 <ListItemIcon
                   className={
@@ -175,8 +174,9 @@ export default function Navbar({ props }) {
             <ListItem
               button
               key="Sign Out"
-              component={Link}
-              to={"/login"}
+              onClick={() => Auth.signOut()}
+              // component={Link}
+              // to={"/login"}
             >
               <ListItemIcon className={classes.icons}>
                 <ExitToAppIcon />
