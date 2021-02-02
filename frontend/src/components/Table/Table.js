@@ -1,6 +1,6 @@
 // Boilerplate for the orders table found on every page.
 import * as React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "@material-ui/core/Link";
 import { makeStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
@@ -15,11 +15,10 @@ import UpdateIcon from "@material-ui/icons/Update";
 import IconButton from "@material-ui/core/IconButton";
 import Button from "@material-ui/core/Button";
 import Title from "./Title";
-import { dispatchSnackbarSuccess } from "../../utils/Shared";
+import { dispatchSnackbarError, dispatchSnackbarSuccess } from "../../utils/Shared";
 import { useSelector } from "react-redux";
+import { axiosInstance } from "../../network/apis";
 import Auth from "../../utils/Auth";
-
-URL = "http://localhost:9000/api/visitors/getInfo"; //hardcode for now
 
 const useStyles = makeStyles((theme) => ({
   seeMore: {
@@ -82,20 +81,22 @@ export default function TableQ(props) {
   const handlePaid = (message) => {
     dispatchSnackbarSuccess(message);
   };
-  const date = new Date();
 
-  const getVisitorInfo = () => {
-    console.log("getting visitor information");
-    fetch(URL, {
-      method: "GET",
-      headers: {
-        Authorization: "Bearer " + Auth.isAuth(),
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    })
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      getVisitorInfo();
+    }, 2000);
+    return () => clearInterval(intervalId);
+  }, []);
+
+  const getVisitorInfo = async () => {
+    const config = {
+      headers: { Authorization: `Bearer ${Auth.isAuth()}` },
+    };
+    axiosInstance
+      .get("/visitors/getInfo", config)
       .then((response) => {
-        return response.json();
+        return response.data;
       })
       .then((data) => {
         var newEntries = data.filter((obj1) => {
@@ -103,10 +104,37 @@ export default function TableQ(props) {
             return obj1._id == obj2._id;
           });
         });
-        setRows(rows.concat(newEntries));
-        console.log(rows);
+        setRows([...rows, ...newEntries]);
       })
-      .catch();
+      .catch((error) => {
+        console.log(error);
+        if (error.response != undefined)
+          dispatchSnackbarError(error.response.data);
+        else console.log(error);
+      });
+  };
+
+  const postVisitorInfo = async (targetField, targetValue, formId) => {
+    const config = {
+      headers: { Authorization: `Bearer ${Auth.isAuth()}` },
+    };
+    const requestOptions = {
+      field: targetField,
+      value: targetValue,
+      id: formId,
+    };
+    await axiosInstance
+      .post("/visitors/updateInfo", requestOptions, config)
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+        if (error.response != undefined)
+          dispatchSnackbarError(error.response.data);
+        else console.log(error);
+      });
+      getVisitorInfo();
   };
 
   return (
@@ -158,8 +186,8 @@ export default function TableQ(props) {
         <TableBody>
           {category === "Queue" &&
             rows !== undefined &&
-            rows.filter((r) => r.hasEntered === undefined)
-              .map((row, i) => {
+            rows.filter((r) => r.entry_time === undefined)   
+              .map((row, i) => { 
               return (
                 (i < maxEvents || viewAll) && (
                   <TableRow key={row._id}>
@@ -168,11 +196,9 @@ export default function TableQ(props) {
                         icon={<CircleUnchecked />}
                         checkedIcon={<CircleCheckedFilled />}
                         onClick={() => {
-                          const newRows = rows;
-                          newRows[i]["hasEntered"] = true;
-                          newRows[i]["entry_time"] = new Date().toLocaleDateString();
-                          setRows(newRows);
-                                                    
+                          const entryTime = new Date();
+                          // update form table with entry time
+                          postVisitorInfo("entry_time", entryTime, row._id)                          
                           console.log("checked");
                         }}
                       />
@@ -204,7 +230,7 @@ export default function TableQ(props) {
             })}
             {category === "Capacity" &&
             rows !== undefined &&
-            rows.filter((r) => r.hasEntered === true)
+            rows.filter((r) => r.entry_time !== undefined && r.exit_time == undefined)
               .map((row, i) => {
               return (
                 (i < maxEvents || viewAll) && (
@@ -232,12 +258,11 @@ export default function TableQ(props) {
                         color="primary"
                         style={{ borderRadius: 5 }}
                         onClick={() => { 
-                          const newRows = rows;
                           const message = row.firstname + " " + row.lastname + " has been removed.";
+                          const exitTime = new Date(); 
                           dispatchSnackbarSuccess(message);
-                          newRows[i]["exit_time"] = new Date().toLocaleDateString();
-                          newRows.splice(i, 1);
-                          setRows(newRows);                          
+                          // post exit_time field update into DB
+                          postVisitorInfo("exit_time", exitTime, row._id)
                           }
                         }
                       >
