@@ -12,11 +12,8 @@ const useStyles = theme => ({
   content: {
     flexGrow: 1,
     paddingTop: "10vh",
-    paddingRight: "50vh",
-    paddingLeft: "50vh",
     paddingBottom: "10vh",
     justifyContent:'center',
-    alignItems:'center',
     backgroundColor: theme.palette.primary.dark,
     height: "100vh",
     overflow: "auto",
@@ -34,8 +31,9 @@ const useStyles = theme => ({
 	position: "relative",
 	top: "50%",
 	transform: "translateY(-50%)",
-	fontFamily: "Monaco",
-	fontSize: "130%",
+	fontFamily: "Helvetica ",
+	fontSize: "calc(0.4em + 2.6vw)",
+	fontWeight: "lighter",
 
   },
   formHeadLeft: {
@@ -65,11 +63,19 @@ const useStyles = theme => ({
   },
   headerQuestion: {
     fontWeight: 'bold',
-    color: theme.palette.primary.light
+    color: theme.palette.primary.light,
+    fontSize: "calc(0.65em + .7vw)",
   },
   baseQuestion: {
     fontWeight: 'bold',
-    color: theme.palette.secondary.light
+    color: theme.palette.secondary.light,
+    fontSize: "calc(0.5em + 0.6vw)",
+  },
+  question: {
+  	fontSize: "calc(.5em + 0.4vw)",
+  },
+  forminputs: {
+  	fontSize: "calc(0.4em + 0.4vw)",
   },
   centerDiv: {
 	textAlign: 'center',
@@ -96,7 +102,7 @@ class CustomerForm extends React.Component{
 			},
 			'pulled': false,
 			'approved': 'Unkown',
-			questionnaire:
+			questionnaire:  //I just keep the dummy data below so its easier to test without connections
 				[
 					{
 						'question': 'Do you have any of the following new or worsening symptoms or signs?',
@@ -261,14 +267,18 @@ class CustomerForm extends React.Component{
 		else if (this.state.approved == 'Submitted'){
 			return (
 	  			<div className={[classes.content, classes.headerQuestion].join(" ")}>
-					Thank you, your form has been submitted
+	  				<Col  xs={{ span: 4, offset: 4 }} sm={{ span: 4, offset: 4 }} md={{ span: 4, offset: 4 }} lg={{ span: 4, offset: 4 }} xl={{ span: 4, offset: 4}}>
+						Thank you! Your form has been submitted.
+					</Col>
 	  			</div>
 	  		)
 		}
   		else if (!(this.state.pulled && (this.state.approved == 'Yes'))){
 	  		return (
 	  			<div className={[classes.content, classes.headerQuestion].join(" ")}>
-	  				LOADING...
+	  				<Col  xs={{ span: 2, offset: 5 }} sm={{ span: 2, offset: 5 }} md={{ span: 2, offset: 5 }} lg={{ span: 2, offset: 5 }} xl={{ span: 2, offset: 5}}>
+	  					LOADING...
+	  				</Col>
 	  			</div>
 
 	  		)
@@ -276,13 +286,19 @@ class CustomerForm extends React.Component{
 		else {
 		    return (
 		        <div className={classes.content}>
+		        <Row>
+		        <Col  xs={{ span: 12, offset: 0 }} sm={{ span: 10, offset: 1 }} md={{ span: 8, offset: 2 }} lg={{ span: 8, offset: 2 }} xl={{ span: 8, offset: 2}}>
 			        <Container fluid>
 			        <Row className={classes.headRow} >
-			        	<Col xs={{ span: 3, offset: 1 }} sm={{ span: 3, offset: 1 }} md={{ span: 3, offset: 1 }} lg={{ span: 3, offset: 1 }} xl={{ span: 3, offset: 1 }} className={classes.formHeadLeft}>
-			        		<img src={Logo} alt="ScreenIT" height="100%"></img>
+			        	<Col xs={{ span: 4, offset: 1 }} sm={{ span: 3, offset: 1 }} md={{ span: 3, offset: 1 }} lg={{ span: 3, offset: 1 }} xl={{ span: 3, offset: 1 }} className={classes.formHeadLeft}>
+			        		   <table width="100%" height="100%" align="center" valign="center">
+							   <tr><td>
+			        				<img src={Logo} alt="ScreenIT" width="60%" ></img>
+							   </td></tr>
+							   </table>
 				        </Col>
 
-				        <Col xs={{ span: 6, offset: 1 }} sm={{ span: 6, offset: 1 }} md={{ span: 6, offset: 1 }} lg={{ span: 6, offset: 1 }} xl={{ span: 6, offset: 1}} className={classes.formHeadRight}>
+				        <Col xs={{ span: 5, offset: 1 }} sm={{ span: 6, offset: 1 }} md={{ span: 6, offset: 1 }} lg={{ span: 6, offset: 1 }} xl={{ span: 6, offset: 1}} className={classes.formHeadRight}>
 				           	<div className={classes.titleText}>
 				            	Information Form
 				            </div>
@@ -297,33 +313,33 @@ class CustomerForm extends React.Component{
 								  <Form.Label className={classes.headerQuestion}>Name</Form.Label>
 								  <Row>
 								    <Col>
-								      <Form.Control placeholder="First name" onChange={(event) => {this.handleFormChange.bind(this)('firstname', event.target.value)}}/>
+								      <Form.Control placeholder="First name" onChange={(event) => {this.handleFormChange.bind(this)('firstname', event.target.value)}} className={classes.forminputs}/>
 								    </Col>
 								    <Col>
-								      <Form.Control placeholder="Last name" onChange={(event) => {this.handleFormChange.bind(this)('lastname', event.target.value)}}/>
+								      <Form.Control placeholder="Last name" onChange={(event) => {this.handleFormChange.bind(this)('lastname', event.target.value)}} className={classes.forminputs}/>
 								    </Col>
 								  </Row>
 								   </Form.Group>
 
 								  <Form.Group controlId="formBasicEmail">
 								    <Form.Label className={classes.headerQuestion}>Email address</Form.Label>
-								    <Form.Control type="email" placeholder="Enter email" onChange={(event) => {this.handleFormChange.bind(this)('email', event.target.value)}}/>
+								    <Form.Control type="email" placeholder="Enter email" onChange={(event) => {this.handleFormChange.bind(this)('email', event.target.value)}} className={classes.forminputs}/>
 								  </Form.Group>
 
 								  <Form.Group controlId="formBasicPassword">
 								    <Form.Label className={classes.headerQuestion}>Phone Number</Form.Label>
-								    <Form.Control type="tel" placeholder="Phone Number" onChange={(event) => {this.handleFormChange.bind(this)('phone', event.target.value)}}/>
+								    <Form.Control type="tel" placeholder="Phone Number" onChange={(event) => {this.handleFormChange.bind(this)('phone', event.target.value)}} className={classes.forminputs}/>
 								  </Form.Group>
 
 								  <Form.Group controlId="formBasicPassword">
 								    <Form.Label className={classes.headerQuestion}>Address</Form.Label>
-								    <Form.Control type="address" placeholder="Address" onChange={(event) => {this.handleFormChange.bind(this)('address', event.target.value)}}/>
+								    <Form.Control type="address" placeholder="Address" onChange={(event) => {this.handleFormChange.bind(this)('address', event.target.value)}} className={classes.forminputs}/>
 								    <Form.Text className="text-muted">
 								      We'll never share your information with anyone else.
 								    </Form.Text>
 								  <Form.Group >
 								    <Form.Label className={classes.headerQuestion}>Group Size</Form.Label>
-								    <Form.Control type="Number" onChange={(event) => {this.handleFormChange.bind(this)('group_size', event.target.value)}}/>
+								    <Form.Control type="Number" onChange={(event) => {this.handleFormChange.bind(this)('group_size', event.target.value)}} className={classes.forminputs}/>
 								  </Form.Group>
 								  </Form.Group>
 							    	{
@@ -341,7 +357,7 @@ class CustomerForm extends React.Component{
 											                  	<Col>
 											                  		{
 											                  			Q.answers.map(A =>
-											                  				<Form.Check inline label={A} type='radio' id={Q.id.toString() + A} onClick={(event) => {this.handletoggle.bind(this)(Q, A)}}/>
+											                  				<Form.Check inline label={A} type='radio' id={Q.id.toString() + A} className={classes.question} onClick={(event) => {this.handletoggle.bind(this)(Q, A)}}/>
 											                  			)
 											                  		}
 											                  	</Col>
@@ -350,13 +366,13 @@ class CustomerForm extends React.Component{
 
 								                	:
 								                		<Row key={Q.id}>
-									    					<Col>
+									    					<Col  xs={{ span: 6, offset: 0 }} sm={{ span: 7, offset: 1 }} md={{ span: 7, offset: 1 }} lg={{ span: 7, offset: 1 }} xl={{ span: 7, offset: 1 }}>
 										                  		<Form.Label className={classes.baseQuestion}>{Q.question}</Form.Label>
 										                  	</Col>
-										                  	<Col>
+										                  	<Col  xs={{ span: 6, offset: 0 }} sm={{ span: 4, offset: 0 }} md={{ span: 4, offset: 0 }} lg={{ span: 4, offset: 0 }} xl={{ span: 4, offset: 0 }}>
 										                  		{
 										                  			Q.answers.map(A =>
-										                  				<Form.Check inline label={A} type='radio' id={Q.id.toString() + A} onClick={(event) => {this.handletoggle.bind(this)(Q, A)}}/>
+										                  				<Form.Check inline label={A} type='radio' id={Q.id.toString() + A} className={classes.question} onClick={(event) => {this.handletoggle.bind(this)(Q, A)}}/>
 										                  			)
 										                  		}
 										                  	</Col>
@@ -376,6 +392,8 @@ class CustomerForm extends React.Component{
 				    </Row>
 
 			        </Container>
+			    </Col>
+			    </Row>
 		        </div>
 		    )
 		}
