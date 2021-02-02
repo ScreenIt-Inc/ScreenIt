@@ -96,8 +96,6 @@ class CustomerForm extends React.Component{
 				'phone': '',
 				'group_size': '',
 				'questionnaire': {},
-        'entry_time':new Date(2021, 1, 17, 3, 24, 0),
-        'exit_time':new Date(2021, 1, 17, 4, 24, 0),
 				//entry/exit_time only exist if they happened
 			},
 			'pulled': false,
