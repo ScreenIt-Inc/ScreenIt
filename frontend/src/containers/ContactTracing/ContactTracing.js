@@ -54,25 +54,7 @@ export default function ContactTracing(props) {
 
   return(
       <Grid container spacing={3} justify="center" alignItems="baseline">
-        <Grid item xs={10}>
-          <Button
-            variant="contained"
-            classes={classes.button}
-            color="secondary"
-            style={{ borderRadius: 5, margin: 5 }}
-          >
-            <span style={{color: "white"}} >Notify</span>
-          </Button>
 
-          <Button
-            variant="contained"
-            classes={classes.button}
-            color="secondary"
-            style={{ borderRadius: 5, margin: 5  }}
-          >
-            <span style={{color: "white"}} >Export</span>
-          </Button>
-        </Grid>
 
         <Grid item xs={10}>
             <Paper className={classes.paper} >
@@ -82,6 +64,31 @@ export default function ContactTracing(props) {
       </Grid>
   )
 }
+
+
+/*
+<Grid item xs={10}>
+  <Button
+    variant="contained"
+    classes={classes.button}
+    color="secondary"
+    style={{ borderRadius: 5, margin: 5 }}
+  >
+    <span style={{color: "white"}} >Notify</span>
+  </Button>
+
+  <Button
+    variant="contained"
+    classes={classes.button}
+    color="secondary"
+    style={{ borderRadius: 5, margin: 5  }}
+  >
+    <span style={{color: "white"}} >Export</span>
+  </Button>
+</Grid>
+
+*/
+
 /*
 
   <Grid item xs={10}>
