@@ -16,7 +16,7 @@ export default (app: Router) => {
     var response = "";
   client.messages
     .create({
-      body: 'Thank you for your patience. Please make your way in!',
+      body: req.body.msg,
       from: '+12266405423',
       to: req.body.phoneNumber
     })

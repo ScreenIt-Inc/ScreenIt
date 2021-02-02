@@ -59,13 +59,14 @@ export default function TableQ(props) {
   const maxEvents = 10;
 
   const classes = useStyles();
-  const handlePaid = async (row) => {
+  const handlePaid = async (row, message) => {
     dispatchSnackbarSuccess("Notification sent to " + row.name);
     const token = Auth.isAuth()
     const config = {
       headers: { Authorization: `Bearer ${token}` }
   };
     const requestOptions = {
+      msg: message,
       phoneNumber: row.number,
       name: row.name
     };
@@ -145,8 +146,10 @@ export default function TableQ(props) {
                       classes={classes.button}
                       color="primary"
                       style={{ borderRadius: 5 }}
-                      onClick={() =>
-                        handlePaid(row)
+                      onClick={() => {
+                        const message = 'Thank you for your patience. Please make your way in!';
+                        handlePaid(row, message);
+                        }
                       }
                     >
                       <span style={{ color: "white" }}>Notify</span>
