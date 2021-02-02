@@ -78,8 +78,27 @@ export default function TableQ(props) {
   const maxEvents = 10;
 
   const classes = useStyles();
-  const handlePaid = (message) => {
-    dispatchSnackbarSuccess(message);
+  const handlePaid = async (row, message) => {
+    dispatchSnackbarSuccess("Notification sent to " + row.name);
+    const token = Auth.isAuth()
+    const config = {
+      headers: { Authorization: `Bearer ${token}` }
+  };
+    const requestOptions = {
+      msg: message,
+      phoneNumber: row.number,
+      name: row.name
+    };
+    await axiosInstance
+      .post("/notify/sendText", requestOptions, config)
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        // console.log(error.response.data.errors.message);
+        console.log(error);
+        dispatchSnackbarError(error.response.data);
+      });
   };
 
   useEffect(() => {
@@ -217,9 +236,11 @@ export default function TableQ(props) {
                         classes={classes.button}
                         color="primary"
                         style={{ borderRadius: 5 }}
-                        onClick={() =>
-                          handlePaid("Notification sent to " + row.firstname + ' ' + row.lastname)
-                        }
+                        onClick={() =>{
+                            const message = 'Thank you for your patience. Please make your way in!';
+                            handlePaid(row, message);
+                            }  
+                          }
                       >
                         <span style={{ color: "white" }}>Notify</span>
                       </Button>
