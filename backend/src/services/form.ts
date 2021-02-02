@@ -1,9 +1,22 @@
 import mongoose from 'mongoose';
 import { Container } from 'typedi';
 import { Logger } from 'winston';
-import mongoose from 'mongoose';
 import { IForm, IOpenFormUUID} from '../interfaces/IForm';
 import { v4 as uuidv4 } from 'uuid';
+
+export async function updateTime(fieldToUpdate: string, fieldValue: Date, formId: string){
+	const Logger : Logger = Container.get('logger');
+	const formModel = Container.get('formModel') as mongoose.Model<IForm & mongoose.Document>;
+	let results;
+	if (fieldToUpdate == "entry_time"){
+		results = await formModel.updateOne({_id: formId}, { entry_time: fieldValue  
+		})
+	} else if (fieldToUpdate == "exit_time"){
+		results = await formModel.updateOne({_id: formId}, { exit_time: fieldValue  
+		})
+	}
+	console.log(results);
+  }
 
 export async function formSubmit(data: Object){
 	const Logger : Logger = Container.get('logger');
