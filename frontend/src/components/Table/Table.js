@@ -36,8 +36,11 @@ const useStyles = makeStyles((theme) => ({
 export default function TableQ(props) {
   const dispatch = useDispatch();
   const category = useSelector((state) => state.table.category);
+  const generalRedux = useSelector((state) => state.setting.general);
   const [viewAll, setViewAll] = useState(false);
   const [rows, setRows] = useState([]);
+  // const queueRows = rows.filter((r) => r.entry_time === undefined);
+  // const capRows = rows.filter((r) => r.entry_time !== undefined && r.exit_time == undefined); 
 
   function preventDefault(event) {
     setViewAll(!viewAll);
@@ -138,6 +141,18 @@ export default function TableQ(props) {
     getVisitorInfo();
   };
 
+  const handleMaxCapacity = (capacity) => 
+  {
+    if (capacity >= generalRedux.maxCapacity){
+      console.log(capacity)
+      dispatchSnackbarSuccess("Max Capacity "  + generalRedux.maxCapacity + " Reached");
+      return true;
+    }
+    console.log(capacity)
+    console.log(generalRedux.maxCapacity)
+    return false; 
+  };
+  
   return (
     <React.Fragment>
       <div
@@ -186,7 +201,7 @@ export default function TableQ(props) {
         </TableHead>
         <TableBody>
           {category === "Queue" &&
-            rows !== undefined &&
+            rows!== undefined &&
             rows
               .filter((r) => r.entry_time === undefined)
               .map((row, i) => {
@@ -194,7 +209,10 @@ export default function TableQ(props) {
                   (i < maxEvents || viewAll) && (
                     <TableRow key={row._id}>
                       <TableCell>
-                        <Checkbox
+                        
+                        <Checkbox 
+                          disabled = {rows.filter((r) => r.entry_time !== undefined && r.exit_time == undefined)
+                            .length >= generalRedux.maxCapacity} 
                           icon={<CircleUnchecked />}
                           checkedIcon={<CircleCheckedFilled />}
                           onClick={() => {
@@ -216,7 +234,8 @@ export default function TableQ(props) {
                       </TableCell>
                       <TableCell align="right">
                         {" "}
-                        <Button
+                        <Button 
+                          disabled = {handleMaxCapacity(rows.filter((r) => r.entry_time !== undefined && r.exit_time == undefined).length)}  
                           variant="contained"
                           classes={classes.button}
                           color="primary"
@@ -237,9 +256,7 @@ export default function TableQ(props) {
           {category === "Capacity" &&
             rows !== undefined &&
             rows
-              .filter(
-                (r) => r.entry_time !== undefined && r.exit_time == undefined
-              )
+              .filter((r) => r.entry_time !== undefined && r.exit_time == undefined)            
               .map((row, i) => {
                 return (
                   (i < maxEvents || viewAll) && (
