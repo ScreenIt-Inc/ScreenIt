@@ -107,6 +107,9 @@ export default function TableQ(props) {
             capacity: [...rows, ...newEntries].filter(
               (r) => r.entry_time !== undefined && r.exit_time == undefined
             ),
+            alert: [...rows, ...newEntries].filter(
+              (r) => r.entry_time !== undefined && r.temp > TEMP_THRESHOLD
+            ),
           })
         );
       })
@@ -257,6 +260,61 @@ export default function TableQ(props) {
                             const message =
                               "Thank you for your patience. Please make your way in!";
                             handlePaid(row, message);
+                          }}
+                        >
+                          <span style={{ color: "white" }}>Notify</span>
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  )
+                );
+              })}
+          {category === "Alert" &&
+            rows!== undefined &&
+            rows
+              .filter((r) => r.entry_time === undefined && r.temp > TEMP_THRESHOLD)
+              .map((row, i) => {
+                return (
+                  (i < maxEvents || viewAll) && (
+                    <TableRow key={row._id}>
+                      <TableCell>
+                        <Checkbox disabled
+                          icon={<CircleUnchecked />}
+                          checkedIcon={<CircleCheckedFilled />}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        {row.firstname + " " + row.lastname}
+                      </TableCell>
+                      <TableCell>{row.phone.slice(0, 10)}</TableCell>
+                      <TableCell>{1}</TableCell>
+                      <TableCell>{row.temp}</TableCell>
+                      <TableCell>
+                        {new Date(row.createdAt).toLocaleTimeString()}
+                      </TableCell>
+                      <TableCell>
+                        {row.temp > TEMP_THRESHOLD && <WarningIcon color="error"/>}
+                      </TableCell>
+                      <TableCell align="right">
+                        {" "}
+                        <Button 
+                          variant="contained"
+                          classes={classes.button}
+                          color="primary"
+                          style={{ borderRadius: 5 }}
+                          onClick={() => {
+                            const message =
+                              "[ScreenIt Screening Tool] Your temperature is too high.";
+                            handlePaid(row, message);
+                            const removalMessage =
+                              row.firstname +
+                              " " +
+                              row.lastname +
+                              " has been notified and removed.";
+                            const exitTime = new Date();
+                            dispatchSnackbarSuccess(removalMessage);
+                            // post exit_time field update into DB
+                            postVisitorInfo("exit_time", exitTime, row._id);
                           }}
                         >
                           <span style={{ color: "white" }}>Notify</span>
