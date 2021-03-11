@@ -39,8 +39,6 @@ export default function TableQ(props) {
   const generalRedux = useSelector((state) => state.setting.general);
   const [viewAll, setViewAll] = useState(false);
   const [rows, setRows] = useState([]);
-  // const queueRows = rows.filter((r) => r.entry_time === undefined);
-  // const capRows = rows.filter((r) => r.entry_time !== undefined && r.exit_time == undefined); 
 
   function preventDefault(event) {
     setViewAll(!viewAll);
@@ -141,11 +139,11 @@ export default function TableQ(props) {
     getVisitorInfo();
   };
 
-  const handleMaxCapacity = (capacity) => 
+  const handleMaxCapacity = () => 
   {
+    const capacity = rows.filter((r) => r.entry_time !== undefined && r.exit_time == undefined).length;
     if (capacity >= generalRedux.maxCapacity){
       console.log(capacity)
-      dispatchSnackbarSuccess("Max Capacity "  + generalRedux.maxCapacity + " Reached");
       return true;
     }
     console.log(capacity)
@@ -170,6 +168,17 @@ export default function TableQ(props) {
             color="primary"
             aria-label="add to shopping cart"
           >
+            <Button
+            variant="contained"
+            classes={classes.button}
+            color= {handleMaxCapacity() ? "primary" : "secondary"}
+            style={{ borderRadius: 5 }}           
+            margin
+            >
+            <span style={{ color: "white" }}>{handleMaxCapacity()
+            ? "Max Capacity Reached: " + rows.filter((r) => r.entry_time !== undefined && r.exit_time == undefined).length 
+            : "Capacity: " + rows.filter((r) => r.entry_time !== undefined && r.exit_time == undefined).length}</span>
+            </Button>
             <UpdateIcon />
           </IconButton>
           <Link color="primary" href="#" onClick={preventDefault}>
@@ -235,7 +244,7 @@ export default function TableQ(props) {
                       <TableCell align="right">
                         {" "}
                         <Button 
-                          disabled = {handleMaxCapacity(rows.filter((r) => r.entry_time !== undefined && r.exit_time == undefined).length)}  
+                          disabled = {handleMaxCapacity()}  
                           variant="contained"
                           classes={classes.button}
                           color="primary"
