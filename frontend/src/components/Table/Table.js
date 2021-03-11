@@ -9,6 +9,7 @@ import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
+import WarningIcon from '@material-ui/icons/Warning';
 import CircleCheckedFilled from "@material-ui/icons/CheckCircle";
 import CircleUnchecked from "@material-ui/icons/RadioButtonUnchecked";
 import UpdateIcon from "@material-ui/icons/Update";
@@ -35,6 +36,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function TableQ(props) {
   const dispatch = useDispatch();
+  const TEMP_THRESHOLD = 37.8; //  in Celsius, according to google
   const category = useSelector((state) => state.table.category);
   const generalRedux = useSelector((state) => state.setting.general);
   const [viewAll, setViewAll] = useState(false);
@@ -220,8 +222,7 @@ export default function TableQ(props) {
                       <TableCell>
                         
                         <Checkbox 
-                          disabled = {rows.filter((r) => r.entry_time !== undefined && r.exit_time == undefined)
-                            .length >= generalRedux.maxCapacity} 
+                          disabled = {handleMaxCapacity() || row.temp > TEMP_THRESHOLD} 
                           icon={<CircleUnchecked />}
                           checkedIcon={<CircleCheckedFilled />}
                           onClick={() => {
@@ -237,14 +238,17 @@ export default function TableQ(props) {
                       </TableCell>
                       <TableCell>{row.phone.slice(0, 10)}</TableCell>
                       <TableCell>{1}</TableCell>
-                      <TableCell>{35}</TableCell>
+                      <TableCell>{row.temp}</TableCell>
                       <TableCell>
                         {new Date(row.createdAt).toLocaleTimeString()}
+                      </TableCell>
+                      <TableCell>
+                        {row.temp > TEMP_THRESHOLD && <WarningIcon color="error"/>}
                       </TableCell>
                       <TableCell align="right">
                         {" "}
                         <Button 
-                          disabled = {handleMaxCapacity()}  
+                          disabled = {handleMaxCapacity() || row.temp > TEMP_THRESHOLD}  
                           variant="contained"
                           classes={classes.button}
                           color="primary"
@@ -283,7 +287,7 @@ export default function TableQ(props) {
                       </TableCell>
                       <TableCell>{row.phone.slice(0, 10)}</TableCell>
                       <TableCell>{1}</TableCell>
-                      <TableCell>{35}</TableCell>
+                      <TableCell>{row.temp}</TableCell>
                       <TableCell>
                         {new Date(row.createdAt).toLocaleTimeString()}
                       </TableCell>
