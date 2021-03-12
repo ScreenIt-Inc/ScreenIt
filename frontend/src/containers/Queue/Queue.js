@@ -32,9 +32,6 @@ const useStyles = makeStyles((theme) => ({
     overflow: "auto",
     flexDirection: "column",
   },
-  // fixedHeight: {
-  //     height: 500,
-  // }
 }));
 
 export default function Queue(props) {
@@ -101,11 +98,3 @@ export default function Queue(props) {
     </Grid>
   );
 }
-
-// const mapStateToProps = (state) => {
-//     return {
-//         lang : state.lang
-//     }
-// }
-
-// export default connect(mapStateToProps,null)(Home);

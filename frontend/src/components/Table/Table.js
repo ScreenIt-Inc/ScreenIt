@@ -177,8 +177,8 @@ export default function TableQ(props) {
             <Button
               variant="contained"
               classes={classes.button}
-              color={handleMaxCapacity() ? "primary" : "secondary"}
-              style={{ borderRadius: 5 }}
+              color={handleMaxCapacity() ? "secondary" : "primary"}
+              style={{ borderRadius: 5, marginRight: 10, marginBottom: 12 }}
               margin
             >
               <span style={{ color: "white" }}>
