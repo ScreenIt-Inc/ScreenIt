@@ -9,10 +9,10 @@ import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import WarningIcon from '@material-ui/icons/Warning';
 import CircleCheckedFilled from "@material-ui/icons/CheckCircle";
 import CircleUnchecked from "@material-ui/icons/RadioButtonUnchecked";
 import UpdateIcon from "@material-ui/icons/Update";
+import WarningIcon from "@material-ui/icons/Warning";
 import * as React from "react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -144,18 +144,19 @@ export default function TableQ(props) {
     getVisitorInfo();
   };
 
-  const handleMaxCapacity = () => 
-  {
-    const capacity = rows.filter((r) => r.entry_time !== undefined && r.exit_time == undefined).length;
-    if (capacity >= generalRedux.maxCapacity){
-      console.log(capacity)
+  const handleMaxCapacity = () => {
+    const capacity = rows.filter(
+      (r) => r.entry_time !== undefined && r.exit_time == undefined
+    ).length;
+    if (capacity >= generalRedux.maxCapacity) {
+      console.log(capacity);
       return true;
     }
-    console.log(capacity)
-    console.log(generalRedux.maxCapacity)
-    return false; 
+    console.log(capacity);
+    console.log(generalRedux.maxCapacity);
+    return false;
   };
-  
+
   return (
     <React.Fragment>
       <div
@@ -174,15 +175,25 @@ export default function TableQ(props) {
             aria-label="add to shopping cart"
           >
             <Button
-            variant="contained"
-            classes={classes.button}
-            color= {handleMaxCapacity() ? "primary" : "secondary"}
-            style={{ borderRadius: 5 }}           
-            margin
+              variant="contained"
+              classes={classes.button}
+              color={handleMaxCapacity() ? "primary" : "secondary"}
+              style={{ borderRadius: 5 }}
+              margin
             >
-            <span style={{ color: "white" }}>{handleMaxCapacity()
-            ? "Max Capacity Reached: " + rows.filter((r) => r.entry_time !== undefined && r.exit_time == undefined).length 
-            : "Capacity: " + rows.filter((r) => r.entry_time !== undefined && r.exit_time == undefined).length}</span>
+              <span style={{ color: "white" }}>
+                {handleMaxCapacity()
+                  ? "Max Capacity Reached: " +
+                    rows.filter(
+                      (r) =>
+                        r.entry_time !== undefined && r.exit_time == undefined
+                    ).length
+                  : "Capacity: " +
+                    rows.filter(
+                      (r) =>
+                        r.entry_time !== undefined && r.exit_time == undefined
+                    ).length}
+              </span>
             </Button>
             <UpdateIcon />
           </IconButton>
@@ -215,7 +226,7 @@ export default function TableQ(props) {
         </TableHead>
         <TableBody>
           {category === "Queue" &&
-            rows!== undefined &&
+            rows !== undefined &&
             rows
               .filter((r) => r.entry_time === undefined)
               .map((row, i) => {
@@ -223,9 +234,10 @@ export default function TableQ(props) {
                   (i < maxEvents || viewAll) && (
                     <TableRow key={row._id}>
                       <TableCell>
-                        
-                        <Checkbox 
-                          disabled = {handleMaxCapacity() || row.temp > TEMP_THRESHOLD} 
+                        <Checkbox
+                          disabled={
+                            handleMaxCapacity() || row.temp > TEMP_THRESHOLD
+                          }
                           icon={<CircleUnchecked />}
                           checkedIcon={<CircleCheckedFilled />}
                           onClick={() => {
@@ -246,12 +258,16 @@ export default function TableQ(props) {
                         {new Date(row.createdAt).toLocaleTimeString()}
                       </TableCell>
                       <TableCell>
-                        {row.temp > TEMP_THRESHOLD && <WarningIcon color="error"/>}
+                        {row.temp > TEMP_THRESHOLD && (
+                          <WarningIcon color="error" />
+                        )}
                       </TableCell>
                       <TableCell align="right">
                         {" "}
-                        <Button 
-                          disabled = {handleMaxCapacity() || row.temp > TEMP_THRESHOLD}  
+                        <Button
+                          disabled={
+                            handleMaxCapacity() || row.temp > TEMP_THRESHOLD
+                          }
                           variant="contained"
                           classes={classes.button}
                           color="primary"
@@ -270,15 +286,18 @@ export default function TableQ(props) {
                 );
               })}
           {category === "Alert" &&
-            rows!== undefined &&
+            rows !== undefined &&
             rows
-              .filter((r) => r.entry_time === undefined && r.temp > TEMP_THRESHOLD)
+              .filter(
+                (r) => r.entry_time === undefined && r.temp > TEMP_THRESHOLD
+              )
               .map((row, i) => {
                 return (
                   (i < maxEvents || viewAll) && (
                     <TableRow key={row._id}>
                       <TableCell>
-                        <Checkbox disabled
+                        <Checkbox
+                          disabled
                           icon={<CircleUnchecked />}
                           checkedIcon={<CircleCheckedFilled />}
                         />
@@ -293,11 +312,13 @@ export default function TableQ(props) {
                         {new Date(row.createdAt).toLocaleTimeString()}
                       </TableCell>
                       <TableCell>
-                        {row.temp > TEMP_THRESHOLD && <WarningIcon color="error"/>}
+                        {row.temp > TEMP_THRESHOLD && (
+                          <WarningIcon color="error" />
+                        )}
                       </TableCell>
                       <TableCell align="right">
                         {" "}
-                        <Button 
+                        <Button
                           variant="contained"
                           classes={classes.button}
                           color="primary"
@@ -327,7 +348,9 @@ export default function TableQ(props) {
           {category === "Capacity" &&
             rows !== undefined &&
             rows
-              .filter((r) => r.entry_time !== undefined && r.exit_time == undefined)            
+              .filter(
+                (r) => r.entry_time !== undefined && r.exit_time == undefined
+              )
               .map((row, i) => {
                 return (
                   (i < maxEvents || viewAll) && (

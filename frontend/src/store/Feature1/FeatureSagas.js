@@ -15,7 +15,6 @@ export function* sagasRequestExample() {
   }
 }
 
-
 export function* FeatureSaga1() {
   yield takeLatest(TYPES.GET_DATA_REQUEST, sagasRequestExample);
 }

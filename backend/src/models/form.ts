@@ -1,12 +1,12 @@
-import mongoose from 'mongoose';
-import { IForm, IOpenFormUUID } from '../interfaces/IForm';
+import mongoose from "mongoose";
+import { IForm, IOpenFormUUID } from "../interfaces/IForm";
 
 const Form = new mongoose.Schema(
   {
     uuid: {
       type: String,
       required: true,
-      index: true
+      index: true,
     },
     temp: {
       type: Number,
@@ -51,13 +51,11 @@ const Form = new mongoose.Schema(
       type: Array,
       required: true,
     },
-
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
-exports.Form = mongoose.model<IForm & mongoose.Document>('Form', Form);
-
+exports.Form = mongoose.model<IForm & mongoose.Document>("Form", Form);
 
 const OpenFormUUID = new mongoose.Schema(
   {
@@ -72,6 +70,9 @@ const OpenFormUUID = new mongoose.Schema(
       required: true,
     },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
-exports.OpenFormUUIDModel = mongoose.model<IOpenFormUUID & mongoose.Document>('OpenFormUUID', OpenFormUUID);
+exports.OpenFormUUIDModel = mongoose.model<IOpenFormUUID & mongoose.Document>(
+  "OpenFormUUID",
+  OpenFormUUID
+);

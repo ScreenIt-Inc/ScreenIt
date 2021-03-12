@@ -16,12 +16,12 @@ function ThemeApp() {
         main: "#344A59",
         dark: "#212936",
         grey: "#9E9E9E",
-        white: "#FFFFFF"
+        white: "#FFFFFF",
       },
       secondary: {
-        light: '#56657F',
+        light: "#56657F",
         main: "#17D8E2",
-      }
+      },
     },
     overrides: {
       MuiListItem: {
@@ -33,7 +33,7 @@ function ThemeApp() {
             marginLeft: 10,
             "&:hover": {
               backgroundColor: "#344A59",
-              color: "#55AFB4"
+              color: "#55AFB4",
             },
           },
           "&:hover": {

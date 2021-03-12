@@ -1,5 +1,5 @@
-import { ICustomer } from '../interfaces/IForm';
-import mongoose from 'mongoose';
+import { ICustomer } from "../interfaces/IForm";
+import mongoose from "mongoose";
 
 const Customer = new mongoose.Schema(
   {
@@ -37,9 +37,12 @@ const Customer = new mongoose.Schema(
     exitTime: {
       type: Date,
       required: false,
-    }
+    },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
-export default mongoose.model<ICustomer & mongoose.Document>('Customer', Customer);
+export default mongoose.model<ICustomer & mongoose.Document>(
+  "Customer",
+  Customer
+);

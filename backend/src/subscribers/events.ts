@@ -1,6 +1,6 @@
 export default {
   user: {
-    signUp: 'onUserSignUp',
-    signIn: 'onUserSignIn',
+    signUp: "onUserSignUp",
+    signIn: "onUserSignIn",
   },
 };

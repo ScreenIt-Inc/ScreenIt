@@ -1,0 +1,9 @@
+# Ignore artifacts:
+.cache
+.eslintcache
+.gitignore
+README.md
+package.json
+package-lock.json
+public
+node_modules

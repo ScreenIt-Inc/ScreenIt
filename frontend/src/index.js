@@ -8,5 +8,5 @@ ReactDOM.render(
   <Provider store={store}>
     <ThemeApp />
   </Provider>,
-  document.querySelector('#root')
+  document.querySelector("#root")
 );

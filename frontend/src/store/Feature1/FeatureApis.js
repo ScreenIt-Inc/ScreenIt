@@ -1,4 +1,4 @@
-import {axiosInstance} from '../../network/apis';
+import { axiosInstance } from "../../network/apis";
 const handlerEnabled = false;
 
 // Replace endpoint and change api name
@@ -7,5 +7,5 @@ const apiExampleRequest = async () => {
 };
 
 export default {
-  apiExampleRequest
+  apiExampleRequest,
 };

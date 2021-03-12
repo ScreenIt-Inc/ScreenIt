@@ -1,8 +1,7 @@
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 
 // Set the NODE_ENV to 'development' by default
-process.env.NODE_ENV = process.env.NODE_ENV || 'development';
-
+process.env.NODE_ENV = process.env.NODE_ENV || "development";
 
 const envFound = dotenv.config();
 if (envFound.error) {
@@ -33,7 +32,7 @@ export default {
    * Used by winston logger
    */
   logs: {
-    level: process.env.LOG_LEVEL || 'silly',
+    level: process.env.LOG_LEVEL || "silly",
   },
 
   /**
@@ -49,28 +48,28 @@ export default {
    * Agendash config
    */
   agendash: {
-    user: 'agendash',
-    password: '123456'
+    user: "agendash",
+    password: "123456",
   },
   /**
    * API configs
    */
   api: {
-    prefix: '/api',
+    prefix: "/api",
   },
   /**
    * Mailgun email credentials
    */
   emails: {
     apiKey: process.env.MAILGUN_API_KEY,
-    domain: process.env.MAILGUN_DOMAIN
+    domain: process.env.MAILGUN_DOMAIN,
   },
   /**
-   * Twilio authentication credentials 
+   * Twilio authentication credentials
    */
   twilio: {
     accountSid: process.env.TWILIO_ACCOUNT_SID,
     authToken: process.env.TWILIO_AUTH_TOKEN,
-    number: process.env.TWILIO_NUMBER
-  }
+    number: process.env.TWILIO_NUMBER,
+  },
 };
