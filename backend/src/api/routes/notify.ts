@@ -41,7 +41,6 @@ export default (app: Router) => {
     (req: Request, res: Response) => {
       var response = "";
       req.body.numbers.forEach((number) => {
-        console.log(number);
         client.messages
           .create({
             body: "You may be at risk for Covid. Please get tested",

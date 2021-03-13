@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 import { Container } from "typedi";
+import { v4 as uuidv4 } from "uuid";
 import { Logger } from "winston";
 import { IForm, IOpenFormUUID } from "../interfaces/IForm";
-import { v4 as uuidv4 } from "uuid";
 
 export async function updateTime(
   fieldToUpdate: string,
@@ -14,18 +14,17 @@ export async function updateTime(
     IForm & mongoose.Document
   >;
   let results;
-  if (fieldToUpdate == "entry_time") {
+  if (fieldToUpdate === "entry_time") {
     results = await formModel.updateOne(
       { _id: formId },
       { entry_time: fieldValue }
     );
-  } else if (fieldToUpdate == "exit_time") {
+  } else if (fieldToUpdate === "exit_time") {
     results = await formModel.updateOne(
       { _id: formId },
       { exit_time: fieldValue }
     );
   }
-  console.log(results);
 }
 
 export async function formSubmit(data: Object) {
@@ -59,37 +58,29 @@ export async function getForms() {
   return formModel.find({});
 }
 
-export function contactTrace(data: Object) {
-  const Logger: Logger = Container.get("logger");
-  const formModel = Container.get("formModel") as mongoose.Model<
-    IForm & mongoose.Document
-  >;
+export function contactTrace(data: Object){
+	const Logger : Logger = Container.get('logger');
+	const formModel = Container.get('formModel') as mongoose.Model<IForm & mongoose.Document>;
 
-  Logger.verbose("in service layer");
+	Logger.verbose("in service layer");
 
-  return formModel.find({}).then(function (forms) {
-    var atRiskList = [];
-    for (let index = 0; index < data.infectedCustomerIds.length; index++) {
-      var infectedCustomer = forms.find(
-        (form) => form._id == data.infectedCustomerIds[index]
-      );
-      Logger.verbose(infectedCustomer);
+	return formModel.find({}).then(function (forms) {
+		var atRiskList = [];
+		for (let index = 0; index < data.infectedCustomerIds.length; index++) {
+			var infectedCustomer = forms.find(form => form._id == data.infectedCustomerIds[index])
+			Logger.verbose(infectedCustomer);
 
-      var tempAtRisk = forms.filter(
-        (form) =>
-          form.entry_time <= infectedCustomer.exit_time &&
-          form.exit_time >= infectedCustomer.entry_time &&
-          form._id != infectedCustomer._id
-      );
+			var tempAtRisk = forms.filter(form => (form.entry_time <= infectedCustomer.exit_time)
+																					&& (form.exit_time >= infectedCustomer.entry_time)
+																					&& (form._id != infectedCustomer._id));
 
-      tempAtRisk.forEach((element) =>
-        !atRiskList.includes(element._id) ? atRiskList.push(element._id) : null
-      );
-      Logger.verbose(tempAtRisk);
-    }
-    Logger.verbose(atRiskList);
-    return atRiskList;
-  });
+			tempAtRisk.forEach(element => (!atRiskList.includes(element._id)) ? atRiskList.push(element._id) : null);
+			Logger.verbose(tempAtRisk);
+		}
+		Logger.verbose(atRiskList);
+		return atRiskList;
+	});
+
 }
 
 /*
@@ -136,7 +127,6 @@ export function newFormURL(res, temp) {
       res.json({ success: true, data: doc });
     })
     .catch((err) => {
-      console.log(err);
       res.status(500).send({ error: err });
     });
 }
@@ -160,7 +150,7 @@ export async function AddQuestion(question: string) {
       },
     }
   );
-  console.log(results); //should just be a single value, so pull all returns an array
+   //should just be a single value, so pull all returns an array
 }
 
 export async function DeleteQuestion(questions: Array<string>) {
@@ -170,5 +160,5 @@ export async function DeleteQuestion(questions: Array<string>) {
     { _id: "600deff3cef12d5f393a3b49" },
     { $pull: { questionnaire: { question: { $in: questions } } } }
   );
-  console.log(results); //should just be a single value, so pull all returns an array
+   //should just be a single value, so pull all returns an array
 }
