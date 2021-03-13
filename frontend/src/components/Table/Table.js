@@ -9,6 +9,7 @@ import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
+import Tooltip from "@material-ui/core/Tooltip";
 import CircleCheckedFilled from "@material-ui/icons/CheckCircle";
 import CircleUnchecked from "@material-ui/icons/RadioButtonUnchecked";
 import UpdateIcon from "@material-ui/icons/Update";
@@ -183,7 +184,7 @@ export default function TableQ(props) {
             color="primary"
             aria-label="add to shopping cart"
           >
-            <Button
+            {/* <Button
               variant="contained"
               classes={classes.button}
               color={handleMaxCapacity() ? "secondary" : "primary"}
@@ -203,7 +204,7 @@ export default function TableQ(props) {
                         r.entry_time !== undefined && r.exit_time === undefined
                     ).length}
               </span>
-            </Button>
+            </Button> */}
             <UpdateIcon />
           </IconButton>
           <Link color="primary" href="#" onClick={preventDefault}>
@@ -262,14 +263,16 @@ export default function TableQ(props) {
                       </TableCell>
                       <TableCell>{row.phone.slice(0, 10)}</TableCell>
                       <TableCell>{1}</TableCell>
-                      <TableCell>{row.temp}</TableCell>
                       <TableCell>
-                        {new Date(row.createdAt).toLocaleTimeString()}
+                        {row.temp}{" "}
+                        {row.temp > TEMP_THRESHOLD && (
+                          <Tooltip title="Temperature outside threshold">
+                            <WarningIcon color="error" />
+                          </Tooltip>
+                        )}
                       </TableCell>
                       <TableCell>
-                        {row.temp > TEMP_THRESHOLD && (
-                          <WarningIcon color="error" />
-                        )}
+                        {new Date(row.createdAt).toLocaleTimeString()}
                       </TableCell>
                       <TableCell align="right">
                         {" "}
@@ -316,14 +319,16 @@ export default function TableQ(props) {
                       </TableCell>
                       <TableCell>{row.phone.slice(0, 10)}</TableCell>
                       <TableCell>{1}</TableCell>
-                      <TableCell>{row.temp}</TableCell>
                       <TableCell>
-                        {new Date(row.createdAt).toLocaleTimeString()}
+                        {row.temp}{" "}
+                        {row.temp > TEMP_THRESHOLD && (
+                          <Tooltip title="Temperature outside threshold">
+                            <WarningIcon color="error" />
+                          </Tooltip>
+                        )}
                       </TableCell>
                       <TableCell>
-                        {row.temp > TEMP_THRESHOLD && (
-                          <WarningIcon color="error" />
-                        )}
+                        {new Date(row.createdAt).toLocaleTimeString()}
                       </TableCell>
                       <TableCell align="right">
                         {" "}

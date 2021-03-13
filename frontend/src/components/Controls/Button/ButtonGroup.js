@@ -30,6 +30,7 @@ const ButtonGroup = ({ buttons, page }) => {
       ? (state) => state.table.category
       : (state) => state.setting.category
   );
+  const maxCapacity = useSelector((state) => state.setting.general.maxCapacity);
   const dispatch = useDispatch();
 
   const handleClick = (category) => {
@@ -53,6 +54,9 @@ const ButtonGroup = ({ buttons, page }) => {
               icon={button.icon}
               handleClick={() => handleClick(button.category)}
               page={page}
+              maxCapacity={
+                button.category === "Capacity" && button.quantity >= maxCapacity
+              }
             />
           </div>
         );
