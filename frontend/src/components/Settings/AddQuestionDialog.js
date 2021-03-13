@@ -65,8 +65,7 @@ export default function AddQuestionDialog({ loadData }) {
         dispatchSnackbarSuccess("Question Added");
       })
       .catch((error) => {
-        console.log(error);
-        if (error.response != null) {
+        if (error.response !== null) {
           dispatchSnackbarError(error.response.data);
         } else {
           dispatchSnackbarError(

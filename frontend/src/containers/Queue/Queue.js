@@ -8,10 +8,14 @@ import {
   PeopleAlt,
 } from "@material-ui/icons";
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 // import PaperButton from '../../components/Controls/Button/PaperButton'
 import ButtonGroup from "../../components/Controls/Button/ButtonGroup";
 import Table from "../../components/Table/Table";
+import { axiosInstance } from "../../network/apis";
+import { setCurrentSetting } from "../../store/Setting/SettingAction";
+import Auth from "../../utils/Auth";
+import { dispatchSnackbarError } from "../../utils/Shared";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -37,7 +41,11 @@ const useStyles = makeStyles((theme) => ({
 export default function Queue(props) {
   const classes = useStyles();
   const table = useSelector((state) => state.table);
-  console.log(table);
+  const token = Auth.isAuth();
+  const dispatch = useDispatch();
+  const generalRedux = useSelector((state) => state.setting.general);
+  const [values, setValues] = useState(generalRedux ? generalRedux : {});
+
   const [buttons, setButtons] = useState([
     {
       quantity: table.capacity.length,
@@ -61,6 +69,43 @@ export default function Queue(props) {
     },
   ]);
 
+  const loadData = () => {
+    const config = {
+      headers: { Authorization: `Bearer ${token}` },
+    };
+    axiosInstance
+      .get("/settings/getSettings", config)
+      .then((response) => {
+        const {
+          establishmentId,
+          establishmentName,
+          maxCapacity,
+          notificationMessage,
+        } = response.data.generalSettings;
+        setValues({
+          establishmentId,
+          establishmentName,
+          maxCapacity,
+          notificationMessage,
+        });
+        dispatch(
+          setCurrentSetting({
+            general: {
+              establishmentId,
+              establishmentName,
+              maxCapacity,
+              notificationMessage,
+            },
+          })
+        );
+      })
+      .catch((error) => {
+        if (error.response !== undefined)
+          dispatchSnackbarError(error.response.data);
+        else dispatchSnackbarError(error);
+      });
+  };
+
   useEffect(() => {
     setButtons([
       {
@@ -73,11 +118,6 @@ export default function Queue(props) {
         category: "Queue",
         icon: AssignmentTurnedIn,
       },
-      // {
-      //   quantity: table.notification.length,
-      //   category: "Notifications",
-      //   icon: Notifications,
-      // },
       {
         quantity: table.alert.length,
         category: "Alert",
@@ -85,6 +125,10 @@ export default function Queue(props) {
       },
     ]);
   }, [table]);
+
+  useEffect(() => {
+    loadData();
+  }, []);
   return (
     <Grid container spacing={3} justify="center">
       <Grid item xs={12}>

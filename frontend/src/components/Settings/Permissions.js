@@ -167,8 +167,7 @@ const EnhancedTableToolbar = (props) => {
         dispatchSnackbarSuccess("Users Deleted");
       })
       .catch((error) => {
-        console.log(error);
-        if (error.response != null) {
+        if (error.response !== null) {
           dispatchSnackbarError(error.response.data);
         } else {
           dispatchSnackbarError(
@@ -287,8 +286,7 @@ export default function Permissions() {
         dispatch(setCurrentSetting({ permissions: [...users] }));
       })
       .catch((error) => {
-        console.log(error);
-        if (error.response != null) {
+        if (error.response !== null) {
           dispatchSnackbarError(error.response.data);
         } else {
           dispatchSnackbarError(
@@ -315,8 +313,7 @@ export default function Permissions() {
         dispatchSnackbarSuccess("Users Settings Saved");
       })
       .catch((error) => {
-        console.log(error);
-        if (error.response != null) {
+        if (error.response !== null) {
           dispatchSnackbarError(error.response.data);
         } else {
           dispatchSnackbarError(

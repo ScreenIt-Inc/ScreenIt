@@ -71,8 +71,8 @@ export default function TableQ(props) {
       })
       .catch((error) => {
         // console.log(error.response.data.errors.message);
-        console.log(error);
-        if (error.response != null) {
+
+        if (error.response !== null) {
           dispatchSnackbarError(error.response.data);
         } else {
           dispatchSnackbarError(
@@ -101,7 +101,7 @@ export default function TableQ(props) {
       .then((data) => {
         var newEntries = data.filter((obj1) => {
           return !rows.some((obj2) => {
-            return obj1._id == obj2._id;
+            return obj1._id === obj2._id;
           });
         });
         setRows([...rows, ...newEntries]);
@@ -111,7 +111,7 @@ export default function TableQ(props) {
               (r) => r.entry_time === undefined
             ),
             capacity: [...rows, ...newEntries].filter(
-              (r) => r.entry_time !== undefined && r.exit_time == undefined
+              (r) => r.entry_time !== undefined && r.exit_time === undefined
             ),
             alert: [...rows, ...newEntries].filter(
               (r) => r.entry_time === undefined && r.temp > TEMP_THRESHOLD
@@ -120,8 +120,7 @@ export default function TableQ(props) {
         );
       })
       .catch((error) => {
-        console.log(error);
-        if (error.response != null) {
+        if (error.response !== null) {
           dispatchSnackbarError(error.response.data);
         } else {
           dispatchSnackbarError(
@@ -146,8 +145,7 @@ export default function TableQ(props) {
         console.log(response);
       })
       .catch((error) => {
-        console.log(error);
-        if (error.response != null) {
+        if (error.response !== null) {
           dispatchSnackbarError(error.response.data);
         } else {
           dispatchSnackbarError(
@@ -160,14 +158,11 @@ export default function TableQ(props) {
 
   const handleMaxCapacity = () => {
     const capacity = rows.filter(
-      (r) => r.entry_time !== undefined && r.exit_time == undefined
+      (r) => r.entry_time !== undefined && r.exit_time === undefined
     ).length;
     if (capacity >= generalRedux.maxCapacity) {
-      console.log(capacity);
       return true;
     }
-    console.log(capacity);
-    console.log(generalRedux.maxCapacity);
     return false;
   };
 
@@ -200,12 +195,12 @@ export default function TableQ(props) {
                   ? "Max Capacity Reached: " +
                     rows.filter(
                       (r) =>
-                        r.entry_time !== undefined && r.exit_time == undefined
+                        r.entry_time !== undefined && r.exit_time === undefined
                     ).length
                   : "Capacity: " +
                     rows.filter(
                       (r) =>
-                        r.entry_time !== undefined && r.exit_time == undefined
+                        r.entry_time !== undefined && r.exit_time === undefined
                     ).length}
               </span>
             </Button>
@@ -363,7 +358,7 @@ export default function TableQ(props) {
             rows !== undefined &&
             rows
               .filter(
-                (r) => r.entry_time !== undefined && r.exit_time == undefined
+                (r) => r.entry_time !== undefined && r.exit_time === undefined
               )
               .map((row, i) => {
                 return (

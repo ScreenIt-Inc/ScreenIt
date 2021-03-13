@@ -1,6 +1,7 @@
 import { Button, Grid } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { BrowserRouter as Router, Link, Route, Switch } from "react-router-dom";
 import Logo from "../../assets/images/ScreenitOriginal.png";
 import SidebarLogo from "../../assets/images/sidebarlogo.png";
@@ -9,6 +10,7 @@ import LoginField from "../../components/Controls/InputField/LoginField";
 import RegisterField from "../../components/Controls/InputField/RegisterField";
 import { axiosInstance } from "../../network/apis";
 import { default as History, default as history } from "../../routes/History";
+import { setCurrentSetting } from "../../store/Setting/SettingAction";
 import { dispatchSnackbarError } from "../../utils/Shared";
 
 const useStyles = makeStyles((theme) => ({
@@ -35,6 +37,7 @@ export default function Login(props) {
     establishmentId: "",
     showPassword: false,
   });
+  const dispatch = useDispatch();
   const [selected, setSelected] = useState("Log In");
   // this method is only to trigger route guards , remove and use your own logic
   const handleLogin = async () => {
@@ -48,10 +51,11 @@ export default function Login(props) {
       .then((response) => {
         const { token, user } = response.data;
         localStorage.setItem("token", token);
-        localStorage.setItem("user", user);
+        localStorage.setItem("user", user.role);
+        dispatch(setCurrentSetting({ user: user }));
       })
       .catch((error) => {
-        if (error.response != null) {
+        if (error.response !== null) {
           dispatchSnackbarError(error.response.data);
         } else {
           dispatchSnackbarError(

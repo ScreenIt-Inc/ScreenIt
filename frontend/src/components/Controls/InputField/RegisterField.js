@@ -71,8 +71,7 @@ const RegisterField = ({
         dispatchSnackbarSuccess("Registered Successfully");
       })
       .catch((error) => {
-        // console.log(error.response.data.errors.message);
-        if (error.response != null) {
+        if (error.response !== null) {
           dispatchSnackbarError(error.response.data);
         } else {
           dispatchSnackbarError(

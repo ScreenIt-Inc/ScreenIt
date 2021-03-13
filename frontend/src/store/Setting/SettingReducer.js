@@ -1,14 +1,9 @@
-import Auth from "../../utils/Auth";
 import * as types from "./SettingTypes";
 
 const INITIAL_STATE = {
+  user: {},
   category: "General",
-  general: {
-    establishmentName: "",
-    establishmentId: Auth.getUser(),
-    maxCapacity: 250,
-    notficationMessage: "You may now enter.",
-  },
+  general: {},
   permissions: [],
   form: [],
 };

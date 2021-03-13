@@ -27,10 +27,8 @@ export default function MaterialSnackbar(props) {
 
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
-      console.log(reason);
       return;
     }
-    console.log("close");
     dispatch(hideSnackbarAction());
   };
   return (

@@ -28,7 +28,6 @@ import {
 } from "../../utils/Shared";
 
 function descendingComparator(a, b, orderBy) {
-  console.log(a, b, orderBy);
   if (b[orderBy] < a[orderBy]) {
     return -1;
   }
@@ -171,8 +170,7 @@ const EnhancedTableToolbar = (props) => {
         dispatchSnackbarSuccess("Questions Deleted");
       })
       .catch((error) => {
-        console.log(error);
-        if (error.response != null) {
+        if (error.response !== null) {
           dispatchSnackbarError(error.response.data);
         } else {
           dispatchSnackbarError(
@@ -286,13 +284,11 @@ export default function Form() {
               question: question.question,
             };
           });
-        console.log("questions", questions);
         setRows(questions);
         dispatch(setCurrentSetting({ form: questions }));
       })
       .catch((error) => {
-        console.log(error);
-        if (error.response != null) {
+        if (error.response !== null) {
           dispatchSnackbarError(error.response.data);
         } else {
           dispatchSnackbarError(

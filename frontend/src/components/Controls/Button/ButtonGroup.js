@@ -26,17 +26,17 @@ const useStyles = makeStyles((theme) => ({
 const ButtonGroup = ({ buttons, page }) => {
   const classes = useStyles();
   let category = useSelector(
-    page == "Queue"
+    page === "Queue"
       ? (state) => state.table.category
       : (state) => state.setting.category
   );
   const dispatch = useDispatch();
 
   const handleClick = (category) => {
-    if (page == "Queue") {
+    if (page === "Queue") {
       dispatch(setCurrentTable({ category: category }));
     }
-    if (page == "Settings") {
+    if (page === "Settings") {
       dispatch(setCurrentSetting({ category: category }));
     }
   };

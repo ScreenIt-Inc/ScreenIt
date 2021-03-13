@@ -179,7 +179,6 @@ class CustomerForm extends React.Component {
       .catch(function (error) {
         //make sure to bind for above set state
         console.log("Error pulling database questions, using default");
-        console.log(error);
       });
 
     fetch(BASE_URL + GET_UUIDS_ENDPOINT)
@@ -189,7 +188,7 @@ class CustomerForm extends React.Component {
       .then(
         function (data) {
           for (var i = 0; i < data.length; i++) {
-            if (data[i].uuid == this.uuid) {
+            if (data[i].uuid === this.uuid) {
               this.setState({
                 approved: "Yes",
               });
@@ -205,7 +204,6 @@ class CustomerForm extends React.Component {
       .catch(function (error) {
         //make sure to bind for above set state
         console.log("Error pulling uuid, unable to grant access");
-        console.log(error);
       });
   }
 
@@ -244,7 +242,7 @@ class CustomerForm extends React.Component {
     this.state.user_data.questionnaire[Q.question] = value;
     for (var i = 0; i < Q.answers.length; i++) {
       //not the most efficient but its fine based on expected usage
-      if (Q.answers[i] != value) {
+      if (Q.answers[i] !== value) {
         document.getElementById(Q.id.toString() + Q.answers[i]).checked = false;
       }
     }
@@ -255,13 +253,13 @@ class CustomerForm extends React.Component {
 
   render() {
     const { classes } = this.props;
-    if (this.state.approved == "Denied") {
+    if (this.state.approved === "Denied") {
       return (
         <div className={[classes.content, classes.headerQuestion].join(" ")}>
           Denied...
         </div>
       );
-    } else if (this.state.approved == "Submitted") {
+    } else if (this.state.approved === "Submitted") {
       return (
         <div className={[classes.content, classes.headerQuestion].join(" ")}>
           <Col
@@ -275,7 +273,7 @@ class CustomerForm extends React.Component {
           </Col>
         </div>
       );
-    } else if (!(this.state.pulled && this.state.approved == "Yes")) {
+    } else if (!(this.state.pulled && this.state.approved === "Yes")) {
       return (
         <div className={[classes.content, classes.headerQuestion].join(" ")}>
           <Col

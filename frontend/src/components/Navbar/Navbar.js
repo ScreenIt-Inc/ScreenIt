@@ -15,6 +15,7 @@ import PeopleAltIcon from "@material-ui/icons/PeopleAlt";
 import SettingsIcon from "@material-ui/icons/Settings";
 import clsx from "clsx";
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import { BrowserRouter as Router, Link, Route, Switch } from "react-router-dom";
 import Logo from "../../assets/images/ScreenitLogo.png";
 import ContactTracing from "../../containers/ContactTracing/ContactTracing";
@@ -108,6 +109,7 @@ export default function Navbar({ props }) {
   const classes = useStyles();
   const [open, setOpen] = useState(true);
   const [selected, setSelected] = useState(0);
+  const user = useSelector((state) => state.setting.user);
   const pages = [
     { title: "Queue", route: "/queue", adminRequired: false },
     {
@@ -155,6 +157,7 @@ export default function Navbar({ props }) {
                 onClick={() => setSelected(i)}
                 component={Link}
                 to={page.route}
+                disabled={page.adminRequired && Auth.getUser() !== "Admin"}
               >
                 <ListItemIcon
                   className={
