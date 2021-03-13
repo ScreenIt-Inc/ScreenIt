@@ -172,9 +172,13 @@ const EnhancedTableToolbar = (props) => {
       })
       .catch((error) => {
         console.log(error);
-        if (error.response != undefined)
+        if (error.response != null) {
           dispatchSnackbarError(error.response.data);
-        else console.log(error);
+        } else {
+          dispatchSnackbarError(
+            "Cannot connect to server! Please try again later."
+          );
+        }
       });
     loadData();
   };
@@ -288,9 +292,13 @@ export default function Form() {
       })
       .catch((error) => {
         console.log(error);
-        if (error.response != undefined)
+        if (error.response != null) {
           dispatchSnackbarError(error.response.data);
-        else console.log(error);
+        } else {
+          dispatchSnackbarError(
+            "Cannot connect to server! Please try again later."
+          );
+        }
       });
   };
 

@@ -72,7 +72,13 @@ export default function TableQ(props) {
       .catch((error) => {
         // console.log(error.response.data.errors.message);
         console.log(error);
-        dispatchSnackbarError(error.response.data);
+        if (error.response != null) {
+          dispatchSnackbarError(error.response.data);
+        } else {
+          dispatchSnackbarError(
+            "Cannot connect to server! Please try again later."
+          );
+        }
       });
   };
 
@@ -115,9 +121,13 @@ export default function TableQ(props) {
       })
       .catch((error) => {
         console.log(error);
-        if (error.response != undefined)
+        if (error.response != null) {
           dispatchSnackbarError(error.response.data);
-        else console.log(error);
+        } else {
+          dispatchSnackbarError(
+            "Cannot connect to server! Please try again later."
+          );
+        }
       });
   };
 
@@ -137,9 +147,13 @@ export default function TableQ(props) {
       })
       .catch((error) => {
         console.log(error);
-        if (error.response != undefined)
+        if (error.response != null) {
           dispatchSnackbarError(error.response.data);
-        else console.log(error);
+        } else {
+          dispatchSnackbarError(
+            "Cannot connect to server! Please try again later."
+          );
+        }
       });
     getVisitorInfo();
   };

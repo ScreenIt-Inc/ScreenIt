@@ -86,7 +86,7 @@ export default function General(props) {
         console.log(error);
         if (error.response != undefined)
           dispatchSnackbarError(error.response.data);
-        else console.log(error);
+        else dispatchSnackbarError(error);
       });
   };
 

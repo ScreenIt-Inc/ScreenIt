@@ -1,27 +1,27 @@
-import React, { useState } from "react";
 import {
-  TextField,
-  InputAdornment,
   Button,
   IconButton,
+  InputAdornment,
+  TextField,
 } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
 import {
   AccountCircle,
+  AssignmentInd,
+  Business,
+  Email,
   LockRounded,
   Visibility,
   VisibilityOff,
-  Business,
-  Email,
-  AssignmentInd,
 } from "@material-ui/icons";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { makeStyles } from "@material-ui/core/styles";
+import { axiosInstance } from "../../../network/apis";
+import History from "../../../routes/History";
 import {
   dispatchSnackbarError,
   dispatchSnackbarSuccess,
 } from "../../../utils/Shared";
-import { axiosInstance } from "../../../network/apis";
-import History from "../../../routes/History";
 
 const useStyles = makeStyles((theme) => ({
   button: {
@@ -72,7 +72,13 @@ const RegisterField = ({
       })
       .catch((error) => {
         // console.log(error.response.data.errors.message);
-        dispatchSnackbarError(error.response.data);
+        if (error.response != null) {
+          dispatchSnackbarError(error.response.data);
+        } else {
+          dispatchSnackbarError(
+            "Cannot connect to server! Please try again later."
+          );
+        }
       });
     History.push("/");
   };
