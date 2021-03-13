@@ -73,11 +73,11 @@ export default function Queue(props) {
         category: "Queue",
         icon: AssignmentTurnedIn,
       },
-      {
-        quantity: table.notification.length,
-        category: "Notifications",
-        icon: Notifications,
-      },
+      // {
+      //   quantity: table.notification.length,
+      //   category: "Notifications",
+      //   icon: Notifications,
+      // },
       {
         quantity: table.alert.length,
         category: "Alert",
