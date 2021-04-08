@@ -14,33 +14,34 @@ import CircleUnchecked from "@material-ui/icons/RadioButtonUnchecked";
 import Button from "@material-ui/core/Button";
 import Title from "./Title";
 import { dispatchSnackbarSuccess } from "../../utils/Shared";
-import {useSelector, useDispatch} from 'react-redux'
+import { useSelector, useDispatch } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   seeMore: {
     marginTop: theme.spacing(3),
   },
   button: {
-    backgroundColor: theme.palette.primary.light
-  }
+    backgroundColor: theme.palette.primary.light,
+  },
 }));
 
-function createData(id, lastName, firstName, contactNumber, emailAddress){//}), entryDate, exitDate) {
-  return { id, lastName, firstName, contactNumber, emailAddress }//, entryDate, exitDate };
+function createData(id, lastName, firstName, contactNumber, emailAddress) {
+  //}), entryDate, exitDate) {
+  return { id, lastName, firstName, contactNumber, emailAddress }; //, entryDate, exitDate };
 }
 
 const rows = [
-  createData( 1, 'Snow', 'Jon', '123-456-7890', "name@email.com"),//, new Date(2020, 5, 5, 5, 20, 0), new Date(2020, 5, 5, 5, 40, 0) ),
-  createData( 2, 'Lane', 'Carrie', '123-456-7890', "name@email.com"),//, new Date(2020, 5, 5, 5, 43, 0), new Date(2020, 5, 5, 6, 0, 0) ),
-  createData( 3, 'Lane', 'Jaime', '123-456-7890', "name@email.com")//, new Date(2020, 5, 5, 5, 30, 0), new Date(2020, 5, 5, 5, 45, 0) )
+  createData(1, "Snow", "Jon", "123-456-7890", "name@email.com"), //, new Date(2020, 5, 5, 5, 20, 0), new Date(2020, 5, 5, 5, 40, 0) ),
+  createData(2, "Lane", "Carrie", "123-456-7890", "name@email.com"), //, new Date(2020, 5, 5, 5, 43, 0), new Date(2020, 5, 5, 6, 0, 0) ),
+  createData(3, "Lane", "Jaime", "123-456-7890", "name@email.com"), //, new Date(2020, 5, 5, 5, 30, 0), new Date(2020, 5, 5, 5, 45, 0) )
 ];
 
 export default function PossibleContactsTable(props) {
-  const category = useSelector(state => state.table.category)
+  const category = useSelector((state) => state.table.category);
   const [viewAll, setViewAll] = useState(false);
   const [paid] = useState(rows);
   function preventDefault(event) {
-    setViewAll(!viewAll)
+    setViewAll(!viewAll);
     event.preventDefault();
   }
   const maxEvents = 10;
@@ -48,8 +49,8 @@ export default function PossibleContactsTable(props) {
   const classes = useStyles();
   const handlePaid = (message) => {
     dispatchSnackbarSuccess(message);
-  }
-  const date = new Date()
+  };
+  const date = new Date();
   return (
     <React.Fragment>
       <div
@@ -69,33 +70,47 @@ export default function PossibleContactsTable(props) {
       <Table size="small">
         <TableHead>
           <TableRow>
-            <TableCell><b>First Name</b></TableCell>
-            <TableCell><b>Last Name</b></TableCell>
-            <TableCell><b>Contact Number</b></TableCell>
-            <TableCell><b>Email Address</b></TableCell>
+            <TableCell>
+              <b>First Name</b>
+            </TableCell>
+            <TableCell>
+              <b>Last Name</b>
+            </TableCell>
+            <TableCell>
+              <b>Contact Number</b>
+            </TableCell>
+            <TableCell>
+              <b>Email Address</b>
+            </TableCell>
             <TableCell align="right"></TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {paid.map((row, i) => {
-            return ((i < maxEvents || viewAll) && <TableRow key={row.id}>
-              <TableCell>{row.lastName}</TableCell>
-              <TableCell>{row.firstName}</TableCell>
-              <TableCell>{row.contactNumber}</TableCell>
-              <TableCell>{row.emailAddress}</TableCell>
-              <TableCell align="right">
-                {" "}
-                <Button
-                  variant="contained"
-                  classes={classes.button}
-                  color="primary"
-                  style={{ borderRadius: 5 }}
-                  onClick={() => handlePaid("Notification sent to "+row.name)}
-                >
-                  <span style={{color: "white"}} >Notify</span>
-                </Button>
-              </TableCell>
-            </TableRow>)
+            return (
+              (i < maxEvents || viewAll) && (
+                <TableRow key={row.id}>
+                  <TableCell>{row.lastName}</TableCell>
+                  <TableCell>{row.firstName}</TableCell>
+                  <TableCell>{row.contactNumber}</TableCell>
+                  <TableCell>{row.emailAddress}</TableCell>
+                  <TableCell align="right">
+                    {" "}
+                    <Button
+                      variant="contained"
+                      classes={classes.button}
+                      color="primary"
+                      style={{ borderRadius: 5 }}
+                      onClick={() =>
+                        handlePaid("Notification sent to " + row.name)
+                      }
+                    >
+                      <span style={{ color: "white" }}>Notify</span>
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              )
+            );
           })}
         </TableBody>
       </Table>

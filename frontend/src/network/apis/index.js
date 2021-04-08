@@ -6,14 +6,14 @@ import { BASE_URL } from "../../utils/Constants";
 export const axiosInstance = axios.create({
   baseURL: BASE_URL,
   headers: {
-    "Content-Type": "application/json"
-  }
+    "Content-Type": "application/json",
+  },
 });
 
 // Handle request process
-axiosInstance.interceptors.request.use(request => requestHandler(request));
+axiosInstance.interceptors.request.use((request) => requestHandler(request));
 // Handle response process
 axiosInstance.interceptors.response.use(
-  response => successHandler(response),
-  error => errorHandler(error)
+  (response) => successHandler(response),
+  (error) => errorHandler(error)
 );

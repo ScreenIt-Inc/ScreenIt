@@ -1,9 +1,9 @@
-import { Container } from 'typedi';
-import { EventSubscriber, On } from 'event-dispatch';
-import events from './events';
-import { IUser } from '../interfaces/IUser';
-import mongoose from 'mongoose';
-import { Logger } from 'winston';
+import { Container } from "typedi";
+import { EventSubscriber, On } from "event-dispatch";
+import events from "./events";
+import { IUser } from "../interfaces/IUser";
+import mongoose from "mongoose";
+import { Logger } from "winston";
 
 @EventSubscriber()
 export default class UserSubscriber {
@@ -19,10 +19,12 @@ export default class UserSubscriber {
    */
   @On(events.user.signIn)
   public onUserSignIn({ _id }: Partial<IUser>) {
-    const Logger: Logger = Container.get('logger');
+    const Logger: Logger = Container.get("logger");
 
     try {
-      const UserModel = Container.get('UserModel') as mongoose.Model<IUser & mongoose.Document>;
+      const UserModel = Container.get("UserModel") as mongoose.Model<
+        IUser & mongoose.Document
+      >;
 
       UserModel.update({ _id }, { $set: { lastLogin: new Date() } });
     } catch (e) {
@@ -35,7 +37,7 @@ export default class UserSubscriber {
 
   @On(events.user.signUp)
   public onUserSignUp({ name, email, _id }: Partial<IUser>) {
-    const Logger: Logger = Container.get('logger');
+    const Logger: Logger = Container.get("logger");
 
     try {
       /**

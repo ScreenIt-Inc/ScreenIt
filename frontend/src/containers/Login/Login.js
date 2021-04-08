@@ -1,16 +1,17 @@
+import { Button, Grid } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
 import React, { useState } from "react";
-import { Grid, Button } from "@material-ui/core";
+import { useDispatch } from "react-redux";
+import { BrowserRouter as Router, Link, Route, Switch } from "react-router-dom";
 import Logo from "../../assets/images/ScreenitOriginal.png";
 import SidebarLogo from "../../assets/images/sidebarlogo.png";
+import ForgotPasswordField from "../../components/Controls/InputField/ForgotPasswordField";
 import LoginField from "../../components/Controls/InputField/LoginField";
 import RegisterField from "../../components/Controls/InputField/RegisterField";
-import ForgotPasswordField from "../../components/Controls/InputField/ForgotPasswordField";
-import History from "../../routes/History";
 import { axiosInstance } from "../../network/apis";
+import { default as History, default as history } from "../../routes/History";
+import { setCurrentSetting } from "../../store/Setting/SettingAction";
 import { dispatchSnackbarError } from "../../utils/Shared";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import { makeStyles } from "@material-ui/core/styles";
-import history from "../../routes/History";
 
 const useStyles = makeStyles((theme) => ({
   button: {
@@ -36,6 +37,7 @@ export default function Login(props) {
     establishmentId: "",
     showPassword: false,
   });
+  const dispatch = useDispatch();
   const [selected, setSelected] = useState("Log In");
   // this method is only to trigger route guards , remove and use your own logic
   const handleLogin = async () => {
@@ -49,11 +51,17 @@ export default function Login(props) {
       .then((response) => {
         const { token, user } = response.data;
         localStorage.setItem("token", token);
-        localStorage.setItem("user", user);
+        localStorage.setItem("user", user.role);
+        dispatch(setCurrentSetting({ user: user }));
       })
       .catch((error) => {
-        // console.log(error.response.data.errors.message);
-        dispatchSnackbarError(error.response.data);
+        if (error.response !== null) {
+          dispatchSnackbarError(error.response.data);
+        } else {
+          dispatchSnackbarError(
+            "Cannot connect to server! Please try again later."
+          );
+        }
       });
     History.push("/");
   };

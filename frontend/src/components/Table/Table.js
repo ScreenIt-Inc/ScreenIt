@@ -9,9 +9,11 @@ import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
+import Tooltip from "@material-ui/core/Tooltip";
 import CircleCheckedFilled from "@material-ui/icons/CheckCircle";
 import CircleUnchecked from "@material-ui/icons/RadioButtonUnchecked";
 import UpdateIcon from "@material-ui/icons/Update";
+import WarningIcon from "@material-ui/icons/Warning";
 import * as React from "react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -35,7 +37,9 @@ const useStyles = makeStyles((theme) => ({
 
 export default function TableQ(props) {
   const dispatch = useDispatch();
+  const TEMP_THRESHOLD = 37.8; //  in Celsius, according to google
   const category = useSelector((state) => state.table.category);
+  const generalRedux = useSelector((state) => state.setting.general);
   const [viewAll, setViewAll] = useState(false);
   const [rows, setRows] = useState([]);
 
@@ -68,8 +72,14 @@ export default function TableQ(props) {
       })
       .catch((error) => {
         // console.log(error.response.data.errors.message);
-        console.log(error);
-        dispatchSnackbarError(error.response.data);
+
+        if (error.response !== null) {
+          dispatchSnackbarError(error.response.data);
+        } else {
+          dispatchSnackbarError(
+            "Cannot connect to server! Please try again later."
+          );
+        }
       });
   };
 
@@ -92,7 +102,7 @@ export default function TableQ(props) {
       .then((data) => {
         var newEntries = data.filter((obj1) => {
           return !rows.some((obj2) => {
-            return obj1._id == obj2._id;
+            return obj1._id === obj2._id;
           });
         });
         setRows([...rows, ...newEntries]);
@@ -102,16 +112,22 @@ export default function TableQ(props) {
               (r) => r.entry_time === undefined
             ),
             capacity: [...rows, ...newEntries].filter(
-              (r) => r.entry_time !== undefined && r.exit_time == undefined
+              (r) => r.entry_time !== undefined && r.exit_time === undefined
+            ),
+            alert: [...rows, ...newEntries].filter(
+              (r) => r.entry_time === undefined && r.temp > TEMP_THRESHOLD
             ),
           })
         );
       })
       .catch((error) => {
-        console.log(error);
-        if (error.response != undefined)
+        if (error.response !== null) {
           dispatchSnackbarError(error.response.data);
-        else console.log(error);
+        } else {
+          dispatchSnackbarError(
+            "Cannot connect to server! Please try again later."
+          );
+        }
       });
   };
 
@@ -130,12 +146,25 @@ export default function TableQ(props) {
         console.log(response);
       })
       .catch((error) => {
-        console.log(error);
-        if (error.response != undefined)
+        if (error.response !== null) {
           dispatchSnackbarError(error.response.data);
-        else console.log(error);
+        } else {
+          dispatchSnackbarError(
+            "Cannot connect to server! Please try again later."
+          );
+        }
       });
     getVisitorInfo();
+  };
+
+  const handleMaxCapacity = () => {
+    const capacity = rows.filter(
+      (r) => r.entry_time !== undefined && r.exit_time === undefined
+    ).length;
+    if (capacity >= generalRedux.maxCapacity) {
+      return true;
+    }
+    return false;
   };
 
   return (
@@ -155,6 +184,27 @@ export default function TableQ(props) {
             color="primary"
             aria-label="add to shopping cart"
           >
+            {/* <Button
+              variant="contained"
+              classes={classes.button}
+              color={handleMaxCapacity() ? "secondary" : "primary"}
+              style={{ borderRadius: 5, marginRight: 10, marginBottom: 12 }}
+              margin
+            >
+              <span style={{ color: "white" }}>
+                {handleMaxCapacity()
+                  ? "Max Capacity Reached: " +
+                    rows.filter(
+                      (r) =>
+                        r.entry_time !== undefined && r.exit_time === undefined
+                    ).length
+                  : "Capacity: " +
+                    rows.filter(
+                      (r) =>
+                        r.entry_time !== undefined && r.exit_time === undefined
+                    ).length}
+              </span>
+            </Button> */}
             <UpdateIcon />
           </IconButton>
           <Link color="primary" href="#" onClick={preventDefault}>
@@ -195,6 +245,9 @@ export default function TableQ(props) {
                     <TableRow key={row._id}>
                       <TableCell>
                         <Checkbox
+                          disabled={
+                            handleMaxCapacity() || row.temp > TEMP_THRESHOLD
+                          }
                           icon={<CircleUnchecked />}
                           checkedIcon={<CircleCheckedFilled />}
                           onClick={() => {
@@ -210,13 +263,23 @@ export default function TableQ(props) {
                       </TableCell>
                       <TableCell>{row.phone.slice(0, 10)}</TableCell>
                       <TableCell>{1}</TableCell>
-                      <TableCell>{35}</TableCell>
+                      <TableCell>
+                        {row.temp}{" "}
+                        {row.temp > TEMP_THRESHOLD && (
+                          <Tooltip title="Temperature outside threshold">
+                            <WarningIcon color="error" />
+                          </Tooltip>
+                        )}
+                      </TableCell>
                       <TableCell>
                         {new Date(row.createdAt).toLocaleTimeString()}
                       </TableCell>
                       <TableCell align="right">
                         {" "}
                         <Button
+                          disabled={
+                            handleMaxCapacity() || row.temp > TEMP_THRESHOLD
+                          }
                           variant="contained"
                           classes={classes.button}
                           color="primary"
@@ -234,11 +297,73 @@ export default function TableQ(props) {
                   )
                 );
               })}
+          {category === "Alert" &&
+            rows !== undefined &&
+            rows
+              .filter(
+                (r) => r.entry_time === undefined && r.temp > TEMP_THRESHOLD
+              )
+              .map((row, i) => {
+                return (
+                  (i < maxEvents || viewAll) && (
+                    <TableRow key={row._id}>
+                      <TableCell>
+                        <Checkbox
+                          disabled
+                          icon={<CircleUnchecked />}
+                          checkedIcon={<CircleCheckedFilled />}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        {row.firstname + " " + row.lastname}
+                      </TableCell>
+                      <TableCell>{row.phone.slice(0, 10)}</TableCell>
+                      <TableCell>{1}</TableCell>
+                      <TableCell>
+                        {row.temp}{" "}
+                        {row.temp > TEMP_THRESHOLD && (
+                          <Tooltip title="Temperature outside threshold">
+                            <WarningIcon color="error" />
+                          </Tooltip>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {new Date(row.createdAt).toLocaleTimeString()}
+                      </TableCell>
+                      <TableCell align="right">
+                        {" "}
+                        <Button
+                          variant="contained"
+                          classes={classes.button}
+                          color="primary"
+                          style={{ borderRadius: 5 }}
+                          onClick={() => {
+                            const message =
+                              "[ScreenIt Screening Tool] Your temperature is too high.";
+                            handlePaid(row, message);
+                            const removalMessage =
+                              row.firstname +
+                              " " +
+                              row.lastname +
+                              " has been notified and removed.";
+                            const exitTime = new Date();
+                            dispatchSnackbarSuccess(removalMessage);
+                            // post exit_time field update into DB
+                            postVisitorInfo("exit_time", exitTime, row._id);
+                          }}
+                        >
+                          <span style={{ color: "white" }}>Notify</span>
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  )
+                );
+              })}
           {category === "Capacity" &&
             rows !== undefined &&
             rows
               .filter(
-                (r) => r.entry_time !== undefined && r.exit_time == undefined
+                (r) => r.entry_time !== undefined && r.exit_time === undefined
               )
               .map((row, i) => {
                 return (
@@ -257,7 +382,7 @@ export default function TableQ(props) {
                       </TableCell>
                       <TableCell>{row.phone.slice(0, 10)}</TableCell>
                       <TableCell>{1}</TableCell>
-                      <TableCell>{35}</TableCell>
+                      <TableCell>{row.temp}</TableCell>
                       <TableCell>
                         {new Date(row.createdAt).toLocaleTimeString()}
                       </TableCell>

@@ -58,7 +58,6 @@ export default function General(props) {
     axiosInstance
       .get("/settings/getSettings", config)
       .then((response) => {
-        console.log(response);
         const {
           establishmentId,
           establishmentName,
@@ -83,10 +82,9 @@ export default function General(props) {
         );
       })
       .catch((error) => {
-        console.log(error);
-        if (error.response != undefined)
+        if (error.response !== undefined)
           dispatchSnackbarError(error.response.data);
-        else console.log(error);
+        else dispatchSnackbarError(error);
       });
   };
 
@@ -107,7 +105,6 @@ export default function General(props) {
         dispatchSnackbarSuccess("Settings Saved");
       })
       .catch((error) => {
-        // console.log(error.response.data.errors.message);
         dispatchSnackbarError(error.response.data);
       });
   };

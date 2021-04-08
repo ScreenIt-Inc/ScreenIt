@@ -107,7 +107,6 @@ export default function AddUserDialog({ loadData }) {
     await axiosInstance
       .post("/settings/addUser", requestOptions, config)
       .then((response) => {
-        console.log("sdfsdf", currentUsers, response);
         const { name, email, role } = values;
         dispatch(
           setCurrentSetting({
@@ -117,10 +116,13 @@ export default function AddUserDialog({ loadData }) {
         dispatchSnackbarSuccess("User Added");
       })
       .catch((error) => {
-        console.log(error);
-        if (error.response != undefined)
+        if (error.response !== null) {
           dispatchSnackbarError(error.response.data);
-        else console.log(error);
+        } else {
+          dispatchSnackbarError(
+            "Cannot connect to server! Please try again later."
+          );
+        }
       });
     loadData();
     handleClose();

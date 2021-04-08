@@ -8,7 +8,7 @@ export default (state = INITIAL_STATE, action) => {
     case types.GET_DATA_RECEIVE:
       return {
         ...state,
-        ...action.payload
+        ...action.payload,
       };
     default:
       return state;

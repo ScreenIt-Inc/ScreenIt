@@ -1,9 +1,9 @@
-import en from './en';
-import ar from './ar';
+import en from "./en";
+import ar from "./ar";
 
 const messages = {
-  ...ar, 
-  ...en
-}
+  ...ar,
+  ...en,
+};
 
 export default messages;

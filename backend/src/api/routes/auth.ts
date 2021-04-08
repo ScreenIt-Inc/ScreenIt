@@ -1,18 +1,18 @@
-import { Router, Request, Response, NextFunction } from 'express';
-import { Container } from 'typedi';
-import AuthService from '../../services/auth';
-import { IUserInputDTO } from '../../interfaces/IUser';
-import middlewares from '../middlewares';
-import { celebrate, Joi } from 'celebrate';
-import { Logger } from 'winston';
+import { Router, Request, Response, NextFunction } from "express";
+import { Container } from "typedi";
+import AuthService from "../../services/auth";
+import { IUserInputDTO } from "../../interfaces/IUser";
+import middlewares from "../middlewares";
+import { celebrate, Joi } from "celebrate";
+import { Logger } from "winston";
 
 const route = Router();
 
 export default (app: Router) => {
-  app.use('/auth', route);
+  app.use("/auth", route);
 
   route.post(
-    '/signup',
+    "/signup",
     celebrate({
       body: Joi.object({
         establishmentId: Joi.string().required(),
@@ -23,21 +23,23 @@ export default (app: Router) => {
       }),
     }),
     async (req: Request, res: Response, next: NextFunction) => {
-      const logger:Logger = Container.get('logger');
-      logger.debug('Calling Sign-Up endpoint with body: %o', req.body );
+      const logger: Logger = Container.get("logger");
+      logger.debug("Calling Sign-Up endpoint with body: %o", req.body);
       try {
         const authServiceInstance = Container.get(AuthService);
-        const { user, token } = await authServiceInstance.SignUp(req.body as IUserInputDTO);
+        const { user, token } = await authServiceInstance.SignUp(
+          req.body as IUserInputDTO
+        );
         return res.status(201).json({ user, token });
       } catch (e) {
-        logger.error('🔥 error: %o', e);
+        logger.error("🔥 error: %o", e);
         return next(e);
       }
-    },
+    }
   );
 
   route.post(
-    '/signin',
+    "/signin",
     celebrate({
       body: Joi.object({
         establishmentId: Joi.string().required(),
@@ -46,18 +48,22 @@ export default (app: Router) => {
       }),
     }),
     async (req: Request, res: Response, next: NextFunction) => {
-      const logger:Logger = Container.get('logger');
-      logger.debug('Calling Sign-In endpoint with body: %o', req.body);
+      const logger: Logger = Container.get("logger");
+      logger.debug("Calling Sign-In endpoint with body: %o", req.body);
       try {
         const { email, password, establishmentId } = req.body;
         const authServiceInstance = Container.get(AuthService);
-        const { user, token } = await authServiceInstance.SignIn(email, password, establishmentId);
+        const { user, token } = await authServiceInstance.SignIn(
+          email,
+          password,
+          establishmentId
+        );
         return res.json({ user, token }).status(200);
       } catch (e) {
-        logger.error('🔥 error: %o',  e );
+        logger.error("🔥 error: %o", e);
         return next(e);
       }
-    },
+    }
   );
 
   /**

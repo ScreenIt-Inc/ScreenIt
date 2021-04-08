@@ -7,15 +7,14 @@ export default (state = {}, action) => {
         ...state,
         isOpen: true,
         message: action.message,
-        type: action.snacknarType
+        type: action.snacknarType,
       };
     case types.HIDE_SNACKBAR:
       return {
         ...state,
-        isOpen: false
+        isOpen: false,
       };
     default:
       return state;
   }
 };
-

@@ -1,6 +1,6 @@
-import React from "react";
 import Paper from "@material-ui/core/Paper";
 import { makeStyles } from "@material-ui/core/styles";
+import React from "react";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -36,6 +36,12 @@ const useStyles = makeStyles((theme) => ({
     height: 50,
     marginTop: 10,
   },
+  max: {
+    width: 50,
+    height: 50,
+    marginTop: 10,
+    color: "red",
+  },
   quantity: {
     fontSize: 24,
   },
@@ -58,6 +64,7 @@ const PaperButton = ({
   page,
   selected,
   handleClick,
+  maxCapacity,
 }) => {
   const classes = useStyles();
   const Icon = icon;
@@ -68,10 +75,10 @@ const PaperButton = ({
       onClick={handleClick}
       elevation={5}
     >
-      <Icon className={classes.icon} />
+      <Icon className={maxCapacity ? classes.max : classes.icon} />
       <p className={classes.quantity}>{quantity}</p>
       <p className={page === "Queue" ? classes.category : classes.settings}>
-        {category}
+        {maxCapacity ? "Max Capacity" : category}
       </p>
     </Paper>
   );

@@ -26,17 +26,18 @@ const useStyles = makeStyles((theme) => ({
 const ButtonGroup = ({ buttons, page }) => {
   const classes = useStyles();
   let category = useSelector(
-    page == "Queue"
+    page === "Queue"
       ? (state) => state.table.category
       : (state) => state.setting.category
   );
+  const maxCapacity = useSelector((state) => state.setting.general.maxCapacity);
   const dispatch = useDispatch();
 
   const handleClick = (category) => {
-    if (page == "Queue") {
+    if (page === "Queue") {
       dispatch(setCurrentTable({ category: category }));
     }
-    if (page == "Settings") {
+    if (page === "Settings") {
       dispatch(setCurrentSetting({ category: category }));
     }
   };
@@ -53,6 +54,9 @@ const ButtonGroup = ({ buttons, page }) => {
               icon={button.icon}
               handleClick={() => handleClick(button.category)}
               page={page}
+              maxCapacity={
+                button.category === "Capacity" && button.quantity >= maxCapacity
+              }
             />
           </div>
         );

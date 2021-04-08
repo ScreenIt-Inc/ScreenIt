@@ -167,10 +167,13 @@ const EnhancedTableToolbar = (props) => {
         dispatchSnackbarSuccess("Users Deleted");
       })
       .catch((error) => {
-        console.log(error);
-        if (error.response != undefined)
+        if (error.response !== null) {
           dispatchSnackbarError(error.response.data);
-        else console.log(error);
+        } else {
+          dispatchSnackbarError(
+            "Cannot connect to server! Please try again later."
+          );
+        }
       });
     loadData();
   };
@@ -283,10 +286,13 @@ export default function Permissions() {
         dispatch(setCurrentSetting({ permissions: [...users] }));
       })
       .catch((error) => {
-        console.log(error);
-        if (error.response != undefined)
+        if (error.response !== null) {
           dispatchSnackbarError(error.response.data);
-        else console.log(error);
+        } else {
+          dispatchSnackbarError(
+            "Cannot connect to server! Please try again later."
+          );
+        }
       });
   };
 
@@ -307,10 +313,13 @@ export default function Permissions() {
         dispatchSnackbarSuccess("Users Settings Saved");
       })
       .catch((error) => {
-        console.log(error);
-        if (error.response != undefined)
+        if (error.response !== null) {
           dispatchSnackbarError(error.response.data);
-        else console.log(error);
+        } else {
+          dispatchSnackbarError(
+            "Cannot connect to server! Please try again later."
+          );
+        }
       });
     loadData();
   };

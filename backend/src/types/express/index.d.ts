@@ -1,13 +1,13 @@
-import { Document, Model } from 'mongoose';
-import { IEstablishment } from '../../interfaces/IEstablishment';
-import { IForm } from '../../interfaces/IForm';
-import { IUser } from '../../interfaces/IUser';
+import { Document, Model } from "mongoose";
+import { IEstablishment } from "../../interfaces/IEstablishment";
+import { IForm } from "../../interfaces/IForm";
+import { IUser } from "../../interfaces/IUser";
 
 declare global {
   namespace Express {
     export interface Request {
       currentUser: IUser & Document;
-    }    
+    }
   }
 
   namespace Models {

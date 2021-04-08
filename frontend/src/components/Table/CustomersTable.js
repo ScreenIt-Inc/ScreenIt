@@ -44,7 +44,6 @@ class CustomersTable extends React.Component {
       .get("/form/getForms")
       .then((response) => {
         const serverResponse = response.data;
-        console.log(serverResponse);
         var i = 1;
         var newCustomers = serverResponse.map((item) => ({
           id: item._id,
@@ -150,7 +149,7 @@ class CustomersTable extends React.Component {
   }
 
   make12hour(i) {
-    if (i == 0) {
+    if (i === 0) {
       return 12;
     }
     if (i > 12) {
