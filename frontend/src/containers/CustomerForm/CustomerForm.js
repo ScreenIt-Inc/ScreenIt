@@ -78,6 +78,9 @@ const useStyles = (theme) => ({
   centerDiv: {
     textAlign: "center",
   },
+  errorMessage: {
+  	color: "red"
+  }
 });
 
 class CustomerForm extends React.Component {
@@ -96,6 +99,7 @@ class CustomerForm extends React.Component {
         questionnaire: {},
         //entry/exit_time only exist if they happened
       },
+      errorsmessage: '',
       pulled: false,
       approved: "Unkown",
       //I just keep the dummy data below so its easier to test without connections
@@ -212,6 +216,25 @@ class CustomerForm extends React.Component {
   };
 
   verifyData = () => {
+  	for (var field in this.state.user_data){
+  		if (!this.state.user_data[field]){
+		      this.setState({
+		        errorsmessage: "Please fill all fields",
+		      });
+  			return false
+  		}
+  	}
+
+  	//check for numbers in string
+  	if (!/[^a-zA-Z]/.test(this.state.user_data.lastname) || !/[^a-zA-Z]/.test(this.state.user_data.firstname)){
+	      this.setState({
+	        errorsmessage: "Invalid lastname or firstname",
+	      });
+  		return false
+  	}
+
+
+
     return true;
   };
 
@@ -228,7 +251,6 @@ class CustomerForm extends React.Component {
 
   handleSubmit = () => {
     if (!this.verifyData.bind(this)()) {
-      //indicate error here
       return;
     }
 
@@ -505,6 +527,11 @@ class CustomerForm extends React.Component {
                           )
                         )}
                         <br />
+                        <div className={classes.centerDiv}>
+	                        <div className={classes.errorMessage}>
+	                        {this.state.errorsmessage}
+	                        </div>
+                        </div>
                         <div className={classes.centerDiv}>
                           <Button
                             variant="info"
